@@ -30,19 +30,29 @@ export default function RootLayout({
                 </Link>
               </div>
               <div className="flex-1 overflow-auto py-2">
-                <nav className="grid items-start px-4 text-sm font-medium">
+                <nav className="flex flex-col tems-start px-4 text-sm font-medium h-full">
                   <NavItem href="/">
-                    <UsersIcon className="h-4 w-4" />
+                    <VercelLogo className="h-4 w-4" />
+                    Panel General
+                  </NavItem>
+                  <NavItem href="/inventario">
+                    <VercelLogo className="h-4 w-4" />
                     Inventario
                   </NavItem>
-                  <NavItem href="/">
-                    <SettingsIcon className="h-4 w-4" />
+                  <NavItem href="/mantenimiento">
+                    <UsersIcon className="h-4 w-4" />
                     Mantenimiento
                   </NavItem>
-                  <NavItem href="">
-                    <VercelLogo className="h-4 w-4" />
-                    Configuracion
+                  <NavItem href="/calibraciones">
+                    <UsersIcon className="h-4 w-4" />
+                    Calibraciones
                   </NavItem>
+                  <div className="mt-auto">
+                    <NavItem href="/configuracion">
+                      <SettingsIcon className="h-4 w-4" />
+                      Configuracion
+                    </NavItem>
+                  </div>
                 </nav>
               </div>
             </div>
