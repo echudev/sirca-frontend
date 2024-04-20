@@ -31,19 +31,14 @@ export default function RootLayout({
                   className="flex items-center gap-2 font-semibold"
                   href="/"
                 >
-                  <p>Logo</p>
-                  <span className="">SIRCA</span>
+                  <span className="ml-9">SIRCA</span>
                 </Link>
               </div>
               <div className="flex-1 overflow-auto py-2">
                 <nav className="flex flex-col tems-start px-4 text-sm font-medium h-full">
                   <NavItem href="/">
                     <ScreenIcon />
-                    Panel General
-                  </NavItem>
-                  <NavItem href="/inventario">
-                    <ArchiveIcon />
-                    Inventario
+                    Estaciones
                   </NavItem>
                   <NavItem href="/mantenimiento">
                     <HammerIcon />
@@ -52,6 +47,10 @@ export default function RootLayout({
                   <NavItem href="/calibraciones">
                     <RulerIcon />
                     Calibraciones
+                  </NavItem>
+                  <NavItem href="/inventario">
+                    <ArchiveIcon />
+                    Existencias
                   </NavItem>
                   <NavItem href="/calendario">
                     <CalendarIcon />
@@ -67,8 +66,7 @@ export default function RootLayout({
                 className="flex items-center gap-2 font-semibold lg:hidden"
                 href="/"
               >
-                <p>Logo2</p>
-                <span className="">SIRCA2</span>
+                <span className="">sirca</span>
               </Link>
               <User />
             </header>
