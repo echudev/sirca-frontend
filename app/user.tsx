@@ -1,6 +1,7 @@
 // import { Button } from './components/ui/button';
 // import { auth, signIn, signOut } from '@/lib/auth';
 // import Image from 'next/image';
+import { UsersIcon } from '../components/icons';
 
 export async function User() {
   // const session = await auth();
@@ -20,7 +21,8 @@ export async function User() {
   // }
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2 mr-4 hover:cursor-pointer">
+      <UsersIcon />
       user
       {/* <form
         action={async () => {

@@ -1,7 +1,13 @@
 import './globals.css';
 import Link from 'next/link';
 import { NavItem } from './nav-item';
-import { UsersIcon, SettingsIcon, VercelLogo } from '../components/icons';
+import {
+  SettingsIcon,
+  ScreenIcon,
+  HammerIcon,
+  RulerIcon,
+  BoxIcon
+} from '../components/icons';
 import { User } from './user';
 
 export const metadata = {
@@ -32,27 +38,25 @@ export default function RootLayout({
               <div className="flex-1 overflow-auto py-2">
                 <nav className="flex flex-col tems-start px-4 text-sm font-medium h-full">
                   <NavItem href="/">
-                    <VercelLogo className="h-4 w-4" />
+                    <ScreenIcon />
                     Panel General
                   </NavItem>
                   <NavItem href="/inventario">
-                    <VercelLogo className="h-4 w-4" />
+                    <BoxIcon />
                     Inventario
                   </NavItem>
                   <NavItem href="/mantenimiento">
-                    <UsersIcon className="h-4 w-4" />
+                    <HammerIcon />
                     Mantenimiento
                   </NavItem>
                   <NavItem href="/calibraciones">
-                    <UsersIcon className="h-4 w-4" />
+                    <RulerIcon />
                     Calibraciones
                   </NavItem>
-                  <div className="mt-auto">
-                    <NavItem href="/configuracion">
-                      <SettingsIcon className="h-4 w-4" />
-                      Configuracion
-                    </NavItem>
-                  </div>
+                  <NavItem href="/configuracion">
+                    <SettingsIcon />
+                    Configuracion
+                  </NavItem>
                 </nav>
               </div>
             </div>
