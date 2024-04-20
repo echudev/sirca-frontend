@@ -2,11 +2,11 @@ import './globals.css';
 import Link from 'next/link';
 import { NavItem } from './nav-item';
 import {
-  SettingsIcon,
   ScreenIcon,
   HammerIcon,
   RulerIcon,
-  BoxIcon
+  ArchiveIcon,
+  CalendarIcon
 } from '../components/icons';
 import { User } from './user';
 
@@ -42,7 +42,7 @@ export default function RootLayout({
                     Panel General
                   </NavItem>
                   <NavItem href="/inventario">
-                    <BoxIcon />
+                    <ArchiveIcon />
                     Inventario
                   </NavItem>
                   <NavItem href="/mantenimiento">
@@ -53,9 +53,9 @@ export default function RootLayout({
                     <RulerIcon />
                     Calibraciones
                   </NavItem>
-                  <NavItem href="/configuracion">
-                    <SettingsIcon />
-                    Configuracion
+                  <NavItem href="/calendario">
+                    <CalendarIcon />
+                    Calendario
                   </NavItem>
                 </nav>
               </div>
