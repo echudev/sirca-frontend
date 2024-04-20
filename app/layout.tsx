@@ -1,13 +1,6 @@
 import './globals.css';
 import Link from 'next/link';
-import { NavItem } from './nav-item';
-import {
-  ScreenIcon,
-  HammerIcon,
-  RulerIcon,
-  ArchiveIcon,
-  CalendarIcon
-} from '../components/icons';
+import Sidebar from './sidebar';
 import { User } from './user';
 
 export const metadata = {
@@ -34,30 +27,7 @@ export default function RootLayout({
                   <span className="ml-9">SIRCA</span>
                 </Link>
               </div>
-              <div className="flex-1 overflow-auto py-2">
-                <nav className="flex flex-col tems-start px-4 text-sm font-medium h-full">
-                  <NavItem href="/">
-                    <ScreenIcon />
-                    Estaciones
-                  </NavItem>
-                  <NavItem href="/mantenimiento">
-                    <HammerIcon />
-                    Mantenimiento
-                  </NavItem>
-                  <NavItem href="/calibraciones">
-                    <RulerIcon />
-                    Calibraciones
-                  </NavItem>
-                  <NavItem href="/inventario">
-                    <ArchiveIcon />
-                    Existencias
-                  </NavItem>
-                  <NavItem href="/calendario">
-                    <CalendarIcon />
-                    Calendario
-                  </NavItem>
-                </nav>
-              </div>
+              <Sidebar />
             </div>
           </div>
           <div className="flex flex-col">
