@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { ArrowIcon } from '../components/icons';
 
 export function NavItem({
   size = 1,
@@ -30,6 +31,17 @@ export function NavItem({
       )}
     >
       {children}
+      <div
+        className={clsx(
+          'ml-auto transition-all',
+          {
+            hidden: !(href == '/mantenimiento' || href == '/inventario')
+          },
+          { '-rotate-90 transition-all': pathname === href }
+        )}
+      >
+        <ArrowIcon />
+      </div>
     </Link>
   );
 }
