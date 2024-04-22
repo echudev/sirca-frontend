@@ -31,14 +31,14 @@ export default function Sidebar() {
             'h-28': pathname.startsWith('/mantenimiento')
           })}
         >
-          <NavItem size={2} href="/mantenimiento/reparaciones">
-            Equipos
+          <NavItem size={2} href="/mantenimiento/historial">
+            Historial
           </NavItem>
-          <NavItem size={2} href="/mantenimiento/reparaciones">
+          <NavItem size={2} href="/mantenimiento/calibraciones">
             Calibraciones
           </NavItem>
-          <NavItem size={2} href="/mantenimiento/reparaciones">
-            Programado
+          <NavItem size={2} href="/mantenimiento/rutina">
+            Rutina
           </NavItem>
         </div>
         <NavItem href="/inventario">
@@ -51,21 +51,21 @@ export default function Sidebar() {
           className={clsx(
             'h-0 overflow-hidden transition-all animate-in slide-in-from-top',
             {
-              'h-28': pathname.startsWith('/inventario')
+              'h-36': pathname.startsWith('/inventario')
             }
           )}
         >
-          <NavItem size={2} href="/mantenimiento/reparaciones">
+          <NavItem size={2} href="/inventario/equipos">
             Equipos
           </NavItem>
-          <NavItem size={2} href="/mantenimiento/reparaciones">
+          <NavItem size={2} href="/inventario/partes">
             Partes
           </NavItem>
-          <NavItem size={2} href="/mantenimiento/reparaciones">
-            Gases
-          </NavItem>
-          <NavItem size={2} href="/mantenimiento/reparaciones">
+          <NavItem size={2} href="/inventario/consumibles">
             Consumibles
+          </NavItem>
+          <NavItem size={2} href="/inventario/gases">
+            Gases
           </NavItem>
         </div>
         <NavItem href="/calendario">

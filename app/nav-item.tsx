@@ -37,7 +37,7 @@ export function NavItem({
           {
             hidden: !(href == '/mantenimiento' || href == '/inventario')
           },
-          { '-rotate-90 transition-all': pathname === href }
+          { '-rotate-90 transition-all': pathname.startsWith(href) }
         )}
       >
         <ArrowIcon />
