@@ -4,9 +4,9 @@ import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
 import { NavItem } from './nav-item';
 import {
-  ScreenIcon,
+  HomeIcon,
   HammerIcon,
-  ArchiveIcon,
+  BoxIcon,
   CalendarIcon
 } from '../components/icons';
 
@@ -16,7 +16,7 @@ export default function Sidebar() {
     <div className="flex-1 overflow-auto py-2">
       <nav className="flex flex-col tems-start px-4 text-sm font-medium h-full">
         <NavItem href="/">
-          <ScreenIcon />
+          <HomeIcon />
           Inicio
         </NavItem>
         <NavItem href="/mantenimiento">
@@ -42,7 +42,7 @@ export default function Sidebar() {
           </NavItem>
         </div>
         <NavItem href="/inventario">
-          <ArchiveIcon />
+          <BoxIcon />
           Inventario
         </NavItem>
         <div
