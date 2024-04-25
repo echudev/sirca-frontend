@@ -23,10 +23,11 @@ export function NavItem({
       href={href}
       onClick={toggleState}
       className={clsx(
-        'animate-in slide-in-from-left flex items-center gap-2 rounded-lg px-3 py-2 text-base text-gray-900 transition-all hover:bg-gray-200/90  dark:text-gray-50 dark:hover:text-gray-50',
+        'animate-in gap-4 slide-in-from-left flex items-center rounded px-3 py-2 text-white/80 transition-all hover:bg-white/20  dark:text-gray-50 dark:hover:text-gray-50',
         {
-          'bg-gray-300/70 dark:bg-gray-800': pathname === href,
-          'text-sm ml-7': size === 2
+          'bg-white/20 dark:bg-gray-800': pathname === href,
+          'text-sm ml-10': size === 2,
+          uppercase: size === 1
         }
       )}
     >

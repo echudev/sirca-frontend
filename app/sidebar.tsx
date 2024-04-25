@@ -13,8 +13,8 @@ import {
 export default function Sidebar() {
   const pathname = usePathname();
   return (
-    <div className="flex-1 overflow-auto py-2">
-      <nav className="flex flex-col tems-start px-4 text-sm font-medium h-full">
+    <div className="flex-1 overflow-auto pt-6 m-2 rounded bg-gradient-to-br from-blue-500 to-blue-600 shadow-md shadow-black/80">
+      <nav className="flex flex-col tems-start px-1 text-sm font-medium h-full gap-1">
         <NavItem href="/">
           <HomeIcon />
           Inicio
