@@ -1,10 +1,25 @@
 import './globals.css';
-import Link from 'next/link';
+import Header from './header';
 import Sidebar from './sidebar';
-import { User } from './user';
+
+// const ubuntu = localFont({
+//   src: [
+//     {
+//       path: "../public/font/Ubuntu-Bold.ttf",
+//       weight: "700",
+//       style: "normal",
+//     },
+//     {
+//       path: "../public/font/Ubuntu-Regular.ttf",
+//       weight: "400",
+//       style: "normal",
+//     },
+//   ],
+//   variable: "--font-ubuntu",
+// });
 
 export const metadata = {
-  title: 'SIRCA',
+  title: 'SIRCA - Inicio',
   description: 'Sistema de Gestion de la Red de Calidad del Aire.'
 };
 
@@ -14,34 +29,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className="h-full bg-gray-50">
-      <body>
-        <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
-          <div className="hidden border-r bg-gray-100/40 lg:block dark:bg-gray-800/40">
-            <div className="flex h-full max-h-screen flex-col gap-2">
-              <div className="flex h-[60px] items-center border-b px-5">
-                <Link
-                  className="flex items-center gap-2 font-semibold"
-                  href="/"
-                >
-                  <span className="ml-9">SIRCA</span>
-                </Link>
-              </div>
-              <Sidebar />
-            </div>
-          </div>
-          <div className="flex flex-col">
-            <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40 justify-between lg:justify-end">
-              <Link
-                className="flex items-center gap-2 font-semibold lg:hidden"
-                href="/"
-              >
-                <span className="">sirca</span>
-              </Link>
-              <User />
-            </header>
+    <html lang="es">
+      <head />
+      <body className="flex flex-col h-screen  bg-slate-200">
+        <Header />
+        <div className="flex flex-row h-full">
+          <Sidebar />
+          <main className="flex w-full flex-col bg-gray-50 rounded m-3 shadow-md shadow-black/80">
             {children}
-          </div>
+          </main>
         </div>
       </body>
     </html>
