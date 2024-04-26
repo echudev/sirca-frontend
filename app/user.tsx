@@ -21,9 +21,12 @@ export async function User() {
   // }
 
   return (
-    <div className="flex items-center gap-2 mr-4 hover:cursor-pointer">
+    <div className="flex mr-10 hover:cursor-pointer gap-2">
       <UsersIcon />
-      user
+      <div className="flex flex-col">
+        <p>nombre usuario</p>
+        <p className="text-slate-700 text-xs">Administrador</p>
+      </div>
       {/* <form
         action={async () => {
           'use server';
