@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "date": "20/10/2020",
+    "description": "arreglamos el equipo porque presentaba las siguientes fallas y estaba con alarma tal y tal y tal se deja a prueba",
+    "status": "en proceso",
+    "operator": "Jon Doe",
+    "equipment": "Equipo 1",
+    "station": "Station 1"
+  },
+
+  {
+    "id": 2,
+    "date": "20/10/2021",
+    "description": "el equipo presenta alarma de x y x",
+    "status": "pendiente",
+    "operator": "Jon Doe",
+    "equipment": "Equipo 1",
+    "station": "Station 23"
+  },
+
+  {
+    "id": 3,
+    "date": "22/2/2020",
+    "description": "el equipo presenta alarma de x y x",
+    "status": "cerrado",
+    "operator": "Jon Doe",
+    "equipment": "Equipo 1",
+    "station": "Station 1"
+  },
+
+  {
+    "id": 4,
+    "date": "12/5/2022",
+    "description": "se realiza limpieza del inyector y se cambia filtro de fibra de vidrio",
+    "status": "cerrado",
+    "operator": "One Man",
+    "equipment": "Equipo 5",
+    "station": "Station 23"
+  }
+]
