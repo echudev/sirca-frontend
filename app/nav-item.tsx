@@ -7,12 +7,10 @@ import { ArrowIcon } from '../components/icons';
 
 export function NavItem({
   size = 1,
-  toggleState,
   href,
   children
 }: {
   size?: number;
-  toggleState?: () => void | undefined;
   href: string;
   children: React.ReactNode;
 }) {
@@ -21,7 +19,6 @@ export function NavItem({
   return (
     <Link
       href={href}
-      onClick={toggleState}
       className={clsx(
         'animate-in gap-4 slide-in-from-left flex items-center rounded px-3 py-2 text-white/80 transition-all hover:bg-white/20  dark:text-gray-50 dark:hover:text-gray-50',
         {
