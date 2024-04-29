@@ -61,7 +61,7 @@ export const Filters = () => {
       </div>
       <div
         aria-label="searchbar"
-        className="flex min-w-[300px] border-2 px-2 py-1 has-[:focus]:outline-blue-300 rounded border-slate-300 shadow shadow-slate-300 my-1 outline outline-transparent outline-offset-1 transition-all"
+        className="flex items-center min-w-[300px] border-2 px-2 py-1 has-[:focus]:outline-blue-300 rounded border-slate-300 shadow shadow-slate-300 my-1 outline outline-transparent outline-offset-1 transition-all"
       >
         <SearchIcon />
         <input
