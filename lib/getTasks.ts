@@ -1,15 +1,5 @@
 import data from './tasksDB.json';
-
-export interface TaskData {
-  id: number;
-  uuid: string;
-  date: string;
-  description: string;
-  status: string;
-  operator: string;
-  equipment: string;
-  station: string;
-}
+import { TaskData } from './types';
 
 export default async function GetTasks() {
   const allTasks: TaskData[] = [];
