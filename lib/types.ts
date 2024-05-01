@@ -1,10 +1,10 @@
-export interface TaskData {
+export interface EquipoData {
   id: number;
-  uuid: string;
-  date: string;
-  description: string;
+  serial_number: string;
+  brand: string;
+  model: string;
+  type: string;
+  parameters: string[];
+  actual_site: string;
   status: string;
-  operator: string;
-  equipment: string;
-  station: string;
 }

@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "serial_number": "abs123456789",
+    "brand": "Thermo",
+    "model": "48i",
+    "type": "Analizador de gases",
+    "parameters": ["CO"],
+    "actual_site": "Centenario",
+    "status": "Operativo"
+  },
+
+  {
+    "id": 2,
+    "serial_number": "abs12345678sdasd",
+    "brand": "Ecotech",
+    "model": "Serinus 30",
+    "type": "Analizador de gases",
+    "parameters": ["O3"],
+    "actual_site": "Centenario",
+    "status": "No Operativo"
+  }
+]

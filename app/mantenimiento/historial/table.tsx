@@ -1,6 +1,6 @@
-import { TaskData } from '../../../lib/types';
+import { AssetData } from '../../../lib/types';
 
-export const Table = ({ data }: { data: TaskData[] }) => {
+export const Table = ({ data }: { data: AssetData[] }) => {
   console.log(data);
   return (
     <table className="mt-5 table-auto text-center w-full border-2 border-slate-300 shadow shadow-slate-300 bg-slate-100/50">

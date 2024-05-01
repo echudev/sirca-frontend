@@ -1,7 +1,7 @@
 import { Filters } from './filters';
 import { Table } from './table';
 import { Metadata } from 'next';
-import GetTasks from '../../../lib/getTasks';
+import GetEquipos from '../../../lib/getEquipos';
 import { Header } from './header';
 
 export const metadata: Metadata = {
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Historial() {
-  const { allTasks } = await GetTasks();
+  const { allEquipos } = await GetEquipos();
 
   return (
     <main className="flex flex-col p-4">
@@ -20,7 +20,7 @@ export default async function Historial() {
         subpath="Historial"
       />
       <Filters />
-      <Table data={allTasks} />
+      <Table data={allEquipos} />
     </main>
   );
 }
