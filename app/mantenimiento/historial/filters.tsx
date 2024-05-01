@@ -6,62 +6,42 @@ export const Filters = () => {
   return (
     <div
       aria-label="filter&searchbar container"
-      className="flex flex-col lg:flex-row :flex-col gap-2 w-full justify-center"
+      className="flex flex-col lg:flex-row :flex-col gap-2 w-full"
     >
       <div aria-label="filters" className="flex gap-2 items-center">
-        <div className="border-2 border-slate-300 shadow shadow-slate-300 px-2 py-1 rounded">
-          <label className="ml-auto mr-2" htmlFor="filtro">
-            Marca:
-          </label>
-          <select
-            onChange={(e) => console.log(e.target.value)}
-            className="rounded inline"
-          >
-            <option value="">Todas</option>
-            <option value="thermo">Thermo</option>
-            <option value="ecotech">Ecotech</option>
-            <option value="acoem">Acoem</option>
-            <option value="teledyne">Teledyne</option>
-            <option value="environnement">Environnement</option>
-            <option value="environnement">Davis</option>
-            <option value="environnement">Thomas</option>
-          </select>
-        </div>
         <div className="border-2 border-slate-300 shadow shadow-slate-300 px-2 py-1  rounded">
           <label className="ml-auto mr-2" htmlFor="contaminante">
-            Contaminante:
+            Sitio
           </label>
           <select
             onChange={(e) => console.log(e.target.value)}
             className="rounded"
           >
             <option value="">Todos</option>
-            <option value="co">Monóxido de Carbono</option>
-            <option value="nox">Óxidos de Nitrógeno</option>
-            <option value="so2">Dióxido de Azufre</option>
-            <option value="o3">Ozono</option>
-            <option value="particulado">Particulado</option>
-            <option value="meteo">Meteorológica</option>
+            <option value="co">Centenario</option>
+            <option value="o3">CIFA</option>
+            <option value="particulado">La Boca</option>
+            <option value="meteo">Córdoba</option>
           </select>
         </div>
         <div className="border-2 border-slate-300 shadow shadow-slate-300 px-2 py-1 rounded">
           <label className="ml-auto mr-2" htmlFor="estado">
-            Estado:
+            Estado
           </label>
           <select
             onChange={(e) => console.log(e.target.value)}
             className="rounded"
           >
             <option value="">Todos</option>
-            <option value="pendiente">Pendiente</option>
-            <option value="enproceso">En proceso</option>
-            <option value="completado">Completado</option>
+            <option value="pendiente">Operativo</option>
+            <option value="enproceso">En Mantenimiento</option>
+            <option value="completado">No Operativo</option>
           </select>
         </div>
       </div>
       <div
         aria-label="searchbar"
-        className="flex items-center min-w-[300px] border-2 px-2 py-1 has-[:focus]:outline-blue-300 rounded border-slate-300 shadow shadow-slate-300 my-1 outline outline-transparent outline-offset-1 transition-all"
+        className="flex items-center w-full border-2 px-2 py-1 has-[:focus]:outline-blue-300 rounded border-slate-300 shadow shadow-slate-300 my-1 outline outline-transparent outline-offset-1 transition-all"
       >
         <SearchIcon />
         <input
