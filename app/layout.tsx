@@ -1,5 +1,4 @@
 import './globals.css';
-import Header from './header';
 import Sidebar from './sidebar';
 
 // const ubuntu = localFont({
@@ -32,7 +31,6 @@ export default function RootLayout({
     <html lang="es">
       <head />
       <body className="flex flex-col h-screen bg-slate-200">
-        <Header />
         <div className="flex flex-row h-full">
           <Sidebar />
           <main className="flex w-full flex-col bg-gray-50 rounded m-3 shadow-md shadow-black/80">
