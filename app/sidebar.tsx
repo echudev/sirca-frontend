@@ -28,17 +28,14 @@ export default function Sidebar() {
           aria-expanded="false"
           aria-controls="Mantenimiento-content"
           className={clsx('h-0 overflow-hidden transition-all', {
-            'h-28': pathname.startsWith('/mantenimiento')
+            'h-20': pathname.startsWith('/mantenimiento')
           })}
         >
-          <NavItem size={2} href="/mantenimiento/historial">
-            Historial
+          <NavItem size={2} href="/mantenimiento/ordenes">
+            Ordenes de trabajo
           </NavItem>
-          <NavItem size={2} href="/mantenimiento/calibraciones">
-            Calibraciones
-          </NavItem>
-          <NavItem size={2} href="/mantenimiento/rutina">
-            Rutina
+          <NavItem size={2} href="/mantenimiento/programado">
+            Programado
           </NavItem>
         </div>
         <NavItem href="/inventario">
@@ -55,14 +52,14 @@ export default function Sidebar() {
             }
           )}
         >
+          <NavItem size={2} href="/inventario/estaciones">
+            Estaciones
+          </NavItem>
           <NavItem size={2} href="/inventario/equipos">
             Equipos
           </NavItem>
           <NavItem size={2} href="/inventario/partes">
             Partes
-          </NavItem>
-          <NavItem size={2} href="/inventario/consumibles">
-            Consumibles
           </NavItem>
           <NavItem size={2} href="/inventario/gases">
             Gases

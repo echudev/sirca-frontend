@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: 'App de mantenimiento de la red'
 };
 
-export default async function Historial() {
+export default async function Ordenes() {
   const { allEquipos } = await GetEquipos();
 
   return (
