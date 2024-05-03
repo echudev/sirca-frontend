@@ -10,14 +10,14 @@ export const Filters = () => {
     >
       <div aria-label="filters" className="flex gap-2 items-center">
         <div className="border-2 border-slate-300 shadow shadow-slate-300 px-2 py-1  rounded">
-          <label className="ml-auto mr-2" htmlFor="contaminante">
-            Sitio
+          <label className="ml-auto mr-2" htmlFor="estacion">
+            Estación
           </label>
           <select
             onChange={(e) => console.log(e.target.value)}
             className="rounded"
           >
-            <option value="">Todos</option>
+            <option value="">Todas</option>
             <option value="co">Centenario</option>
             <option value="o3">CIFA</option>
             <option value="particulado">La Boca</option>
@@ -33,9 +33,25 @@ export const Filters = () => {
             className="rounded"
           >
             <option value="">Todos</option>
-            <option value="pendiente">Operativo</option>
-            <option value="enproceso">En Mantenimiento</option>
-            <option value="completado">No Operativo</option>
+            <option value="pendiente">Abierto</option>
+            <option value="enproceso">Asignado</option>
+            <option value="completado">En Proceso</option>
+            <option value="completado">Cerrado</option>
+          </select>
+        </div>
+        <div className="border-2 border-slate-300 shadow shadow-slate-300 px-2 py-1 rounded">
+          <label className="ml-auto mr-2" htmlFor="tipo">
+            Tipo
+          </label>
+          <select
+            onChange={(e) => console.log(e.target.value)}
+            className="rounded"
+          >
+            <option value="">Todos</option>
+            <option value="pendiente">Calibración</option>
+            <option value="enproceso">Preventivo</option>
+            <option value="completado">Correctivo</option>
+            <option value="completado">Otro</option>
           </select>
         </div>
       </div>

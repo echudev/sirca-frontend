@@ -15,9 +15,9 @@ export default async function Ordenes() {
   return (
     <main className="flex flex-col p-4">
       <Header
-        title="Activos de la red"
+        title="Ordenes de Trabajo"
         path="Mantenimiento"
-        subpath="Historial"
+        subpath="Ordenes"
       />
       <Filters />
       <Table data={allEquipos} />
