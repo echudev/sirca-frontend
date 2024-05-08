@@ -1,7 +1,7 @@
 import { Filters } from './filters';
 import { Table } from './table';
 import { Metadata } from 'next';
-import GetEquipos from '../../../lib/getEquipos';
+import GetOrdenes from '../../../lib/getOrdenes';
 import { Header } from './header';
 
 export const metadata: Metadata = {
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Ordenes() {
-  const { allEquipos } = await GetEquipos();
+  const { allOrdenes } = await GetOrdenes();
 
   return (
     <main className="flex flex-col p-4">
@@ -20,7 +20,7 @@ export default async function Ordenes() {
         subpath="Ordenes"
       />
       <Filters />
-      <Table data={allEquipos} />
+      <Table data={allOrdenes} />
     </main>
   );
 }

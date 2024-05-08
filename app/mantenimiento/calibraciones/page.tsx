@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import GetEquipos from '../../../lib/getEquipos';
 import { Header } from './header';
 
 export const metadata: Metadata = {
