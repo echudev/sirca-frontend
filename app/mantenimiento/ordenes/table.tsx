@@ -5,7 +5,7 @@ export const Table = ({ data }: { data: OrdenesData[] }) => {
   return (
     <table className="mt-5 table-auto text-center w-full border-2 border-slate-300 shadow shadow-slate-300 bg-slate-100/50">
       <thead>
-        <tr>
+        <tr className="h-10 bg-blue-200">
           <th>Nro Orden</th>
           <th>Equipo</th>
           <th>Estación</th>
@@ -18,7 +18,7 @@ export const Table = ({ data }: { data: OrdenesData[] }) => {
           return (
             <tr
               key={orden.ordenID}
-              className="bg-slate-300/30 border-y border-slate-400/70 "
+              className="odd:bg-slate-300/30 border-y border-slate-400/70 h-10"
             >
               <td>{orden.ordenID}</td>
               <td>{orden.equipo}</td>
