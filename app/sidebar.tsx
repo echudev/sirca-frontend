@@ -28,11 +28,14 @@ export default function Sidebar() {
           aria-expanded="false"
           aria-controls="Mantenimiento-content"
           className={clsx('h-0 overflow-hidden transition-all', {
-            'h-20': pathname.startsWith('/mantenimiento')
+            'h-28': pathname.startsWith('/mantenimiento')
           })}
         >
           <NavItem size={2} href="/mantenimiento/ordenes">
-            Ordenes de trabajo
+            Órdenes
+          </NavItem>
+          <NavItem size={2} href="/mantenimiento/calibraciones">
+            Calibraciones
           </NavItem>
           <NavItem size={2} href="/mantenimiento/programado">
             Programado
