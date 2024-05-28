@@ -1,7 +1,6 @@
 import { OrdenesData } from '../../../lib/types';
 
 export const Table = ({ data }: { data: OrdenesData[] }) => {
-  console.log(data);
   return (
     <table className="mt-5 table-auto text-center w-full border-2 border-slate-300 shadow shadow-slate-300 bg-slate-100/50">
       <thead>
