@@ -1,8 +1,8 @@
-import { Filters } from './filters';
-import { Table } from './table';
 import { Metadata } from 'next';
-import GetOrdenes from '../../../lib/getOrdenes';
+import { Filters } from './filters';
+import { Table } from '../../../components/table';
 import { Header } from '../../../components/header';
+import GetOrdenes from '../../../lib/getOrdenes';
 
 export const metadata: Metadata = {
   title: 'SIRCA - Mantenimiento',
