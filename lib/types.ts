@@ -18,3 +18,14 @@ export interface OrdenesData {
   ordenEstado: string;
   ultimaModificacion: string;
 }
+
+export interface EquiposData {
+  id: number;
+  marca: string;
+  modelo: string;
+  descripcion: string;
+  numeroSerie: string;
+  estado: string;
+  urlImagen: string;
+  analizador: string;
+}
