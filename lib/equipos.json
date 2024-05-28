@@ -1,42 +1,82 @@
 [
   {
     "id": 1,
-    "marca": "Thermo",
-    "modelo": "48i",
+    "marca": "Acoem",
+    "modelo": "Serinus 30",
     "descripcion": "Analizador de Monóxido de Carbono",
-    "nuermoDeSerie": "askdj12984",
-    "fechaCompra": "",
-    "categoria": "analizador",
-    "estado": "Operativo",
+    "numeroSerie": "22-0710",
+    "estado": "operativo",
     "urlImagen": "",
-    "precioUnitario": "",
-    "proveedores": ""
+    "analizador": "True"
   },
-
   {
     "id": 2,
-    "marca": "Thermo",
-    "modelo": "48i",
-    "descripcion": "Analizador de Monóxido de Carbono",
-    "nuermoDeSerie": "askdj12984",
-    "fechaCompra": "",
-    "categoria": "parte",
-    "estado": "Operativo",
+    "marca": "Ecotech",
+    "modelo": "Serinus 10",
+    "descripcion": "Analizador de Ozono",
+    "numeroSerie": "16-1099",
+    "estado": "no operativo",
     "urlImagen": "",
-    "precioUnitario": "",
-    "proveedores": ""
+    "analizador": "True"
   },
   {
     "id": 3,
     "marca": "Ecotech",
-    "modelo": "Serinus 30",
-    "descripcion": "Analizador de Monóxido de Carbono",
-    "nuermoDeSerie": "askdj12984",
-    "fechaCompra": "",
-    "categoria": "analizador",
-    "estado": "Operativo",
+    "modelo": "Spirant BAM 1020",
+    "descripcion": "Analizador de Material Particulado",
+    "numeroSerie": "U19996",
+    "estado": "operativo",
     "urlImagen": "",
-    "precioUnitario": "",
-    "proveedores": ""
+    "analizador": "True"
+  },
+  {
+    "id": 4,
+    "marca": "Thermo",
+    "modelo": "FH62C14",
+    "descripcion": "Analizador de Material Particulado",
+    "numeroSerie": "0819",
+    "estado": "no operativo",
+    "urlImagen": "",
+    "analizador": "True"
+  },
+  {
+    "id": 5,
+    "marca": "Thermo",
+    "modelo": "146C",
+    "descripcion": "Calibrador multigas",
+    "numeroSerie": "0436610193",
+    "estado": "operativo",
+    "urlImagen": "",
+    "analizador": "False"
+  },
+  {
+    "id": 6,
+    "marca": "Thermo",
+    "modelo": "111",
+    "descripcion": "Generador de Aire Cero",
+    "numeroSerie": "0436610192",
+    "estado": "operativo",
+    "urlImagen": "",
+    "analizador": "False"
+  },
+  {
+    "id": 7,
+    "marca": "EATON",
+    "modelo": "9sx6000",
+    "descripcion": "UPS",
+    "numeroSerie": "G201F10066",
+    "estado": "operativo",
+    "urlImagen": "",
+    "analizador": "False"
+  },
+  {
+    "id": 8,
+    "marca": "Davis",
+    "modelo": "Vantage Pro 2",
+    "descripcion": "Meteorológica",
+    "numeroSerie": "6162CEU",
+    "estado": "operativo",
+    "urlImagen": "",
+    "analizador": "False"
   }
 ]
