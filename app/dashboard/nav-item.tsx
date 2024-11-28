@@ -33,7 +33,10 @@ export function NavItem({
         className={clsx(
           "ml-auto transition-all",
           {
-            hidden: !(href == "/mantenimiento" || href == "/inventario"),
+            hidden: !(
+              href == "/dashboard/mantenimiento" ||
+              href == "/dashboard/inventario"
+            ),
           },
           { "-rotate-90 transition-all": pathname.startsWith(href) }
         )}
