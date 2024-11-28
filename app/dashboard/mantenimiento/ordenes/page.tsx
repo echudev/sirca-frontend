@@ -1,12 +1,12 @@
-import { Filters } from './filters';
-import { Table } from '../../../components/table';
-import { Metadata } from 'next';
-import GetOrdenes from '../../../lib/getOrdenes';
-import { Header } from '../../../components/header';
+import { Filters } from "./filters";
+import { Table } from "@/components/table";
+import { Metadata } from "next";
+import GetOrdenes from "@/lib/getOrdenes";
+import { Header } from "@/components/header";
 
 export const metadata: Metadata = {
-  title: 'SIRCA - Mantenimiento',
-  description: 'App de mantenimiento de la red'
+  title: "SIRCA - Mantenimiento",
+  description: "App de mantenimiento de la red",
 };
 
 export default async function Ordenes() {
