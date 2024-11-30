@@ -3,7 +3,7 @@ interface TableProps {
 }
 
 export const Table: React.FC<TableProps> = ({ data }) => {
-  let tableHeaders = Object.keys(data[0]);
+  const tableHeaders = Object.keys(data[0]);
 
   return (
     <table className="mt-5 table-auto text-center w-full border-2 border-slate-300 shadow shadow-slate-300 bg-slate-100/50">
