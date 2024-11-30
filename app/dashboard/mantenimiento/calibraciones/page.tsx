@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { Header } from "@/components/header";
+import { Header } from "@/components/Header";
 
 export const metadata: Metadata = {
   title: "SIRCA - Mantenimiento",

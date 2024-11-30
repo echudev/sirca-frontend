@@ -1,7 +1,7 @@
 import { Metadata } from "next";
-import { Filters } from "./filters";
-import { Table } from "@/components/table";
-import { Header } from "@/components/header";
+import { Filters } from "@/components/Filters";
+import { Table } from "@/components/ui/Table";
+import { Header } from "@/components/Header";
 import GetEquipos from "@/lib/getEquipos";
 
 export const metadata: Metadata = {

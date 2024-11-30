@@ -3,7 +3,7 @@
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowIcon } from "@/components/icons";
+import { ArrowIcon } from "@/components/Icons";
 
 export function NavItem({
   size = 1,

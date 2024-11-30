@@ -2,13 +2,13 @@
 
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
-import { NavItem } from "./nav-item";
+import { NavItem } from "./ui/NavItem";
 import {
   HomeIcon,
   HammerIcon,
   BoxIcon,
   CalendarIcon,
-} from "@/components/icons";
+} from "@/components/Icons";
 
 export default function Sidebar() {
   const pathname = usePathname();

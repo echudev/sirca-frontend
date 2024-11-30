@@ -1,4 +1,4 @@
-import Sidebar from "./sidebar";
+import Sidebar from "../../components/Sidebar";
 
 export const metadata = {
   title: "SIRCA - Inicio",
