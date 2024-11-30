@@ -15,5 +15,8 @@ export async function signup(state: FormState, formData: FormData) {
     };
   }
 
+  return {
+    success: true,
+  };
   // Call the provider or db to create a user...
 }

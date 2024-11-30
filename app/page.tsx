@@ -9,7 +9,6 @@ export default async function WelcomePage() {
           Sistema Integral de la Red de Calidad del Aire
         </p>
       </div>
-      <p>Inicia sesión</p>
       <SignupForm />
     </main>
   );
