@@ -1,6 +1,6 @@
 "use client";
 
-import { SearchIcon } from "@/components/Icons";
+import { SearchIcon } from "@/components/ui/Icons";
 
 export const Filters = () => {
   return (

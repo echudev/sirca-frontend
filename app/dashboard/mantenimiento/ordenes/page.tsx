@@ -1,5 +1,5 @@
 import { Filters } from "@/components/Filters";
-import { Table } from "@/components/ui/Table";
+import { Table } from "@/components/Table";
 import { Metadata } from "next";
 import GetOrdenes from "@/lib/getOrdenes";
 import { Header } from "@/components/Header";
