@@ -13,10 +13,7 @@ export const Filters = () => {
           <label className="ml-auto mr-2" htmlFor="estacion">
             Estación
           </label>
-          <select
-            onChange={(e) => console.log(e.target.value)}
-            className="rounded"
-          >
+          <select className="rounded">
             <option value="">Todas</option>
             <option value="co">Centenario</option>
             <option value="o3">CIFA</option>
@@ -28,10 +25,7 @@ export const Filters = () => {
           <label className="ml-auto mr-2" htmlFor="estado">
             Estado
           </label>
-          <select
-            onChange={(e) => console.log(e.target.value)}
-            className="rounded"
-          >
+          <select className="rounded">
             <option value="">Todos</option>
             <option value="pendiente">Abierto</option>
             <option value="enproceso">Asignado</option>
@@ -43,10 +37,7 @@ export const Filters = () => {
           <label className="ml-auto mr-2" htmlFor="tipo">
             Tipo
           </label>
-          <select
-            onChange={(e) => console.log(e.target.value)}
-            className="rounded"
-          >
+          <select className="rounded">
             <option value="">Todos</option>
             <option value="pendiente">Calibración</option>
             <option value="enproceso">Preventivo</option>
