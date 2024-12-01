@@ -13,10 +13,16 @@ export async function signup(state: FormState, formData: FormData) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
     };
+  } else {
+    //wait 2 seconds
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    return {
+      success: true,
+    };
   }
 
-  return {
-    success: true,
-  };
+  //return {
+  //   success: true,
+  // };
   // Call the provider or db to create a user...
 }

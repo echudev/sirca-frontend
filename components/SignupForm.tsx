@@ -3,7 +3,6 @@
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
 import { SignupFormSchema, FormState } from "@/lib/definitions";
-import { useFormStatus } from "react-dom";
 import { useActionState, useState, ChangeEvent } from "react";
 import { signup } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
@@ -18,18 +17,16 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
+function SubmitButton({ isPending }: { isPending: boolean }) {
   return (
-    <Button disabled={pending} type="submit">
-      {pending ? <Loader2 className="ml-2 h-4 w-4 animate-spin" /> : "Ingresar"}
+    <Button disabled={isPending} type="submit" className="w-full">
+      {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Ingresar"}
     </Button>
   );
 }
 
 export function SignupForm() {
-  const [state, action] = useActionState(signup, undefined);
+  const [state, action, isPending] = useActionState(signup, undefined);
   const [localErrors, setLocalErrors] = useState<FormState>({
     errors: {
       name: [],
@@ -144,7 +141,7 @@ export function SignupForm() {
               </p>
             ))}
           </div>
-          <SubmitButton />
+          <SubmitButton isPending={isPending} />
         </form>
       </CardContent>
       <CardFooter className="flex justify-between">
