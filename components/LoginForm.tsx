@@ -2,8 +2,8 @@
 
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
-import { SignupFormSchema, FormState } from "@/lib/definitions";
-import { useActionState, useState, ChangeEvent } from "react";
+import { LoginFormState, LoginFormSchema } from "@/lib/definitions";
+import { useActionState, useState, ChangeEvent, useEffect } from "react";
 import { login } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,20 +17,32 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
-function SubmitButton({ isPending }: { isPending: boolean }) {
+function SubmitButton({
+  isPending,
+  isValid,
+}: {
+  isPending: boolean;
+  isValid: boolean;
+}) {
   return (
-    <Button disabled={isPending} type="submit" className="w-full">
+    <Button disabled={isPending || !isValid} type="submit" className="w-full">
       {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Ingresar"}
     </Button>
   );
 }
 
 export function LoginForm() {
+  // Uso useActionState para manejar el estado del formulario
   const [state, action, isPending] = useActionState(login, undefined);
-  const [localErrors, setLocalErrors] = useState<FormState>({
+  // isValid y localErrors solo nos sirven para habilitar/deshabilitar el botón de "ingresar"
+  const [isValid, setIsValid] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    password: "",
+  });
+  const [localErrors, setLocalErrors] = useState<LoginFormState>({
     errors: {
       name: [],
-      email: [],
       password: [],
     },
   });
@@ -40,15 +52,13 @@ export function LoginForm() {
       // Corregimos la validación según el campo específico
       switch (name) {
         case "name":
-          SignupFormSchema.pick({ name: true }).parse({ name: value });
-          break;
-        case "email":
-          SignupFormSchema.pick({ email: true }).parse({ email: value });
+          LoginFormSchema.pick({ name: true }).parse({ name: value });
           break;
         case "password":
-          SignupFormSchema.pick({ password: true }).parse({ password: value });
+          LoginFormSchema.pick({ password: true }).parse({ password: value });
           break;
       }
+      setFormData((prev) => ({ ...prev, [name]: value }));
 
       setLocalErrors((prev) => ({
         errors: {
@@ -65,13 +75,42 @@ export function LoginForm() {
           },
         }));
       }
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     validateField(name, value);
+    setIsValid(
+      LoginFormSchema.safeParse({
+        ...formData,
+        [name]: value,
+      }).success
+    );
   };
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      password: "",
+    });
+    setIsValid(false);
+    setLocalErrors({
+      errors: {
+        name: [],
+        password: [],
+      },
+    });
+  };
+
+  // Resetea el formulario cuando se envía la acción
+  // los valores de los input los resetea el useActionState.
+  useEffect(() => {
+    if (state && !state.success) {
+      resetForm();
+    }
+  }, [state]);
 
   return (
     <Card className="w-[350px]">
@@ -102,26 +141,6 @@ export function LoginForm() {
           </div>
 
           <div className="flex flex-col space-y-1.5 my-4">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              placeholder="Email"
-              onChange={handleInputChange}
-              className={`w-full ${
-                (localErrors?.errors?.email?.length ?? 0 > 0)
-                  ? "border-red-500 focus-visible:ring-red-500"
-                  : ""
-              }`}
-            />
-            {localErrors?.errors?.email?.map((error) => (
-              <p key={error} className="text-sm text-red-500">
-                {error}
-              </p>
-            ))}
-          </div>
-
-          <div className="flex flex-col space-y-1.5 my-4">
             <Label htmlFor="password">Contraseña</Label>
             <Input
               id="password"
@@ -141,7 +160,7 @@ export function LoginForm() {
               </p>
             ))}
           </div>
-          <SubmitButton isPending={isPending} />
+          <SubmitButton isPending={isPending} isValid={isValid} />
         </form>
       </CardContent>
       <CardFooter className="flex justify-between">
