@@ -1,4 +1,4 @@
-import { SignupForm } from "@/components/SignupForm";
+import { LoginForm } from "@/components/LoginForm";
 
 export default async function WelcomePage() {
   return (
@@ -9,7 +9,7 @@ export default async function WelcomePage() {
           Sistema Integrado de la Red de Calidad del Aire
         </p>
       </div>
-      <SignupForm />
+      <LoginForm />
     </main>
   );
 }

@@ -4,7 +4,7 @@ import { z } from "zod";
 import { Loader2 } from "lucide-react";
 import { SignupFormSchema, FormState } from "@/lib/definitions";
 import { useActionState, useState, ChangeEvent } from "react";
-import { signup } from "@/app/actions/auth";
+import { login } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,8 +25,8 @@ function SubmitButton({ isPending }: { isPending: boolean }) {
   );
 }
 
-export function SignupForm() {
-  const [state, action, isPending] = useActionState(signup, undefined);
+export function LoginForm() {
+  const [state, action, isPending] = useActionState(login, undefined);
   const [localErrors, setLocalErrors] = useState<FormState>({
     errors: {
       name: [],
@@ -145,8 +145,10 @@ export function SignupForm() {
         </form>
       </CardContent>
       <CardFooter className="flex justify-between">
-        hola soy un footer
-        {state?.success && <p>Success</p>}
+        {state?.success && <p>Bienvenido! {state.data?.name}</p>}
+        {!state?.success && (
+          <p className="text-sm text-red-500">{state?.message}</p>
+        )}
       </CardFooter>
     </Card>
   );
