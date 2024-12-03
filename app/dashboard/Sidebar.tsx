@@ -9,6 +9,7 @@ import {
   BoxIcon,
   CalendarIcon,
 } from "@/components/ui/Icons";
+import { logout } from "@/app/actions/auth";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -72,6 +73,12 @@ export default function Sidebar() {
           <CalendarIcon />
           Calendario
         </NavItem>
+        <button
+          className="text-white font-bold border border-white rounded hover:bg-gray-500 transition-all"
+          onClick={logout}
+        >
+          Logout
+        </button>
       </nav>
     </div>
   );
