@@ -8,6 +8,8 @@ import {
 } from "@/lib/definitions";
 import { db } from "@/db/connection";
 import { UserInsert, usersTable } from "@/db/schema";
+import { redirect } from "next/navigation";
+import { createSession, deleteSession } from "@/lib/session";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
@@ -42,15 +44,19 @@ export async function login(state: LoginFormState, formData: FormData) {
   ) {
     return {
       success: false,
-      message: "El usuario no existe o la contraseña es incorrecta",
+      message: "Usuario o contraseña incorrectos",
     };
   }
 
-  //3. If the user exists and the password is correct, return a success message
-  return {
-    success: true,
-    data: { name: usuario.name },
-  };
+  // 4. Create user session
+  await createSession(usuario.id.toString());
+  // 5. Redirect user
+  redirect("/dashboard");
+}
+
+export async function logout() {
+  deleteSession();
+  redirect("/");
 }
 
 export async function register(state: RegisterFormState, formData: FormData) {
