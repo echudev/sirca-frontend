@@ -225,8 +225,9 @@ export function RegisterForm() {
                 <SelectValue placeholder="Selecciona un rol" />
               </SelectTrigger>
               <SelectContent position="popper">
-                <SelectItem value="USER">Usuario</SelectItem>
-                <SelectItem value="ADMIN">Administrador</SelectItem>
+                <SelectItem value="VIEWER">Viewer</SelectItem>
+                <SelectItem value="EDITOR">Editor</SelectItem>
+                <SelectItem value="ADMIN">Admin</SelectItem>
               </SelectContent>
             </Select>
             {localErrors?.errors?.role?.map((error) => (

@@ -31,7 +31,7 @@ export const RegisterFormSchema = z.object({
       message: "Contain at least one special character.",
     })
     .trim(),
-  role: z.enum(["USER", "ADMIN"], {
+  role: z.enum(["ADMIN", "EDITOR", "VIEWER"], {
     required_error: "Please select a role.",
   }),
 });
