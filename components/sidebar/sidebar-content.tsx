@@ -16,12 +16,12 @@ export function SidebarContentComponent() {
   return (
     <SidebarContent>
       <SidebarGroup>
-        <SidebarMenuButton asChild>
-          <Link href="/dashboard">
+        <Link href="/dashboard" className=" my-3">
+          <SidebarMenuButton>
             <Home />
             <span>Inicio</span>
-          </Link>
-        </SidebarMenuButton>
+          </SidebarMenuButton>
+        </Link>
         <SidebarGroupLabel>Módulos</SidebarGroupLabel>
         <SidebarGroupContent>
           <MenuInventario />

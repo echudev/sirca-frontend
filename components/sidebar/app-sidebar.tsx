@@ -1,4 +1,4 @@
-import { SidebarContentComponent } from "./app-sidebar-content";
+import { SidebarContentComponent } from "./sidebar-content";
 
 import { ChevronUp } from "lucide-react";
 
@@ -25,10 +25,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Separator } from "@radix-ui/react-select";
+import { Separator } from "@/components/ui/separator";
 
-import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
-import { Button } from "./ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
+import { Button } from "../ui/button";
 import { verifySession } from "@/lib/session";
 import { CookieDTO } from "@/domain/user/dto";
 import { logout } from "@/app/actions/auth";
@@ -52,8 +52,9 @@ export async function AppSidebar() {
           <p className="font-bold text-base">SIRCA</p>
         </SidebarMenuButton>
       </SidebarHeader>
-      <Separator className="border mx-2 mt-3" />
+      <Separator className="mt-3" />
       <SidebarContentComponent />
+      <Separator className="mb-3" />
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>

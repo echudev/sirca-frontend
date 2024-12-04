@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Home, ChevronRight } from "lucide-react";
+import { Package2Icon, ChevronRight } from "lucide-react";
 
 import {
   SidebarMenu,
@@ -50,15 +50,17 @@ export function MenuInventario() {
           className="group/collapsible"
         >
           <CollapsibleTrigger asChild>
-            <SidebarMenuButton>
-              <Home />
-              <span>Inventario</span>
-              <ChevronRight
-                className={`ml-auto transition-transform ${
-                  isOpen ? "rotate-90" : "rotate-0"
-                }`}
-              />
-            </SidebarMenuButton>
+            <Link href="/dashboard/inventario">
+              <SidebarMenuButton>
+                <Package2Icon />
+                <span>Inventario</span>
+                <ChevronRight
+                  className={`ml-auto transition-transform ${
+                    isOpen ? "rotate-90" : "rotate-0"
+                  }`}
+                />
+              </SidebarMenuButton>
+            </Link>
           </CollapsibleTrigger>
           <SidebarMenuSub>
             {itemsInventario.map((item) => (
