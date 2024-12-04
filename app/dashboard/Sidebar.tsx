@@ -11,11 +11,16 @@ import {
 } from "@/components/ui/Icons";
 import { logout } from "@/app/actions/auth";
 
-export default function Sidebar() {
+interface SidebarProps {
+  userName: string; // Define el tipo de las props
+}
+
+export default function Sidebar({ userName }: SidebarProps) {
   const pathname = usePathname();
   return (
     <div className="flex w-64 pt-6 m-3 rounded bg-gradient-to-br from-blue-500 to-blue-600 shadow-md shadow-black/80">
       <nav className="flex flex-col tems-start px-1 text-sm font-medium h-full gap-1">
+        <p>{userName}</p>
         <NavItem href="/dashboard">
           <HomeIcon />
           Inicio

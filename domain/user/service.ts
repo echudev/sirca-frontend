@@ -20,7 +20,7 @@ export async function loginUser(data: LoginDTO) {
   }
 
   // Crear la sesión del usuario
-  await createSession(usuario.id.toString());
+  await createSession(usuario.id.toString(), usuario.name, usuario.role);
 
   // Retornar el nombre del usuario para posibles personalizaciones
   return { success: true, data: { id: usuario.id, name: usuario.name } };

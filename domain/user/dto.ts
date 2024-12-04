@@ -15,3 +15,14 @@ export interface UserResponseDTO {
   name: string;
   email: string;
 }
+
+export interface CookiePayloadDTO {
+  userId: string;
+  userName: string;
+  role: string;
+}
+
+export interface CookieDTO {
+  isAuth: boolean;
+  data: CookiePayloadDTO;
+}

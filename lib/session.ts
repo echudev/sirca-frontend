@@ -1,6 +1,8 @@
 import "server-only";
 
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { cache } from "react";
 import { SignJWT, jwtVerify } from "jose";
 import { SessionPayload } from "./definitions";
 // The payload should contain the minimum, unique user data that'll be used in subsequent requests,
@@ -29,9 +31,13 @@ export async function decrypt(session: string | undefined = "") {
   }
 }
 
-export async function createSession(userId: string) {
+export async function createSession(
+  userId: string,
+  userName: string,
+  role: string
+) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  const sessionPayload: SessionPayload = { userId, expiresAt }; // Define el payload
+  const sessionPayload: SessionPayload = { userId, userName, role, expiresAt };
   const session = await encrypt(sessionPayload);
 
   // Guardar la sesión en las cookies
@@ -69,3 +75,21 @@ export async function deleteSession() {
   const cookieStore = await cookies();
   cookieStore.delete("session");
 }
+
+export const verifySession = cache(async () => {
+  const cookie = (await cookies()).get("session")?.value;
+  const session = await decrypt(cookie);
+
+  if (!session?.userId) {
+    redirect("/");
+  }
+
+  return {
+    isAuth: true,
+    data: {
+      userId: session.userId as string,
+      userName: session.userName as string,
+      role: session.role as string,
+    },
+  };
+});
