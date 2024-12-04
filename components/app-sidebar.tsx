@@ -18,6 +18,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
 } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -37,36 +40,51 @@ import {
 
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { Button } from "./ui/button";
+import Link from "next/link";
 import { verifySession } from "@/lib/session";
 import { CookieDTO } from "@/domain/user/dto";
 import { logout } from "@/app/actions/auth";
+import { Separator } from "@radix-ui/react-select";
 
-// Menu items.
-const items = [
+// Inventory Menu items.
+const itemsInventario = [
   {
-    title: "Home",
-    url: "#",
+    title: "Estaciones",
+    url: "/dashboard/inventario/estaciones",
     icon: Home,
   },
   {
-    title: "Inbox",
-    url: "#",
+    title: "Equipos",
+    url: "/dashboard/inventario/equipos",
     icon: Inbox,
   },
   {
-    title: "Calendar",
-    url: "#",
+    title: "Partes",
+    url: "/dashboard/inventario/partes",
     icon: Calendar,
   },
   {
-    title: "Search",
-    url: "#",
+    title: "Gases",
+    url: "/dashboard/inventario/gases",
     icon: Search,
   },
+];
+// Mantainance Menu items.
+const itemsMantenimiento = [
   {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
+    title: "Órdenes",
+    url: "/dashboard/mantenimiento/ordenes",
+    icon: Home,
+  },
+  {
+    title: "Calibraciones",
+    url: "/dashboard/mantenimiento/calibraciones",
+    icon: Inbox,
+  },
+  {
+    title: "Programado",
+    url: "/dashboard/mantenimiento/programado",
+    icon: Calendar,
   },
 ];
 
@@ -89,21 +107,58 @@ export async function AppSidebar() {
           <p className="font-bold text-base">SIRCA</p>
         </SidebarMenuButton>
       </SidebarHeader>
+      <Separator className="border mx-2 my-3" />
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarMenuButton asChild>
+            <Link href="/dashboard">
+              <Home />
+              <span>Inicio</span>
+            </Link>
+          </SidebarMenuButton>
+          <SidebarGroupLabel>Módulos</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard/inventario">
+                    <Home />
+                    <span>Inventario</span>
+                  </Link>
+                </SidebarMenuButton>
+                <SidebarMenuSub>
+                  {itemsInventario.map((item) => (
+                    <SidebarMenuSubItem key={item.title}>
+                      <SidebarMenuSubButton asChild>
+                        <Link href={item.url}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  ))}
+                </SidebarMenuSub>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard/mantenimiento">
+                    <Home />
+                    <span>Mantenimiento</span>
+                  </Link>
+                </SidebarMenuButton>
+                <SidebarMenuSub>
+                  {itemsMantenimiento.map((item) => (
+                    <SidebarMenuSubItem key={item.title}>
+                      <SidebarMenuSubButton asChild>
+                        <Link href={item.url}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  ))}
+                </SidebarMenuSub>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
