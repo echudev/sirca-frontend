@@ -65,7 +65,18 @@ export async function AppSidebar() {
 
   return (
     <Sidebar variant="floating" collapsible="icon">
-      <SidebarHeader></SidebarHeader>
+      <SidebarHeader>
+        <SidebarMenuButton
+          size="lg"
+          className="hover:bg-sidebar active:bg-sidebar"
+        >
+          <Avatar className="h-8 w-8 rounded-lg">
+            <AvatarImage src="https://general.premioseikon.com/wp-content/uploads/2022/09/logo-BA-png-1024x921.png" />
+            <AvatarFallback>logo</AvatarFallback>
+          </Avatar>
+          <p className="font-bold text-base">SIRCA</p>
+        </SidebarMenuButton>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
@@ -92,7 +103,7 @@ export async function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton size="lg">
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarImage src="https://cdn3d.iconscout.com/3d/premium/thumb/hombre-avatar-6299539-5187871.png?f=webp" />
                     <AvatarFallback>user</AvatarFallback>
                   </Avatar>
                   <p className="font-bold text-base">{userName}</p>
