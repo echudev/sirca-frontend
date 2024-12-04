@@ -1,6 +1,10 @@
 import { RegisterForm } from "./RegisterForm";
+import { verifySession } from "@/lib/session";
 
 export default async function WelcomePage() {
+  const cookie = await verifySession();
+  const role = cookie.data.role;
+
   return (
     <main className="flex flex-1 flex-col items-center p-4 md:p-6">
       <div className="flex flex-col items-center mb-8">
@@ -9,7 +13,14 @@ export default async function WelcomePage() {
           Sistema Integrado de la Red de Calidad del Aire
         </p>
       </div>
-      <RegisterForm />
+      {role === "ADMIN" ? (
+        <>
+          <p className="text-sm text-gray-500">Bienvenido como administrador</p>
+          <RegisterForm />{" "}
+        </>
+      ) : (
+        <p className="text-sm text-gray-500">No tenés permiso para estar acá</p>
+      )}
     </main>
   );
 }
