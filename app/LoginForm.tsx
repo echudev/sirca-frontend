@@ -1,7 +1,8 @@
 "use client";
 
 import { z } from "zod";
-import { Loader2 } from "lucide-react";
+import Link from "next/link";
+import { Loader2, EyeIcon, EyeOffIcon } from "lucide-react";
 import { LoginFormState, LoginFormSchema } from "@/lib/definitions";
 import { useActionState, useState, ChangeEvent, useEffect } from "react";
 import { login } from "@/app/actions/auth";
@@ -12,7 +13,6 @@ import {
   Card,
   CardHeader,
   CardTitle,
-  CardDescription,
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
@@ -36,6 +36,7 @@ export function LoginForm() {
   const [state, action, isPending] = useActionState(login, undefined);
   // isValid y localErrors solo nos sirven para habilitar/deshabilitar el botón de "ingresar"
   const [isValid, setIsValid] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     password: "",
@@ -115,17 +116,16 @@ export function LoginForm() {
   return (
     <Card className="w-[350px]">
       <CardHeader>
-        <CardTitle>Bienvenido</CardTitle>
-        <CardDescription>Ingresa con tus datos</CardDescription>
+        <CardTitle className="text-center">Ingresa con tus datos</CardTitle>
       </CardHeader>
       <CardContent>
         <form action={action}>
           <div className="flex flex-col space-y-1.5 my-4">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">Nombre de Usuario</Label>
             <Input
               id="name"
               name="name"
-              placeholder="Name"
+              placeholder="Username"
               onChange={handleInputChange}
               className={`w-full ${
                 (localErrors?.errors?.name?.length ?? 0 > 0)
@@ -140,12 +140,12 @@ export function LoginForm() {
             ))}
           </div>
 
-          <div className="flex flex-col space-y-1.5 my-4">
+          <div className="relative flex flex-col space-y-1.5 my-4">
             <Label htmlFor="password">Contraseña</Label>
             <Input
               id="password"
               name="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Contraseña"
               onChange={handleInputChange}
               className={`w-full ${
@@ -154,6 +154,17 @@ export function LoginForm() {
                   : ""
               }`}
             />
+            <button
+              type="button"
+              className="absolute right-3 top-8 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <EyeOffIcon className="h-5 w-5" />
+              ) : (
+                <EyeIcon className="h-5 w-5" />
+              )}
+            </button>
             {localErrors?.errors?.password?.map((error) => (
               <p key={error} className="text-sm text-red-500">
                 {error}
@@ -163,10 +174,21 @@ export function LoginForm() {
           <SubmitButton isPending={isPending} isValid={isValid} />
         </form>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex flex-col justify-between">
         {!state?.success && (
           <p className="text-sm text-red-500">{state?.message}</p>
         )}
+        <p className="text-sm text-gray-600">
+          <Button variant="link" className="text-xs p-0 w-full" type="button">
+            ¿Olvidaste tu contraseña?
+          </Button>
+        </p>
+        <p className="text-sm text-gray-600">
+          ¿No tenés cuenta?{" "}
+          <Button asChild variant="link" className="p-0">
+            <Link href="/">Registrate</Link>
+          </Button>
+        </p>
       </CardFooter>
     </Card>
   );
