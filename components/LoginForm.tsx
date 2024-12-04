@@ -164,7 +164,6 @@ export function LoginForm() {
         </form>
       </CardContent>
       <CardFooter className="flex justify-between">
-        {state?.success && <p>Bienvenido! {state.data?.name}</p>}
         {!state?.success && (
           <p className="text-sm text-red-500">{state?.message}</p>
         )}
