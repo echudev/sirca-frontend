@@ -1,26 +1,14 @@
-import {
-  Calendar,
-  Home,
-  Inbox,
-  Search,
-  Settings,
-  ChevronUp,
-} from "lucide-react";
+import { SidebarContentComponent } from "./app-sidebar-content";
+
+import { ChevronUp } from "lucide-react";
 
 import {
   Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
-  SidebarMenuSubButton,
 } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -37,59 +25,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Separator } from "@radix-ui/react-select";
 
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { Button } from "./ui/button";
-import Link from "next/link";
 import { verifySession } from "@/lib/session";
 import { CookieDTO } from "@/domain/user/dto";
 import { logout } from "@/app/actions/auth";
-import { Separator } from "@radix-ui/react-select";
-
-// Inventory Menu items.
-const itemsInventario = [
-  {
-    title: "Estaciones",
-    url: "/dashboard/inventario/estaciones",
-    icon: Home,
-  },
-  {
-    title: "Equipos",
-    url: "/dashboard/inventario/equipos",
-    icon: Inbox,
-  },
-  {
-    title: "Partes",
-    url: "/dashboard/inventario/partes",
-    icon: Calendar,
-  },
-  {
-    title: "Gases",
-    url: "/dashboard/inventario/gases",
-    icon: Search,
-  },
-];
-// Mantainance Menu items.
-const itemsMantenimiento = [
-  {
-    title: "Órdenes",
-    url: "/dashboard/mantenimiento/ordenes",
-    icon: Home,
-  },
-  {
-    title: "Calibraciones",
-    url: "/dashboard/mantenimiento/calibraciones",
-    icon: Inbox,
-  },
-  {
-    title: "Programado",
-    url: "/dashboard/mantenimiento/programado",
-    icon: Calendar,
-  },
-];
 
 export async function AppSidebar() {
-  // user state
+  // user cookie sesion data
   const cookie: CookieDTO = await verifySession();
   const userName = cookie.data.userName;
 
@@ -107,62 +52,8 @@ export async function AppSidebar() {
           <p className="font-bold text-base">SIRCA</p>
         </SidebarMenuButton>
       </SidebarHeader>
-      <Separator className="border mx-2 my-3" />
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarMenuButton asChild>
-            <Link href="/dashboard">
-              <Home />
-              <span>Inicio</span>
-            </Link>
-          </SidebarMenuButton>
-          <SidebarGroupLabel>Módulos</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard/inventario">
-                    <Home />
-                    <span>Inventario</span>
-                  </Link>
-                </SidebarMenuButton>
-                <SidebarMenuSub>
-                  {itemsInventario.map((item) => (
-                    <SidebarMenuSubItem key={item.title}>
-                      <SidebarMenuSubButton asChild>
-                        <Link href={item.url}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard/mantenimiento">
-                    <Home />
-                    <span>Mantenimiento</span>
-                  </Link>
-                </SidebarMenuButton>
-                <SidebarMenuSub>
-                  {itemsMantenimiento.map((item) => (
-                    <SidebarMenuSubItem key={item.title}>
-                      <SidebarMenuSubButton asChild>
-                        <Link href={item.url}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
+      <Separator className="border mx-2 mt-3" />
+      <SidebarContentComponent />
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
