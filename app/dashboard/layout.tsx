@@ -1,6 +1,6 @@
-import Sidebar from "./Sidebar";
-import { verifySession } from "@/lib/session";
-import { CookieDTO } from "@/domain/user/dto";
+import { cookies } from "next/headers";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 
 export const metadata = {
   title: "SIRCA - Inicio",
@@ -12,15 +12,19 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const cookie: CookieDTO = await verifySession();
-  const userName = cookie.data.userName;
+  // sidebar state
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get("sidebar:state")?.value === "true";
 
   return (
-    <div className="flex flex-row h-full">
-      <Sidebar userName={userName} />
-      <main className="flex w-full flex-col bg-gray-50 rounded m-3 shadow-md shadow-black/80">
-        {children}
-      </main>
-    </div>
+    <SidebarProvider defaultOpen={defaultOpen}>
+      <AppSidebar />
+      <div className="flex flex-row h-full">
+        <main className="flex w-full flex-col bg-gray-50 rounded m-3 shadow-md shadow-black/80">
+          <SidebarTrigger />
+          {children}
+        </main>
+      </div>
+    </SidebarProvider>
   );
 }
