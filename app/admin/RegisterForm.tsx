@@ -1,7 +1,7 @@
 "use client";
 
 import { z } from "zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, EyeIcon, EyeOffIcon } from "lucide-react";
 import { RegisterFormSchema, RegisterFormState } from "@/lib/definitions";
 import { useActionState, useState, useEffect, ChangeEvent } from "react";
 import { register } from "@/app/actions/auth";
@@ -43,6 +43,7 @@ export function RegisterForm() {
   const [state, action, isPending] = useActionState(register, undefined);
   // isValid y localErrors solo nos sirven para habilitar/deshabilitar el botón de "ingresar"
   const [isValid, setIsValid] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -193,12 +194,12 @@ export function RegisterForm() {
             ))}
           </div>
 
-          <div className="flex flex-col space-y-1.5 my-4">
+          <div className="relative flex flex-col space-y-1.5 my-4">
             <Label htmlFor="password">Contraseña</Label>
             <Input
               id="password"
               name="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="********"
               onChange={handleInputChange}
               className={`w-full ${
@@ -207,6 +208,17 @@ export function RegisterForm() {
                   : ""
               }`}
             />
+            <button
+              type="button"
+              className="absolute right-3 top-8 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <EyeOffIcon className="h-5 w-5" />
+              ) : (
+                <EyeIcon className="h-5 w-5" />
+              )}
+            </button>
             {localErrors?.errors?.password?.map((error) => (
               <p key={error} className="text-sm text-red-500">
                 {error}
