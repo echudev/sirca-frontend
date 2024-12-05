@@ -1,6 +1,6 @@
 import { SidebarContentComponent } from "./sidebar-content";
 
-import { ChevronUp } from "lucide-react";
+import { ChevronUp, LogOutIcon, UserPenIcon, PlusIcon } from "lucide-react";
 
 import {
   Sidebar,
@@ -9,6 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -58,7 +59,7 @@ export async function AppSidebar() {
             <Dialog>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton size="lg">
+                  <SidebarMenuButton>
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarImage src="https://cdn3d.iconscout.com/3d/premium/thumb/hombre-avatar-6299539-5187871.png?f=webp" />
                       <AvatarFallback>user</AvatarFallback>
@@ -72,10 +73,19 @@ export async function AppSidebar() {
                   className="w-[--radix-popper-anchor-width]"
                 >
                   <DropdownMenuItem>
+                    <UserPenIcon />
                     <span>Mi Perfil</span>
                   </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <PlusIcon />
+                    <span>Registrar Usuario</span>
+                  </DropdownMenuItem>
+                  <SidebarSeparator />
                   <DialogTrigger className="w-full">
-                    <DropdownMenuItem>Salir</DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <LogOutIcon />
+                      <span>Salir</span>
+                    </DropdownMenuItem>
                   </DialogTrigger>
                 </DropdownMenuContent>
               </DropdownMenu>
