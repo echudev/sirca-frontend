@@ -25,7 +25,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
 
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
@@ -40,7 +39,7 @@ export async function AppSidebar() {
 
   return (
     <Sidebar variant="floating" collapsible="icon">
-      <SidebarHeader>
+      <SidebarHeader className="mb-5">
         <SidebarMenuButton
           size="lg"
           className="hover:bg-sidebar active:bg-sidebar"
@@ -52,9 +51,7 @@ export async function AppSidebar() {
           <p className="font-bold text-base">SIRCA</p>
         </SidebarMenuButton>
       </SidebarHeader>
-      <Separator className="mt-3" />
       <SidebarContentComponent />
-      <Separator className="mb-3" />
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>

@@ -46,17 +46,15 @@ export function MenuMantenimiento() {
           className="group/collapsible"
         >
           <CollapsibleTrigger asChild>
-            <Link href="/dashboard/mantenimiento">
-              <SidebarMenuButton>
-                <WrenchIcon />
-                <span>Mantenimiento</span>
-                <ChevronRight
-                  className={`ml-auto transition-transform ${
-                    isOpen ? "rotate-90" : "rotate-0"
-                  }`}
-                />
-              </SidebarMenuButton>
-            </Link>
+            <SidebarMenuButton>
+              <WrenchIcon />
+              <span>Mantenimiento</span>
+              <ChevronRight
+                className={`ml-auto transition-transform ${
+                  isOpen ? "rotate-90" : "rotate-0"
+                }`}
+              />
+            </SidebarMenuButton>
           </CollapsibleTrigger>
           <SidebarMenuSub>
             {itemsMantenimiento.map((item) => (

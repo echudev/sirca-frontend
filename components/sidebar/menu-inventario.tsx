@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/collapsible";
 
 // Inventory Menu items.
-const itemsInventario = [
+const items_inventario = [
   {
     title: "Estaciones",
     url: "/dashboard/inventario/estaciones",
@@ -50,20 +50,18 @@ export function MenuInventario() {
           className="group/collapsible"
         >
           <CollapsibleTrigger asChild>
-            <Link href="/dashboard/inventario">
-              <SidebarMenuButton>
-                <Package2Icon />
-                <span>Inventario</span>
-                <ChevronRight
-                  className={`ml-auto transition-transform ${
-                    isOpen ? "rotate-90" : "rotate-0"
-                  }`}
-                />
-              </SidebarMenuButton>
-            </Link>
+            <SidebarMenuButton>
+              <Package2Icon />
+              <span>Inventario</span>
+              <ChevronRight
+                className={`ml-auto transition-transform z-50 ${
+                  isOpen ? "rotate-90" : "rotate-0"
+                }`}
+              />
+            </SidebarMenuButton>
           </CollapsibleTrigger>
           <SidebarMenuSub>
-            {itemsInventario.map((item) => (
+            {items_inventario.map((item) => (
               <CollapsibleContent
                 key={item.title}
                 className={`transition-[max-height] ease-in-out duration-300 ${

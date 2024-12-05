@@ -10,23 +10,26 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenuButton,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
 
 export function SidebarContentComponent() {
   return (
     <SidebarContent>
       <SidebarGroup>
-        <Link href="/dashboard" className=" my-3">
-          <SidebarMenuButton>
+        <SidebarMenuButton asChild>
+          <Link href="/dashboard">
             <Home />
             <span>Inicio</span>
-          </SidebarMenuButton>
-        </Link>
+          </Link>
+        </SidebarMenuButton>
+        <SidebarSeparator />
         <SidebarGroupLabel>Módulos</SidebarGroupLabel>
         <SidebarGroupContent>
           <MenuInventario />
           <MenuMantenimiento />
         </SidebarGroupContent>
+        <SidebarSeparator />
       </SidebarGroup>
     </SidebarContent>
   );
