@@ -1,7 +1,6 @@
 import { SidebarContentComponent } from "./sidebar-content";
-
+import Link from "next/link";
 import { ChevronUp, LogOutIcon, UserPenIcon, PlusIcon } from "lucide-react";
-
 import {
   Sidebar,
   SidebarHeader,
@@ -37,6 +36,7 @@ export async function AppSidebar() {
   // user cookie sesion data
   const cookie: CookieDTO = await verifySession();
   const userName = cookie.data.userName;
+  const userRole = cookie.data.role;
 
   return (
     <Sidebar variant="floating" collapsible="icon">
@@ -76,10 +76,14 @@ export async function AppSidebar() {
                     <UserPenIcon />
                     <span>Mi Perfil</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <PlusIcon />
-                    <span>Registrar Usuario</span>
-                  </DropdownMenuItem>
+                  {userRole === "ADMIN" && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin">
+                        <PlusIcon />
+                        <span>Registrar Usuario</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <SidebarSeparator />
                   <DialogTrigger className="w-full">
                     <DropdownMenuItem>
