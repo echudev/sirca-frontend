@@ -19,7 +19,7 @@ export default async function RootLayout({
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
-      <div className="flex flex-row h-full">
+      <div className="flex flex-row h-full w-full">
         <main className="flex w-full flex-col bg-gray-50 rounded m-3 shadow-md shadow-black/80">
           <SidebarTrigger />
           {children}
