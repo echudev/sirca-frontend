@@ -3,9 +3,12 @@
 import { z } from "zod";
 import Link from "next/link";
 import { Loader2, EyeIcon, EyeOffIcon } from "lucide-react";
-import { LoginFormState, LoginFormSchema } from "@/lib/definitions";
+import {
+  LoginFormState,
+  LoginFormSchema,
+} from "@/backend/modules/user/validations";
 import { useActionState, useState, ChangeEvent, useEffect } from "react";
-import { login } from "@/app/actions/auth";
+import { login } from "@/backend/modules/user/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

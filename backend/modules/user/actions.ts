@@ -5,11 +5,11 @@ import {
   LoginFormState,
   RegisterFormState,
   RegisterFormSchema,
-} from "@/lib/definitions";
+} from "@/backend/modules/user/validations";
 import { redirect } from "next/navigation";
 import { deleteSession } from "@/lib/session";
-import { loginUser, registerUser } from "@/domain/user/service";
-import { LoginDTO, RegisterDTO } from "@/domain/user/dto";
+import { loginUser, registerUser } from "@/backend/modules/user/service";
+import { LoginDTO, RegisterDTO } from "@/backend/modules/user/dto";
 
 export async function login(state: LoginFormState, formData: FormData) {
   // 1. Validar los campos del formulario

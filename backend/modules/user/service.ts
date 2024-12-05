@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { createSession } from "@/lib/session";
-import { getUserByName, insertUser } from "@/domain/user/dal";
+import { getUserByName, insertUser } from "@/backend/modules/user/repository";
 import { LoginDTO, RegisterDTO, UserResponseDTO } from "./dto";
 
 export async function loginUser(data: LoginDTO) {
