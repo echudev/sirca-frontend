@@ -9,7 +9,7 @@ import {
 import { redirect } from "next/navigation";
 import { deleteSession } from "@/lib/session";
 import { loginUser, registerUser } from "@/backend/modules/user/service";
-import { LoginDTO, RegisterDTO } from "@/backend/modules/user/dto";
+import { LoginUserDTO, RegisterUserDTO } from "@/backend/modules/user/dto";
 
 export async function login(state: LoginFormState, formData: FormData) {
   // 1. Validar los campos del formulario
@@ -24,7 +24,7 @@ export async function login(state: LoginFormState, formData: FormData) {
     };
   }
   // 2. Llamar al servicio de login
-  const result = await loginUser(validatedFields.data as LoginDTO);
+  const result = await loginUser(validatedFields.data as LoginUserDTO);
 
   if (!result.success) {
     return { success: false, message: result.message };
@@ -54,7 +54,7 @@ export async function register(state: RegisterFormState, formData: FormData) {
   }
 
   // 2. Llamar al servicio de registro
-  const result = await registerUser(validatedFields.data as RegisterDTO);
+  const result = await registerUser(validatedFields.data as RegisterUserDTO);
 
   if (!result.success) {
     return { success: false, message: result.message };

@@ -1,28 +1,47 @@
-export interface LoginDTO {
+import { usersTable } from "@/db/schema";
+
+export interface LoginUserDTO {
   name: string;
   password: string;
 }
 
-export interface RegisterDTO {
+export interface LoginUserResponseDTO {
+  success: boolean;
+  data?: {
+    id: number;
+    name: string;
+  };
+  message?: string;
+}
+
+export interface RegisterUserDTO {
   name: string;
   email: string;
   password: string;
   role: string;
 }
 
-export interface UserResponseDTO {
+type RegisterUserResponseData = {
   id: number;
   name: string;
   email: string;
+};
+
+export interface RegisterUserResponseDTO {
+  success: boolean;
+  data?: RegisterUserResponseData;
+  message?: string;
 }
 
-export interface CookiePayloadDTO {
+export type GetUserResponseDTO = typeof usersTable.$inferSelect | null;
+
+export interface CookiePayload {
   userId: string;
   userName: string;
   role: string;
 }
 
-export interface CookieDTO {
+export interface GetCookieResponseDTO {
   isAuth: boolean;
-  data: CookiePayloadDTO;
+  data: CookiePayload;
 }

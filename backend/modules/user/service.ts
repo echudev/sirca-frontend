@@ -1,9 +1,16 @@
 import bcrypt from "bcrypt";
 import { createSession } from "@/lib/session";
 import { getUserByName, insertUser } from "@/backend/modules/user/repository";
-import { LoginDTO, RegisterDTO, UserResponseDTO } from "./dto";
+import {
+  LoginUserDTO,
+  LoginUserResponseDTO,
+  RegisterUserResponseDTO,
+  RegisterUserDTO,
+} from "./dto";
 
-export async function loginUser(data: LoginDTO) {
+export async function loginUser(
+  data: LoginUserDTO
+): Promise<LoginUserResponseDTO> {
   // Obtener el usuario desde la base de datos
   const usuario = await getUserByName(data.name);
   if (!usuario) {
@@ -11,10 +18,7 @@ export async function loginUser(data: LoginDTO) {
   }
 
   // Validar la contraseña
-  const isPasswordValid = await bcrypt.compare(
-    data.password,
-    usuario.passwordHash
-  );
+  const isPasswordValid = await bcrypt.compare(data.password, usuario.password);
   if (!isPasswordValid) {
     return { success: false, message: "Contraseña incorrecta" };
   }
@@ -27,17 +31,17 @@ export async function loginUser(data: LoginDTO) {
 }
 
 export async function registerUser(
-  data: RegisterDTO
-): Promise<{ success: boolean; data?: UserResponseDTO; message?: string }> {
+  data: RegisterUserDTO
+): Promise<RegisterUserResponseDTO> {
   // Hashear la contraseña
-  const passwordHash = await bcrypt.hash(data.password, 10);
+  const password = await bcrypt.hash(data.password, 10);
 
   try {
     // Insertar al usuario en la base de datos
     const result = await insertUser({
       name: data.name,
       email: data.email,
-      passwordHash,
+      password,
       role: data.role,
     });
 

@@ -1,8 +1,9 @@
 import { db } from "@/db/connection";
 import { usersTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { RegisterUserDTO, GetUserResponseDTO } from "./dto";
 
-export async function getUserByName(name: string) {
+export async function getUserByName(name: string): Promise<GetUserResponseDTO> {
   const db_user = await db
     .select()
     .from(usersTable)
@@ -10,12 +11,9 @@ export async function getUserByName(name: string) {
   return db_user.length > 0 ? db_user[0] : null;
 }
 
-export async function insertUser(newUser: {
-  name: string;
-  email: string;
-  passwordHash: string;
-  role: string;
-}): Promise<{ id: number }> {
+export async function insertUser(
+  newUser: RegisterUserDTO
+): Promise<{ id: number }> {
   const result = await db
     .insert(usersTable)
     .values(newUser)
