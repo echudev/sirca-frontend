@@ -29,12 +29,12 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { verifySession } from "@/lib/session";
-import { CookieDTO } from "@/backend/modules/user/dto";
-import { logout } from "@/backend/modules/user/actions";
+import { GetCookieResponseDTO } from "@/app/actions/user/dto";
+import { logout } from "@/app/actions/user/actions";
 
 export async function AppSidebar() {
   // user cookie sesion data
-  const cookie: CookieDTO = await verifySession();
+  const cookie: GetCookieResponseDTO = await verifySession();
   const userName = cookie.data.userName;
   const userRole = cookie.data.role;
 

@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { createSession } from "@/lib/session";
-import { getUserByName, insertUser } from "@/backend/modules/user/repository";
+import { getUserByName, insertUser } from "./repository";
 import {
   LoginUserDTO,
   LoginUserResponseDTO,

@@ -5,9 +5,9 @@ import { Loader2, EyeIcon, EyeOffIcon } from "lucide-react";
 import {
   RegisterFormSchema,
   RegisterFormState,
-} from "@/backend/modules/user/validations";
+} from "@/app/actions/user/validations";
 import { useActionState, useState, useEffect, ChangeEvent } from "react";
-import { register } from "@/backend/modules/user/actions";
+import { register } from "@/app/actions/user/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
