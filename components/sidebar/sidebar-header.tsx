@@ -19,7 +19,7 @@ export function SidebarHeaderComponent() {
       >
         <Avatar className={open ? "h-14 w-14 " : "h-8 w-8"}>
           <AvatarImage src={balogo.src} alt="logo" />
-          <AvatarFallback>logo</AvatarFallback>
+          <AvatarFallback>BA</AvatarFallback>
         </Avatar>
         <div
           className={`flex flex-col ml-2 text-secondary transition-transform ${open ? "delay-300 translate-y-0 opacity-100" : "opacity-0 -translate-y-40"}`}
