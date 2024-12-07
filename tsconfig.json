@@ -21,8 +21,15 @@
     "paths": {
       "@/*": ["./*"] // Crea el alias "@" para la carpeta raíz
     },
-    "target": "ES2017"
+    "target": "ES2017",
+    "types": ["vitest"]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "tests"
+  ],
   "exclude": ["node_modules"]
 }
