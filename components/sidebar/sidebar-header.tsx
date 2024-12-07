@@ -21,7 +21,7 @@ export function SidebarHeaderComponent() {
           <AvatarFallback>logo</AvatarFallback>
         </Avatar>
         <div
-          className={`flex flex-col ml-2 ${open ? "opacity-100" : "opacity-0"}`}
+          className={`flex flex-col ml-2 transition-transform ${open ? "delay-300 translate-y-0 opacity-100" : "opacity-0 -translate-y-40"}`}
         >
           <p className="font-bold text-sm">APrA</p>
           <p className="text-xs">Red de Calidad del Aire</p>
