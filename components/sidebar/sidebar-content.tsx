@@ -1,5 +1,3 @@
-"use client";
-
 import { MenuInventario } from "./menu-inventario";
 import { MenuMantenimiento } from "./menu-mantenimiento";
 import Link from "next/link";
@@ -10,7 +8,6 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenuButton,
-  SidebarSeparator,
 } from "@/components/ui/sidebar";
 
 export function SidebarContentComponent() {
@@ -18,18 +15,16 @@ export function SidebarContentComponent() {
     <SidebarContent>
       <SidebarGroup>
         <SidebarMenuButton asChild>
-          <Link href="/dashboard">
+          <Link href="/dashboard" className="z-50">
             <Home />
             <span>Inicio</span>
           </Link>
         </SidebarMenuButton>
-        <SidebarSeparator />
         <SidebarGroupLabel>Módulos</SidebarGroupLabel>
         <SidebarGroupContent>
           <MenuInventario />
           <MenuMantenimiento />
         </SidebarGroupContent>
-        <SidebarSeparator />
       </SidebarGroup>
     </SidebarContent>
   );

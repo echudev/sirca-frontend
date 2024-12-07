@@ -1,9 +1,9 @@
 import { SidebarContentComponent } from "./sidebar-content";
+import { SidebarHeaderComponent } from "./sidebar-header";
 import Link from "next/link";
 import { ChevronUp, LogOutIcon, UserPenIcon, PlusIcon } from "lucide-react";
 import {
   Sidebar,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -40,19 +40,10 @@ export async function AppSidebar() {
 
   return (
     <Sidebar variant="floating" collapsible="icon">
-      <SidebarHeader className="mb-5">
-        <SidebarMenuButton
-          size="lg"
-          className="hover:bg-sidebar active:bg-sidebar"
-        >
-          <Avatar className="h-8 w-8 rounded-lg">
-            <AvatarImage src="https://general.premioseikon.com/wp-content/uploads/2022/09/logo-BA-png-1024x921.png" />
-            <AvatarFallback>logo</AvatarFallback>
-          </Avatar>
-          <p className="font-bold text-base">SIRCA</p>
-        </SidebarMenuButton>
-      </SidebarHeader>
+      <SidebarHeaderComponent />
+      <SidebarSeparator />
       <SidebarContentComponent />
+      <SidebarSeparator />
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -84,7 +75,6 @@ export async function AppSidebar() {
                       </Link>
                     </DropdownMenuItem>
                   )}
-                  <SidebarSeparator />
                   <DialogTrigger className="w-full">
                     <DropdownMenuItem>
                       <LogOutIcon />
