@@ -28,9 +28,9 @@ import {
 
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
-import { verifySession } from "@/lib/session";
-import { GetCookieResponseDTO } from "@/app/actions/user/dto";
-import { logout } from "@/app/actions/user/actions";
+import { verifySession } from "@/lib/auth-session";
+import { GetCookieResponseDTO } from "@/lib/auth/dto";
+import { logout } from "@/app/actions/auth/";
 
 export async function AppSidebar() {
   // user cookie sesion data

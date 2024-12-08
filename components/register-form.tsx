@@ -2,12 +2,9 @@
 
 import { z } from "zod";
 import { Loader2, EyeIcon, EyeOffIcon } from "lucide-react";
-import {
-  RegisterFormSchema,
-  RegisterFormState,
-} from "@/app/actions/user/validations";
+import { RegisterFormSchema, RegisterFormState } from "@/lib/auth/validations";
 import { useActionState, useState, useEffect, ChangeEvent } from "react";
-import { register } from "@/app/actions/user/actions";
+import { register } from "@/app/actions/auth/";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

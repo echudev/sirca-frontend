@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { SignJWT, jwtVerify } from "jose";
-import { SessionPayload } from "@/app/actions/user/validations";
+import { SessionPayload } from "@/lib/auth/validations";
 // The payload should contain the minimum, unique user data that'll be used in subsequent requests,
 // such as the user's ID, role, etc. It should not contain personally identifiable information
 // like phone number, email address, credit card information, etc, or sensitive data like passwords.

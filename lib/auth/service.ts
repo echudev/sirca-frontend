@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { createSession } from "@/lib/session";
+import { createSession } from "@/lib/auth-session";
 import { getUserByName, insertUser } from "./repository";
 import {
   LoginUserDTO,

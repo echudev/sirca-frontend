@@ -3,12 +3,9 @@
 import { z } from "zod";
 import Link from "next/link";
 import { Loader2, EyeIcon, EyeOffIcon } from "lucide-react";
-import {
-  LoginFormState,
-  LoginFormSchema,
-} from "@/app/actions/user/validations";
+import { LoginFormState, LoginFormSchema } from "@/lib/auth/validations";
 import { useActionState, useState, ChangeEvent, useEffect } from "react";
-import { login } from "@/app/actions/user/actions";
+import { login } from "@/app/actions/auth/";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
