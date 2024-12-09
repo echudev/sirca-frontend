@@ -1,7 +1,7 @@
 import { Filters } from "@/components/Filters";
 import { Table } from "@/components/Table";
 import { Metadata } from "next";
-import GetOrdenes from "@/lib/getOrdenes";
+import GetOrdenes from "@/lib/inventory/getOrdenes";
 import { Header } from "@/components/Header";
 
 export const metadata: Metadata = {

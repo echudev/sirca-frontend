@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { Filters } from "@/components/Filters";
 import { Table } from "@/components/Table";
 import { Header } from "@/components/Header";
-import GetEquipos from "@/lib/getEquipos";
+import GetEquipos from "@/lib/inventory/getEquipos";
 
 export const metadata: Metadata = {
   title: "SIRCA - Mantenimiento",

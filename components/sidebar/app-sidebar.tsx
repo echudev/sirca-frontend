@@ -1,4 +1,4 @@
-import { SidebarContentComponent } from "./sidebar-content";
+import { SidebarContentComponent } from "./sidebar-menu";
 import { SidebarHeaderComponent } from "./sidebar-header";
 import Link from "next/link";
 import { ChevronUp, LogOutIcon, UserPenIcon, PlusIcon } from "lucide-react";

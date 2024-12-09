@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Package2Icon, ChevronRight } from "lucide-react";
+import { WrenchIcon, ChevronRight } from "lucide-react";
 
 import {
   SidebarMenu,
@@ -18,28 +19,18 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-// Inventory Menu items.
-const items_inventario = [
-  {
-    title: "Estaciones",
-    url: "/dashboard/inventario/estaciones",
-  },
-  {
-    title: "Equipos",
-    url: "/dashboard/inventario/equipos",
-  },
-  {
-    title: "Partes",
-    url: "/dashboard/inventario/partes",
-  },
-  {
-    title: "Gases",
-    url: "/dashboard/inventario/gases",
-  },
-];
+interface Item {
+  title: string;
+  url: string;
+}
+interface ModuleMenuProps {
+  title: string;
+  items: Array<Item>;
+}
 
-export function MenuInventario() {
+export function ModuleMenu({ title, items }: ModuleMenuProps) {
   const [isOpen, setIsOpen] = useState(true);
+  const pathName = usePathname();
 
   return (
     <SidebarMenu>
@@ -50,18 +41,18 @@ export function MenuInventario() {
           className="group/collapsible"
         >
           <CollapsibleTrigger asChild>
-            <SidebarMenuButton>
-              <Package2Icon />
-              <span>Inventario</span>
+            <SidebarMenuButton tooltip={title}>
+              <WrenchIcon />
+              <span>{title}</span>
               <ChevronRight
-                className={`ml-auto transition-transform z-50 ${
+                className={`ml-auto transition-transform ${
                   isOpen ? "rotate-90" : "rotate-0"
                 }`}
               />
             </SidebarMenuButton>
           </CollapsibleTrigger>
           <SidebarMenuSub>
-            {items_inventario.map((item) => (
+            {items.map((item) => (
               <CollapsibleContent
                 key={item.title}
                 className={`transition-[max-height] ease-in-out duration-300 ${
@@ -69,7 +60,10 @@ export function MenuInventario() {
                 }`}
               >
                 <SidebarMenuSubItem>
-                  <SidebarMenuSubButton asChild>
+                  <SidebarMenuSubButton
+                    asChild
+                    isActive={pathName === item.url}
+                  >
                     <Link href={item.url}>
                       <span>{item.title}</span>
                     </Link>

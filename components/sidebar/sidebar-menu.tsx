@@ -1,5 +1,7 @@
-import { MenuInventario } from "./menu-inventario";
-import { MenuMantenimiento } from "./menu-mantenimiento";
+"use client";
+
+import { ModuleMenu } from "./module-menu";
+import { inventario, mantenimiento } from "@/lib/modules";
 import Link from "next/link";
 import { Home } from "lucide-react";
 import {
@@ -9,12 +11,18 @@ import {
   SidebarGroupLabel,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
+import { usePathname } from "next/navigation";
 
 export function SidebarContentComponent() {
+  const pathname = usePathname();
   return (
     <SidebarContent className="my-5">
       <SidebarGroup>
-        <SidebarMenuButton asChild>
+        <SidebarMenuButton
+          asChild
+          tooltip={"Inicio"}
+          isActive={pathname === "/dashboard"}
+        >
           <Link href="/dashboard" className="z-50">
             <Home />
             <span>Inicio</span>
@@ -22,8 +30,8 @@ export function SidebarContentComponent() {
         </SidebarMenuButton>
         <SidebarGroupLabel>Módulos</SidebarGroupLabel>
         <SidebarGroupContent>
-          <MenuInventario />
-          <MenuMantenimiento />
+          <ModuleMenu title={inventario.title} items={inventario.items} />
+          <ModuleMenu title={mantenimiento.title} items={mantenimiento.items} />
         </SidebarGroupContent>
       </SidebarGroup>
     </SidebarContent>
