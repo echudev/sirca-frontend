@@ -12,7 +12,7 @@ export function SidebarHeaderComponent() {
   const { open } = useSidebar();
 
   return (
-    <SidebarHeader className="mb-5">
+    <SidebarHeader className="my-5">
       <SidebarMenuButton
         size="lg"
         className="hover:bg-sidebar active:bg-sidebar hover:text-white active:text-white"

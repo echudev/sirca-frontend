@@ -12,7 +12,7 @@ import {
 
 export function SidebarContentComponent() {
   return (
-    <SidebarContent>
+    <SidebarContent className="my-5">
       <SidebarGroup>
         <SidebarMenuButton asChild>
           <Link href="/dashboard" className="z-50">

@@ -50,7 +50,7 @@ export async function AppSidebar() {
             <Dialog>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton>
+                  <SidebarMenuButton size={"lg"}>
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarImage src="https://cdn3d.iconscout.com/3d/premium/thumb/hombre-avatar-6299539-5187871.png?f=webp" />
                       <AvatarFallback>user</AvatarFallback>
