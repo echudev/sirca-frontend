@@ -1,6 +1,9 @@
-// Mantainance Menu items.
+import { WrenchIcon, Package2Icon } from "lucide-react";
+
+// Mantainance , WrenchIconMenu items.
 export const mantenimiento = {
   title: "Mantenimiento",
+  icon: WrenchIcon,
   items: [
     {
       title: "Órdenes",
@@ -19,6 +22,7 @@ export const mantenimiento = {
 
 export const inventario = {
   title: "Inventario",
+  icon: Package2Icon,
   items: [
     {
       title: "Estaciones",

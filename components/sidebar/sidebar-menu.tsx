@@ -30,8 +30,16 @@ export function SidebarContentComponent() {
         </SidebarMenuButton>
         <SidebarGroupLabel>Módulos</SidebarGroupLabel>
         <SidebarGroupContent>
-          <ModuleMenu title={inventario.title} items={inventario.items} />
-          <ModuleMenu title={mantenimiento.title} items={mantenimiento.items} />
+          <ModuleMenu
+            title={inventario.title}
+            items={inventario.items}
+            icon={inventario.icon}
+          />
+          <ModuleMenu
+            title={mantenimiento.title}
+            items={mantenimiento.items}
+            icon={mantenimiento.icon}
+          />
         </SidebarGroupContent>
       </SidebarGroup>
     </SidebarContent>

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { WrenchIcon, ChevronRight } from "lucide-react";
+import { ChevronRight, LucideIcon } from "lucide-react";
 
 import {
   SidebarMenu,
@@ -25,10 +25,11 @@ interface Item {
 }
 interface ModuleMenuProps {
   title: string;
+  icon: LucideIcon;
   items: Array<Item>;
 }
 
-export function ModuleMenu({ title, items }: ModuleMenuProps) {
+export function ModuleMenu({ title, items, icon: Icon }: ModuleMenuProps) {
   const [isOpen, setIsOpen] = useState(true);
   const pathName = usePathname();
 
@@ -42,7 +43,7 @@ export function ModuleMenu({ title, items }: ModuleMenuProps) {
         >
           <CollapsibleTrigger asChild>
             <SidebarMenuButton tooltip={title}>
-              <WrenchIcon />
+              <Icon />
               <span>{title}</span>
               <ChevronRight
                 className={`ml-auto transition-transform ${
