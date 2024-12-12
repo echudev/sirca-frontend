@@ -16,6 +16,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 function SubmitButton({
   isPending,
@@ -25,7 +26,13 @@ function SubmitButton({
   isValid: boolean;
 }) {
   return (
-    <Button disabled={isPending || !isValid} type="submit" className="w-full">
+    <Button
+      disabled={isPending || !isValid}
+      type="submit"
+      className={cn(
+        "font-bold w-full bg-[var(--button-bkg)] hover:bg-[var(--button-hover)] hover:border-[var(--button-hover-border)] border border-secondary text-primary"
+      )}
+    >
       {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Ingresar"}
     </Button>
   );
@@ -114,7 +121,7 @@ export function LoginForm() {
   }, [state]);
 
   return (
-    <Card className="w-[350px]">
+    <Card className="w-[350px] border-[var(--card-border)] bg-[var(--card)] shadow-md">
       <CardHeader>
         <CardTitle className="text-center">Ingresa con tus datos</CardTitle>
       </CardHeader>
