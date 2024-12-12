@@ -15,6 +15,9 @@
     /* Secondary Colors */
     --secondary: 172 58% 72%; /* Azul claro */
     --secondary-20: 172 58% 72% / 0.20;
+    --secondary-30: 172 58% 72% / 0.30;
+    --secondary-40: 172 58% 72% / 0.40;
+    --secondary-50: 172 58% 72% / 0.50;
     --secondary-75: 172 58% 72% / 0.75;
     --secondary-foreground: 222.2 47.4% 11.2%; /* Texto oscuro para contraste */
 
@@ -49,7 +52,7 @@
     --sidebar-primary-foreground: 0 0% 98%; 
     --sidebar-accent: var(--secondary-20); 
     --sidebar-accent-foreground: var(--secondary);
-    --sidebar-border: var(--secondary-35);
+    --sidebar-border: var(--secondary-20);
     --sidebar-ring: var(--secondary);
   }
 }
