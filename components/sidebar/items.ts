@@ -3,7 +3,7 @@ import { WrenchIcon, Package2Icon, HomeIcon } from "lucide-react";
 export const inicio = [
   {
     title: "Inicio",
-    url: "/dashboard",
+    url: "/inicio",
     icon: HomeIcon,
   },
 ];
@@ -15,15 +15,15 @@ export const mantenimiento = {
   items: [
     {
       title: "Órdenes",
-      url: "/dashboard/mantenimiento/ordenes",
+      url: "/inicio/mantenimiento/ordenes",
     },
     {
       title: "Calibraciones",
-      url: "/dashboard/mantenimiento/calibraciones",
+      url: "/inicio/mantenimiento/calibraciones",
     },
     {
       title: "Programado",
-      url: "/dashboard/mantenimiento/programado",
+      url: "/inicio/mantenimiento/programado",
     },
   ],
 };
@@ -34,19 +34,19 @@ export const inventario = {
   items: [
     {
       title: "Estaciones",
-      url: "/dashboard/inventario/estaciones",
+      url: "/inicio/inventario/estaciones",
     },
     {
       title: "Equipos",
-      url: "/dashboard/inventario/equipos",
+      url: "/inicio/inventario/equipos",
     },
     {
       title: "Partes",
-      url: "/dashboard/inventario/partes",
+      url: "/inicio/inventario/partes",
     },
     {
       title: "Gases",
-      url: "/dashboard/inventario/gases",
+      url: "/inicio/inventario/gases",
     },
   ],
 };

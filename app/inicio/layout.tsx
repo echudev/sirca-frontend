@@ -3,6 +3,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { Suspense } from "react";
 import Loading from "../loading";
+import { AppBreadCrumb } from "@/components/app-bread-crumb";
 
 export const metadata = {
   title: "SIRCA - Inicio",
@@ -23,7 +24,10 @@ export default async function DashboardLayout({
       <AppSidebar />
       <div className="flex flex-row h-full w-full">
         <main className="flex w-full flex-col rounded m-3 shadow-md shadow-black/80">
-          <SidebarTrigger />
+          <div className="flex">
+            <SidebarTrigger />
+            <AppBreadCrumb />
+          </div>
           <Suspense fallback={<Loading />}>{children}</Suspense>
         </main>
       </div>
