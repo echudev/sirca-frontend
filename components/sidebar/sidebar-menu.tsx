@@ -1,47 +1,42 @@
 "use client";
 
-import { ModuleMenu } from "./module-menu";
-import { inventario, mantenimiento } from "@/lib/modules";
-import Link from "next/link";
-import { Home } from "lucide-react";
-import {
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenuButton,
-} from "@/components/ui/sidebar";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { LucideIcon } from "lucide-react";
 
-export function SidebarContentComponent() {
-  const pathname = usePathname();
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
+
+interface Item {
+  title: string;
+  url: string;
+  icon: LucideIcon;
+}
+interface ModuleMenuProps {
+  items: Array<Item>;
+}
+
+export function Menu({ items }: ModuleMenuProps) {
+  const pathName = usePathname();
+  const router = useRouter();
+
   return (
-    <SidebarContent className="my-5">
-      <SidebarGroup>
-        <SidebarMenuButton
-          asChild
-          tooltip={"Inicio"}
-          isActive={pathname === "/dashboard"}
-        >
-          <Link href="/dashboard" className="z-50">
-            <Home />
-            <span>Inicio</span>
-          </Link>
-        </SidebarMenuButton>
-        <SidebarGroupLabel>Módulos</SidebarGroupLabel>
-        <SidebarGroupContent>
-          <ModuleMenu
-            title={inventario.title}
-            items={inventario.items}
-            icon={inventario.icon}
-          />
-          <ModuleMenu
-            title={mantenimiento.title}
-            items={mantenimiento.items}
-            icon={mantenimiento.icon}
-          />
-        </SidebarGroupContent>
-      </SidebarGroup>
-    </SidebarContent>
+    <SidebarMenu>
+      <SidebarMenuItem>
+        {items.map((item) => (
+          <SidebarMenuButton
+            key={item.title}
+            tooltip={item.title}
+            isActive={pathName === item.url}
+            onClick={() => router.push(item.url)}
+          >
+            <item.icon className="z-50" />
+            <span>{item.title}</span>
+          </SidebarMenuButton>
+        ))}
+      </SidebarMenuItem>
+    </SidebarMenu>
   );
 }

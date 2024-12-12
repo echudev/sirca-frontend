@@ -8,7 +8,7 @@ import {
 import balogo from "../../public/BA-secondary.png";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 
-export function SidebarHeaderComponent() {
+export function Header() {
   const { open } = useSidebar();
 
   return (

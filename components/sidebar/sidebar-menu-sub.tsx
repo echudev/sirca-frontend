@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { ChevronRight, LucideIcon } from "lucide-react";
 
 import {
@@ -29,9 +28,10 @@ interface ModuleMenuProps {
   items: Array<Item>;
 }
 
-export function ModuleMenu({ title, items, icon: Icon }: ModuleMenuProps) {
+export function MenuSub({ title, items, icon: Icon }: ModuleMenuProps) {
   const [isOpen, setIsOpen] = useState(true);
   const pathName = usePathname();
+  const router = useRouter();
 
   return (
     <SidebarMenu>
@@ -64,10 +64,9 @@ export function ModuleMenu({ title, items, icon: Icon }: ModuleMenuProps) {
                   <SidebarMenuSubButton
                     asChild
                     isActive={pathName === item.url}
+                    onClick={() => router.push(item.url)}
                   >
-                    <Link href={item.url}>
-                      <span>{item.title}</span>
-                    </Link>
+                    <span>{item.title}</span>
                   </SidebarMenuSubButton>
                 </SidebarMenuSubItem>
               </CollapsibleContent>

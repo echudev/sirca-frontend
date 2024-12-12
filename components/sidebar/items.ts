@@ -1,4 +1,12 @@
-import { WrenchIcon, Package2Icon } from "lucide-react";
+import { WrenchIcon, Package2Icon, HomeIcon } from "lucide-react";
+
+export const inicio = [
+  {
+    title: "Inicio",
+    url: "/dashboard",
+    icon: HomeIcon,
+  },
+];
 
 // Mantainance , WrenchIconMenu items.
 export const mantenimiento = {
