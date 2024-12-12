@@ -1,13 +1,15 @@
 import { cookies } from "next/headers";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import { Suspense } from "react";
+import Loading from "../loading";
 
 export const metadata = {
   title: "SIRCA - Inicio",
   description: "Sistema de Gestion de la Red de Calidad del Aire.",
 };
 
-export default async function RootLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -22,7 +24,7 @@ export default async function RootLayout({
       <div className="flex flex-row h-full w-full">
         <main className="flex w-full flex-col rounded m-3 shadow-md shadow-black/80">
           <SidebarTrigger />
-          {children}
+          <Suspense fallback={<Loading />}>{children}</Suspense>
         </main>
       </div>
     </SidebarProvider>

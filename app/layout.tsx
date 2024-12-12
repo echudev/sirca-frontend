@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import Loading from "./loading";
 import "./globals.css";
 
 export const metadata = {
@@ -13,7 +15,9 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head />
-      <body className="flex flex-col h-screen">{children}</body>
+      <body className="flex flex-col h-screen">
+        <Suspense fallback={<Loading />}>{children}</Suspense>
+      </body>
     </html>
   );
 }

@@ -1,6 +1,6 @@
 import { LoginForm } from "../components/login-form";
 
-export default async function WelcomePage() {
+export default function WelcomePage() {
   return (
     <main className="flex flex-1 flex-col items-center p-4 md:p-6">
       <div className="flex flex-col items-center mb-8">
