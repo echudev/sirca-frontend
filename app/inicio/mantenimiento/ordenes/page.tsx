@@ -1,8 +1,6 @@
-import { Filters } from "@/components/Filters";
 import { Table } from "@/components/Table";
 import { Metadata } from "next";
 import GetOrdenes from "@/lib/inventory/getOrdenes";
-import { Header } from "@/components/Header";
 
 export const metadata: Metadata = {
   title: "SIRCA - Mantenimiento",
@@ -14,12 +12,6 @@ export default async function Ordenes() {
 
   return (
     <main className="flex flex-col p-4">
-      <Header
-        title="Ordenes de Trabajo"
-        path="Mantenimiento"
-        subpath="Ordenes"
-      />
-      <Filters />
       <Table data={allOrdenes} />
     </main>
   );

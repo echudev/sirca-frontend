@@ -3,14 +3,14 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { Suspense } from "react";
 import Loading from "../loading";
-import { AppBreadCrumb } from "@/components/app-bread-crumb";
+import { AppBreadCrumb } from "@/components/app-breadcrumb";
 
 export const metadata = {
   title: "SIRCA - Inicio",
   description: "Sistema de Gestion de la Red de Calidad del Aire.",
 };
 
-export default async function DashboardLayout({
+export default async function InicioLayout({
   children,
 }: {
   children: React.ReactNode;

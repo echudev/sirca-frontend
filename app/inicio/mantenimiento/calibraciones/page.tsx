@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { Header } from "@/components/Header";
 
 export const metadata: Metadata = {
   title: "SIRCA - Mantenimiento",
@@ -7,13 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Calibraciones() {
-  return (
-    <main className="flex flex-col p-4">
-      <Header
-        title="Calibraciones"
-        path="Mantenimiento"
-        subpath="Calibraciones"
-      />
-    </main>
-  );
+  return <main className="flex flex-col p-4">Calibraciones</main>;
 }
