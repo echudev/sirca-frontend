@@ -18,7 +18,7 @@ export function Header() {
         size="lg"
         className="hover:bg-sidebar active:bg-sidebar hover:text-white active:text-white"
       >
-        <Avatar className={open ? "h-14 w-14 rounded-md" : "h-8 w-8"}>
+        <Avatar className={open ? "h-10 w-10 rounded-sm" : "h-8 w-8"}>
           <AvatarImage
             src={balogo.src}
             alt="logo"
