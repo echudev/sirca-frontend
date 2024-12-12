@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ChevronRight, LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 import {
   SidebarMenu,
@@ -65,8 +66,9 @@ export function MenuSub({ title, items, icon: Icon }: ModuleMenuProps) {
                     asChild
                     isActive={pathName === item.url}
                     onClick={() => router.push(item.url)}
+                    className={cn("cursor-pointer")}
                   >
-                    <span>{item.title}</span>
+                    <span className="select-none">{item.title}</span>
                   </SidebarMenuSubButton>
                 </SidebarMenuSubItem>
               </CollapsibleContent>

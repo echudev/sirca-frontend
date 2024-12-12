@@ -14,7 +14,7 @@
 
     /* Secondary Colors */
     --secondary: 172 58% 72%; /* Azul claro */
-    --secondary-35: 172 58% 72% / 0.35;
+    --secondary-20: 172 58% 72% / 0.20;
     --secondary-75: 172 58% 72% / 0.75;
     --secondary-foreground: 222.2 47.4% 11.2%; /* Texto oscuro para contraste */
 
@@ -45,10 +45,10 @@
     /* Sidebar Colors */
     --sidebar-background: 204 55% 17%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: var(--secondary); /* Azul oscuro */
-    --sidebar-primary-foreground: 0 0% 98%; /* Texto blanco */
-    --sidebar-accent: var(--secondary-75); /* Amarillo */
-    --sidebar-accent-foreground: var(--primary); /* Texto oscuro */
+    --sidebar-primary: var(--secondary); 
+    --sidebar-primary-foreground: 0 0% 98%; 
+    --sidebar-accent: var(--secondary-20); 
+    --sidebar-accent-foreground: var(--secondary);
     --sidebar-border: var(--secondary-35);
     --sidebar-ring: var(--secondary);
   }
