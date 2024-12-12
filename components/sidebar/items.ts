@@ -1,10 +1,15 @@
-import { WrenchIcon, Package2Icon, HomeIcon } from "lucide-react";
+import { WrenchIcon, Package2Icon, HomeIcon, Calendar } from "lucide-react";
 
 export const inicio = [
   {
     title: "Inicio",
     url: "/inicio",
     icon: HomeIcon,
+  },
+  {
+    title: "Calendario",
+    url: "/inicio/calendario",
+    icon: Calendar,
   },
 ];
 
