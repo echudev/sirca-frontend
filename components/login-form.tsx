@@ -120,7 +120,11 @@ export function LoginForm() {
   }, [state]);
 
   return (
-    <Card className="w-[350px] border-[var(--card-border)] bg-[var(--card)] shadow-md">
+    <Card
+      className={cn(
+        "w-[350px] border-[var(--card-border)] bg-[var(--card)] shadow-md"
+      )}
+    >
       <CardHeader>
         <CardTitle className="text-center">Ingresa con tus datos</CardTitle>
       </CardHeader>
