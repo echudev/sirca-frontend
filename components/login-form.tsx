@@ -1,7 +1,6 @@
 "use client";
 
 import { z } from "zod";
-import Link from "next/link";
 import { Loader2, EyeIcon, EyeOffIcon } from "lucide-react";
 import { LoginFormState, LoginFormSchema } from "@/lib/auth/validations";
 import { useActionState, useState, ChangeEvent, useEffect } from "react";
@@ -188,12 +187,6 @@ export function LoginForm() {
         <p className="text-sm text-gray-600">
           <Button variant="link" className="text-xs p-0 w-full" type="button">
             ¿Olvidaste tu contraseña?
-          </Button>
-        </p>
-        <p className="text-sm text-gray-600">
-          ¿No tenés cuenta?{" "}
-          <Button asChild variant="link" className="p-0">
-            <Link href="/">Registrate</Link>
           </Button>
         </p>
       </CardFooter>
