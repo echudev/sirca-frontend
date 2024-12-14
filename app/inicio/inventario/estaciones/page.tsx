@@ -1,18 +1,47 @@
 import { Metadata } from "next";
+import { Payment, columns } from "./columns";
+import { DataTable } from "./data-table";
 
 export const metadata: Metadata = {
   title: "SIRCA - Inventario",
   description: "App de inventario de la red",
 };
 
+async function getData(): Promise<Payment[]> {
+  return [
+    {
+      id: "728ed52f",
+      amount: 100,
+      status: "pending",
+      email: "fastrak@gmail.com",
+    },
+    {
+      id: "a8e9d4f",
+      amount: 100,
+      status: "pending",
+      email: "macroni@example.com",
+    },
+    {
+      id: "dji8d4f",
+      amount: 200,
+      status: "processing",
+      email: "donizeit@buenosaires.com",
+    },
+    {
+      id: "851d4f",
+      amount: 300,
+      status: "success",
+      email: "m@example.com",
+    },
+  ];
+}
+
 export default async function Estaciones() {
+  const data = await getData();
+
   return (
-    <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
-      <div className="flex items-center">
-        <h1 className="font-semibold text-lg text-primary md:text-2xl">
-          Página en construcción
-        </h1>
-      </div>
+    <main className="container mx-auto py-10">
+      <DataTable columns={columns} data={data} />
     </main>
   );
 }
