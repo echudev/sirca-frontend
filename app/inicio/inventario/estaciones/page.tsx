@@ -1,43 +1,29 @@
 import { Metadata } from "next";
-import { Payment, columns } from "./columns";
-import { DataTable } from "./data-table";
+import { columns } from "./columns";
+import { DataTable } from "@/components/data-table/data-table";
+import { taskSchema } from "./schema";
+import fs from "fs/promises";
+import path from "path";
+import { z } from "zod";
 
 export const metadata: Metadata = {
   title: "SIRCA - Inventario",
   description: "App de inventario de la red",
 };
 
-async function getData(): Promise<Payment[]> {
-  return [
-    {
-      id: "728ed52f",
-      amount: 100,
-      status: "pending",
-      email: "fastrak@gmail.com",
-    },
-    {
-      id: "a8e9d4f",
-      amount: 100,
-      status: "pending",
-      email: "macroni@example.com",
-    },
-    {
-      id: "dji8d4f",
-      amount: 200,
-      status: "processing",
-      email: "donizeit@buenosaires.com",
-    },
-    {
-      id: "851d4f",
-      amount: 300,
-      status: "success",
-      email: "m@example.com",
-    },
-  ];
+// Simulate a database read for tasks.
+async function getTasks() {
+  const data = await fs.readFile(
+    path.join(process.cwd(), "/app/inicio/inventario/estaciones/tasks.json")
+  );
+
+  const tasks = JSON.parse(data.toString());
+
+  return z.array(taskSchema).parse(tasks);
 }
 
 export default async function Estaciones() {
-  const data = await getData();
+  const data = await getTasks();
 
   return (
     <main className="container mx-auto py-10">
