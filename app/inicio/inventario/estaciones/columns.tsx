@@ -1,13 +1,11 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-
-import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { labels, priorities, statuses } from "./data";
+import { priorities, statuses } from "./data";
 import { Task } from "./schema";
-import { DataTableColumnHeader } from "../../../../components/data-table/data-table-column-header";
-import { DataTableRowActions } from "../../../../components/data-table/data-table-row-actions";
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import { DataTableRowActions } from "@/components/data-table/data-table-row-actions";
 
 export const columns: ColumnDef<Task>[] = [
   {
@@ -49,11 +47,8 @@ export const columns: ColumnDef<Task>[] = [
       <DataTableColumnHeader column={column} title="Title" />
     ),
     cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.label);
-
       return (
         <div className="flex space-x-2">
-          {label && <Badge variant="outline">{label.label}</Badge>}
           <span className="max-w-[500px] truncate font-medium">
             {row.getValue("title")}
           </span>
