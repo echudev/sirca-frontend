@@ -4,8 +4,9 @@ import {
   varchar,
   timestamp,
   check,
+  primaryKey,
 } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { items } from "./items";
 import { stations } from "./stations";
 
@@ -22,5 +23,21 @@ export const inventory = pgTable(
     lastUpdate: timestamp("last_update").defaultNow().notNull(),
     updatedBy: varchar("updated_by", { length: 40 }).notNull(),
   },
-  (table) => [check("quantity_check", sql`${table.quantity} >= 0`)]
+  (table) => [
+    {
+      pk: primaryKey({ columns: [table.itemId, table.stationId] }),
+      checkConstraint: check("quantity_check", sql`${table.quantity} >= 0`),
+    },
+  ]
 );
+
+export const inventoryRelations = relations(inventory, ({ one }) => ({
+  item: one(items, {
+    fields: [inventory.itemId],
+    references: [items.id],
+  }),
+  station: one(stations, {
+    fields: [inventory.stationId],
+    references: [stations.id],
+  }),
+}));

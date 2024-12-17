@@ -23,9 +23,9 @@ export const items = pgTable("items", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const itemsRelations = relations(items, ({ one }) => ({
-  analyzers: one(analyzers),
-  cylinders: one(cylinders),
-  parts: one(parts),
-  inventory: one(inventory),
+export const itemsRelations = relations(items, ({ one, many }) => ({
+  analyzer: one(analyzers),
+  cylinder: one(cylinders),
+  part: one(parts),
+  inventory: many(inventory),
 }));
