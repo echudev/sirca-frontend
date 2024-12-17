@@ -6,9 +6,7 @@ import {
   serial,
   date,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
 import { ItemType } from "./types";
-import { itemsToParts } from "./items-parts";
 
 export const items = pgTable("items", {
   id: serial("item_id").primaryKey(),
@@ -19,7 +17,3 @@ export const items = pgTable("items", {
   adquisitionDate: date("item_adquisition_date").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
-
-export const itemsRelations = relations(items, ({ many }) => ({
-  itemParts: many(itemsToParts),
-}));

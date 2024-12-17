@@ -1,4 +1,5 @@
 import { integer, pgTable, varchar, serial, date } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { items } from "./items";
 import { brands } from "./brands";
 import { models } from "./models";
@@ -24,3 +25,18 @@ export const analyzers = pgTable("analyzers", {
   lastCalibration: date("analyzer_last_calibration"),
   lastMaintenance: date("analyzer_last_maintenance"),
 });
+
+export const analyzerRelations = relations(analyzers, ({ one }) => ({
+  item: one(items, {
+    fields: [analyzers.itemId],
+    references: [items.id],
+  }),
+  brand: one(brands, {
+    fields: [analyzers.brandId],
+    references: [brands.id],
+  }),
+  model: one(models, {
+    fields: [analyzers.modelId],
+    references: [models.id],
+  }),
+}));
