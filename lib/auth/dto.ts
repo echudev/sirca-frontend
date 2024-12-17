@@ -1,4 +1,4 @@
-import { usersTable } from "@/db/schema";
+import { usersTable } from "@/db/schema/users";
 
 export interface LoginUserDTO {
   name: string;

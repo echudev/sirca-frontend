@@ -1,5 +1,5 @@
 import { db } from "@/db/connection";
-import { usersTable } from "@/db/schema";
+import { usersTable } from "@/db/schema/users";
 import { eq } from "drizzle-orm";
 import { RegisterUserDTO, GetUserResponseDTO } from "./dto";
 
