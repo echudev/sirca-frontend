@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1733062532148,
-      "tag": "0000_flat_king_cobra",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1733086488287,
-      "tag": "0001_boring_blue_shield",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1733086848009,
-      "tag": "0002_young_supernaut",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1733195395557,
-      "tag": "0003_tense_mikhail_rasputin",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1734324687660,
-      "tag": "0004_silent_bruce_banner",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1734442032249,
-      "tag": "0005_stiff_blazing_skull",
+      "when": 1734460555916,
+      "tag": "0000_confused_golden_guardian",
       "breakpoints": true
     }
   ]

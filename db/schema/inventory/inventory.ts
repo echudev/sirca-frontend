@@ -1,14 +1,8 @@
-import {
-  integer,
-  pgTable,
-  varchar,
-  timestamp,
-  check,
-  primaryKey,
-} from "drizzle-orm/pg-core";
+import { integer, pgTable, check, primaryKey } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 import { items } from "./items";
 import { stations } from "./stations";
+import { commonColumns } from "../common-columns";
 
 export const inventory = pgTable(
   "inventory",
@@ -20,8 +14,7 @@ export const inventory = pgTable(
       .notNull()
       .references(() => stations.id, { onDelete: "cascade" }),
     quantity: integer("quantity").notNull(),
-    lastUpdate: timestamp("last_update").defaultNow().notNull(),
-    updatedBy: varchar("updated_by", { length: 40 }).notNull(),
+    ...commonColumns,
   },
   (table) => [
     {

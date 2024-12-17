@@ -1,11 +1,6 @@
-import {
-  integer,
-  pgTable,
-  varchar,
-  text,
-  timestamp,
-} from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar, text } from "drizzle-orm/pg-core";
 import { InferSelectModel, InferInsertModel } from "drizzle-orm";
+import { commonColumns } from "./common-columns";
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -13,7 +8,7 @@ export const usersTable = pgTable("users", {
   email: varchar({ length: 40 }).notNull().unique(),
   password: text("password_hash").notNull(),
   role: varchar({ length: 10 }).default("VIEWER").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  ...commonColumns,
 });
 export type User = InferSelectModel<typeof usersTable>;
 export type NewUser = InferInsertModel<typeof usersTable>;

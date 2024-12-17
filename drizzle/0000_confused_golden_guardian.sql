@@ -1,9 +1,3 @@
-CREATE TABLE IF NOT EXISTS "analyzer_states" (
-	"analyzer_state_id" serial PRIMARY KEY NOT NULL,
-	"state_name" varchar(20) NOT NULL,
-	CONSTRAINT "analyzer_states_state_name_unique" UNIQUE("state_name")
-);
---> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "analyzers" (
 	"analyzer_id" serial PRIMARY KEY NOT NULL,
 	"item_id" integer NOT NULL,
@@ -38,44 +32,32 @@ CREATE TABLE IF NOT EXISTS "inventory" (
 	"item_id" integer NOT NULL,
 	"station_id" integer NOT NULL,
 	"quantity" integer NOT NULL,
-	"last_update" timestamp DEFAULT now() NOT NULL,
-	"updated_by" varchar(40) NOT NULL,
-	CONSTRAINT "quantity_check" CHECK ("inventory"."quantity" >= 0)
-);
---> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "item_types" (
-	"item_type_id" serial PRIMARY KEY NOT NULL,
-	"type_name" varchar(20) NOT NULL,
-	CONSTRAINT "item_types_type_name_unique" UNIQUE("type_name")
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"updated_by" varchar(100),
+	"is_deleted" boolean DEFAULT false NOT NULL,
+	"deleted_at" timestamp
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "items" (
 	"item_id" serial PRIMARY KEY NOT NULL,
-	"item_type_id" integer NOT NULL,
+	"item_type" varchar(20) NOT NULL,
 	"item_name" varchar(100) NOT NULL,
 	"item_code" varchar(40) NOT NULL,
 	"item_description" text,
 	"item_adquisition_date" date NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"updated_by" varchar(100),
+	"is_deleted" boolean DEFAULT false NOT NULL,
+	"deleted_at" timestamp,
 	CONSTRAINT "items_item_code_unique" UNIQUE("item_code")
-);
---> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "items_parts" (
-	"item_id" integer NOT NULL,
-	"part_id" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "models" (
 	"model_id" serial PRIMARY KEY NOT NULL,
 	"model_name" varchar(40) NOT NULL,
-	"brand_id" integer NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "part_states" (
-	"part_state_id" serial PRIMARY KEY NOT NULL,
-	"part_state_name" varchar(20) NOT NULL,
-	CONSTRAINT "part_states_part_state_name_unique" UNIQUE("part_state_name")
+	"brand_id" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "parts" (
@@ -103,9 +85,28 @@ CREATE TABLE IF NOT EXISTS "traslados" (
 	"station_id_origen" integer NOT NULL,
 	"station_id_destino" integer NOT NULL,
 	"cantidad" integer NOT NULL,
-	"fecha_traslado" timestamp DEFAULT now() NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"updated_by" varchar(100),
+	"is_deleted" boolean DEFAULT false NOT NULL,
+	"deleted_at" timestamp,
 	CONSTRAINT "station_check" CHECK ("traslados"."station_id_origen" <> "traslados"."station_id_destino"),
 	CONSTRAINT "cantidad_check" CHECK ("traslados"."cantidad" > 0)
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "users" (
+	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "users_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
+	"name" varchar(40) NOT NULL,
+	"email" varchar(40) NOT NULL,
+	"password_hash" text NOT NULL,
+	"role" varchar(10) DEFAULT 'VIEWER' NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"updated_by" varchar(100),
+	"is_deleted" boolean DEFAULT false NOT NULL,
+	"deleted_at" timestamp,
+	CONSTRAINT "users_name_unique" UNIQUE("name"),
+	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
 DO $$ BEGIN
@@ -122,12 +123,6 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "analyzers" ADD CONSTRAINT "analyzers_model_id_models_model_id_fk" FOREIGN KEY ("model_id") REFERENCES "public"."models"("model_id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "analyzers" ADD CONSTRAINT "analyzers_analyzer_state_id_analyzer_states_analyzer_state_id_fk" FOREIGN KEY ("analyzer_state_id") REFERENCES "public"."analyzer_states"("analyzer_state_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -151,24 +146,6 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "items" ADD CONSTRAINT "items_item_type_id_item_types_item_type_id_fk" FOREIGN KEY ("item_type_id") REFERENCES "public"."item_types"("item_type_id") ON DELETE restrict ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "items_parts" ADD CONSTRAINT "items_parts_item_id_items_item_id_fk" FOREIGN KEY ("item_id") REFERENCES "public"."items"("item_id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "items_parts" ADD CONSTRAINT "items_parts_part_id_parts_part_id_fk" FOREIGN KEY ("part_id") REFERENCES "public"."parts"("part_id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
  ALTER TABLE "models" ADD CONSTRAINT "models_brand_id_brands_brand_id_fk" FOREIGN KEY ("brand_id") REFERENCES "public"."brands"("brand_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -176,12 +153,6 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "parts" ADD CONSTRAINT "parts_item_id_items_item_id_fk" FOREIGN KEY ("item_id") REFERENCES "public"."items"("item_id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "parts" ADD CONSTRAINT "parts_part_state_id_part_states_part_state_id_fk" FOREIGN KEY ("part_state_id") REFERENCES "public"."part_states"("part_state_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

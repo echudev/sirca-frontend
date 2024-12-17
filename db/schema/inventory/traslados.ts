@@ -1,13 +1,8 @@
-import {
-  integer,
-  pgTable,
-  timestamp,
-  serial,
-  check,
-} from "drizzle-orm/pg-core";
+import { integer, pgTable, serial, check } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 import { items } from "./items";
 import { stations } from "./stations";
+import { commonColumns } from "../common-columns";
 
 export const traslados = pgTable(
   "traslados",
@@ -23,7 +18,7 @@ export const traslados = pgTable(
       .notNull()
       .references(() => stations.id, { onDelete: "cascade" }),
     quantity: integer("cantidad").notNull(),
-    createdAt: timestamp("fecha_traslado").defaultNow().notNull(),
+    ...commonColumns,
   },
   (table) => [
     check("station_check", sql`${table.fromStationId} <> ${table.toStationId}`),

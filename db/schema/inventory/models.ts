@@ -1,10 +1,4 @@
-import {
-  integer,
-  pgTable,
-  varchar,
-  timestamp,
-  serial,
-} from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar, serial } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { brands } from "./brands";
 import { analyzers } from "./analyzers";
@@ -15,7 +9,6 @@ export const models = pgTable("models", {
   brandId: integer("brand_id")
     .notNull()
     .references(() => brands.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const modelsRelations = relations(models, ({ one }) => ({
