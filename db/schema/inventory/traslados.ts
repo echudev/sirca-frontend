@@ -5,7 +5,7 @@ import {
   serial,
   check,
 } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { items } from "./items";
 import { stations } from "./stations";
 
@@ -30,3 +30,18 @@ export const traslados = pgTable(
     check("cantidad_check", sql`${table.quantity} > 0`),
   ]
 );
+
+export const trasladosRelations = relations(traslados, ({ one }) => ({
+  items: one(items, {
+    fields: [traslados.itemId],
+    references: [items.id],
+  }),
+  fromStation: one(stations, {
+    fields: [traslados.fromStationId],
+    references: [stations.id],
+  }),
+  toStation: one(stations, {
+    fields: [traslados.toStationId],
+    references: [stations.id],
+  }),
+}));

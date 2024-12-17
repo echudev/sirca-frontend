@@ -1,6 +1,7 @@
 import { integer, pgTable, varchar, serial } from "drizzle-orm/pg-core";
 import { items } from "./items";
 import { PartState } from "./types";
+import { relations } from "drizzle-orm";
 
 export const parts = pgTable("parts", {
   id: serial("part_id").primaryKey(),
@@ -11,3 +12,10 @@ export const parts = pgTable("parts", {
   serialNumber: varchar("part_serialnumber", { length: 40 }).notNull(),
   stateId: integer("part_state_id").notNull().$type<PartState>(),
 });
+
+export const partsRelations = relations(parts, ({ one }) => ({
+  item: one(items, {
+    fields: [parts.itemId],
+    references: [items.id],
+  }),
+}));

@@ -12,6 +12,7 @@ import { analyzers } from "./analyzers";
 import { cylinders } from "./cylinders";
 import { parts } from "./parts";
 import { inventory } from "./inventory";
+import { traslados } from "./traslados";
 
 export const items = pgTable("items", {
   id: serial("item_id").primaryKey(),
@@ -28,4 +29,5 @@ export const itemsRelations = relations(items, ({ one, many }) => ({
   cylinder: one(cylinders),
   part: one(parts),
   inventory: many(inventory),
+  traslados: many(traslados),
 }));
