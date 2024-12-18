@@ -8,6 +8,13 @@
       "when": 1734460555916,
       "tag": "0000_confused_golden_guardian",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1734554455459,
+      "tag": "0001_amazing_smasher",
+      "breakpoints": true
     }
   ]
 }
