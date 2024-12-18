@@ -1,4 +1,5 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { LoginForm } from "@/components/login-form";
 import { cn } from "@/lib/utils";
 import balogo from "@/public/BA-primary.png";
 
@@ -19,6 +20,7 @@ export default function WelcomePage() {
           <span className="text-sm">Red de Calidad del Aire</span>
         </div>
       </div>
+      <LoginForm />
     </main>
   );
 }
