@@ -21,8 +21,8 @@ export default async function InicioLayout({
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
-      <AppSidebar />
-      <div className="flex flex-row h-full w-full">
+      <div className="flex w-full">
+        <AppSidebar />
         <main className="flex w-full flex-col rounded m-3 bg-gray-50 shadow-md shadow-black/25">
           <div className="flex">
             <SidebarTrigger />
