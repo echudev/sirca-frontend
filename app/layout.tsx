@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head />
-      <body className="flex flex-col h-screen bg-[#f0f8f6]">
+      <body className="bg-[#f0f8f6]">
         <Suspense fallback={<Loading />}>{children}</Suspense>
       </body>
     </html>
