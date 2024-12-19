@@ -10,21 +10,19 @@ export const metadata: Metadata = {
 
 export default function Estaciones() {
   return (
-    <main className="container mx-auto">
-      <div className="flex items-center justify-between space-y-2 my-8">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-primary">
-            Estaciones de monitoreo
-          </h2>
-          <p className="text-muted-foreground">
-            Listado con las estaciones que se encuentran en la red de calidad
-            del aire
-          </p>
-        </div>
+    <div className="flex flex-col h-full space-y-5 p-4">
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight text-primary">
+          Estaciones de monitoreo
+        </h2>
+        <p className="text-muted-foreground">
+          Listado con las estaciones que se encuentran en la red de calidad del
+          aire
+        </p>
       </div>
       <Suspense fallback={<Loader />}>
         <TablaEstaciones />
       </Suspense>
-    </main>
+    </div>
   );
 }
