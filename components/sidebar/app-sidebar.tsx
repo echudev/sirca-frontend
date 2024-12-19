@@ -5,7 +5,7 @@ import { Footer } from "./sidebar-footer";
 
 export async function AppSidebar() {
   return (
-    <Sidebar variant="floating" collapsible="icon">
+    <Sidebar variant="floating" collapsible="icon" className="z-50">
       <Header />
       <SidebarSeparator />
       <Content />
