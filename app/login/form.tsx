@@ -75,7 +75,7 @@ export function LoginForm() {
       <CardFooter className="flex flex-col justify-between">
         {(state?.errors || !state?.success) && (
           <p className="text-sm text-red-500 font-bold">
-            Nombre o Contraseña incorrectos
+            Usuario o Contraseña incorrectos
           </p>
         )}
         <p className="text-sm text-gray-600">
