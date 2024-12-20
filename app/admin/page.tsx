@@ -1,4 +1,4 @@
-import { RegisterForm } from "../../components/register-form";
+import { RegisterForm } from "./form";
 import { verifySession } from "@/lib/auth-session";
 
 export default async function WelcomePage() {
