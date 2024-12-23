@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head />
-      <body className="bg-[#f0f8f6]">
+      <body className="bg-[var(--secondary-bg-1)]">
         <Suspense fallback={<Loading />}>{children}</Suspense>
       </body>
     </html>

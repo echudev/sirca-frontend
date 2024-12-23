@@ -20,6 +20,7 @@
     --secondary-50: 172 58% 72% / 0.5;
     --secondary-75: 172 58% 72% / 0.75;
     --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary-bg-1: #f0f8f6;
 
     /* Accent (Amarillo) */
     --accent: 48 100% 50%;
