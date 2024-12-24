@@ -14,7 +14,7 @@ const description = "Listado con las estaciones que se encuentran en la red de c
 
 export default function Estaciones() {
   return (
-    <div className="flex flex-col p-4 overflow-auto">
+    <div className="flex flex-col h-full px-4 overflow-auto">
       <PageHeader title={title} description={description} />
       <Suspense fallback={<Loader />}>
         <TablaEstaciones />

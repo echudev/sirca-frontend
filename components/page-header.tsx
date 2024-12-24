@@ -5,7 +5,7 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description }: PageHeaderProps) {
     return (
-        <div>
+        <div className="flex flex-col">
             <h2 className="text-2xl font-bold tracking-tight text-primary">
                 {title}
             </h2>

@@ -1,3 +1,5 @@
+// Este componente toma la tabla desde data-table.tsx, le agrega los datos fetcheados y lo exporta para ser usado en page.tsx
+
 import { columns } from "./columns";
 import { DataTable } from "@/components/data-table/data-table";
 import { taskSchema } from "./schema";
