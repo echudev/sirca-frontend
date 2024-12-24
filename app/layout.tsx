@@ -1,5 +1,3 @@
-import { Suspense } from "react";
-import Loading from "./loading";
 import "./globals.css";
 
 export const metadata = {
@@ -16,7 +14,7 @@ export default function RootLayout({
     <html lang="es">
       <head />
       <body className="bg-[var(--secondary-bg-1)]">
-        <Suspense fallback={<Loading />}>{children}</Suspense>
+        {children}
       </body>
     </html>
   );
