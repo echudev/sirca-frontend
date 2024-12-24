@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
+import { PageHeader } from "@/components/page-header";
 import TablaEstaciones from "./tabla-estaciones";
 import Loader from "@/app/loading";
 
@@ -8,18 +9,13 @@ export const metadata: Metadata = {
   description: "App de inventario de la red",
 };
 
+const title = "Estaciones de monitoreo";
+const description = "Listado con las estaciones que se encuentran en la red de calidad del aire";
+
 export default function Estaciones() {
   return (
-    <div className="flex flex-col h-full space-y-5 p-4">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight text-primary">
-          Estaciones de monitoreo
-        </h2>
-        <p className="text-muted-foreground">
-          Listado con las estaciones que se encuentran en la red de calidad del
-          aire
-        </p>
-      </div>
+    <div className="flex flex-col p-4 overflow-auto">
+      <PageHeader title={title} description={description} />
       <Suspense fallback={<Loader />}>
         <TablaEstaciones />
       </Suspense>
