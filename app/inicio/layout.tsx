@@ -21,16 +21,16 @@ export default async function InicioLayout({
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
-      <div className="flex w-full">
-        <AppSidebar />
-        <main className="flex w-full flex-col rounded m-3 bg-gray-50 shadow-md shadow-black/25">
+      <AppSidebar />
+      <main className="w-full h-screen p-3">
+        <div className="flex flex-col h-full rounded bg-gray-50 shadow-md shadow-black/25">
           <div className="flex">
             <SidebarTrigger />
             <AppBreadCrumb />
           </div>
           <Suspense fallback={<Loading />}>{children}</Suspense>
-        </main>
-      </div>
+        </div>
+      </main>
     </SidebarProvider>
   );
 }
