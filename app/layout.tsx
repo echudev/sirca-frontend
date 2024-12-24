@@ -11,9 +11,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
+    <html lang="es" className="bg-[var(--secondary-bg-1)] overflow-hidden">
       <head />
-      <body className="bg-[var(--secondary-bg-1)]">
+      <body>
         {children}
       </body>
     </html>
