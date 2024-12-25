@@ -73,9 +73,22 @@ export function LoginForm() {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col justify-between">
-        {(state?.errors || !state?.success) && (
+        {/* Si succes es false, significa que conectó a la base de datos y no conincidió user o contraseña */}
+        {!state?.success && (
           <p className="text-sm text-red-500 font-bold">
-            Usuario o Contraseña incorrectos
+            {state?.message || " "}
+          </p>
+        )}
+        {/* Si hay error en reglas del name (cantidad de carácteres minimo), evita conectar a base de datos y da error */}
+        {state?.errors?.name && (
+          <p className="text-sm text-red-500 font-bold">
+            {state.errors.name || " "}
+          </p>
+        )}
+        {/* Si hay error en reglas del password (longitud, carácteres especiales, que contenga minuscula etc), evita conectar a base de datos y da error */}
+        {state?.errors?.password && (
+          <p className="text-sm text-red-500 font-bold">
+            Contraseña incorrecta
           </p>
         )}
         <p className="text-sm text-gray-600">
