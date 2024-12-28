@@ -1,7 +1,7 @@
 import { integer, pgTable, varchar, serial } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { brands } from "./brands";
-import { analyzers } from "./analyzers";
+import { analyzersDetail } from "./analyzers-detail";
 
 export const models = pgTable("models", {
   id: serial("model_id").primaryKey(),
@@ -16,5 +16,5 @@ export const modelsRelations = relations(models, ({ one }) => ({
     fields: [models.brandId],
     references: [brands.id],
   }),
-  analyzer: one(analyzers),
+  analyzer: one(analyzersDetail),
 }));

@@ -10,7 +10,7 @@ import {
 import { relations } from "drizzle-orm";
 import { items } from "./items";
 
-export const cylinders = pgTable("cylinders", {
+export const cylindersDetail = pgTable("cylinders_detail", {
   id: serial("cylinder_id").primaryKey(),
   itemId: integer("item_id")
     .notNull()
@@ -22,9 +22,9 @@ export const cylinders = pgTable("cylinders", {
   certificate: text("cylinder_certificate"),
 });
 
-export const cylindersRelations = relations(cylinders, ({ one }) => ({
+export const cylindersRelations = relations(cylindersDetail, ({ one }) => ({
   item: one(items, {
-    fields: [cylinders.itemId],
+    fields: [cylindersDetail.itemId],
     references: [items.id],
   }),
 }));

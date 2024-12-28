@@ -5,7 +5,7 @@ import { brands } from "./brands";
 import { models } from "./models";
 import { AnalyzerState } from "./types";
 
-export const analyzers = pgTable("analyzers", {
+export const analyzersDetail = pgTable("analyzers_detail", {
   id: serial("analyzer_id").primaryKey(),
   itemId: integer("item_id")
     .notNull()
@@ -17,26 +17,23 @@ export const analyzers = pgTable("analyzers", {
   modelId: integer("model_id")
     .notNull()
     .references(() => models.id, { onDelete: "cascade" }),
-  stateId: integer("analyzer_state_id").notNull().$type<AnalyzerState>(),
-  serialNumber: varchar("analyzer_serialnumber", { length: 40 })
-    .notNull()
-    .unique(),
+  analyzerState: integer("analyzer_state").notNull().$type<AnalyzerState>(),
   pollutant: varchar("analyzer_pollutant", { length: 40 }).notNull(),
   lastCalibration: date("analyzer_last_calibration"),
   lastMaintenance: date("analyzer_last_maintenance"),
 });
 
-export const analyzerRelations = relations(analyzers, ({ one }) => ({
+export const analyzerRelations = relations(analyzersDetail, ({ one }) => ({
   item: one(items, {
-    fields: [analyzers.itemId],
+    fields: [analyzersDetail.itemId],
     references: [items.id],
   }),
   brand: one(brands, {
-    fields: [analyzers.brandId],
+    fields: [analyzersDetail.brandId],
     references: [brands.id],
   }),
   model: one(models, {
-    fields: [analyzers.modelId],
+    fields: [analyzersDetail.modelId],
     references: [models.id],
   }),
 }));

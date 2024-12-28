@@ -1,1 +1,0 @@
-ALTER TABLE "parts" RENAME COLUMN "part_state_id" TO "part_state";

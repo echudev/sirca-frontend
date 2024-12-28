@@ -1,15 +1,13 @@
-CREATE TABLE IF NOT EXISTS "analyzers" (
+CREATE TABLE IF NOT EXISTS "analyzers_detail" (
 	"analyzer_id" serial PRIMARY KEY NOT NULL,
 	"item_id" integer NOT NULL,
 	"brand_id" integer NOT NULL,
 	"model_id" integer NOT NULL,
-	"analyzer_state_id" integer NOT NULL,
-	"analyzer_serialnumber" varchar(40) NOT NULL,
+	"analyzer_state" integer NOT NULL,
 	"analyzer_pollutant" varchar(40) NOT NULL,
 	"analyzer_last_calibration" date,
 	"analyzer_last_maintenance" date,
-	CONSTRAINT "analyzers_item_id_unique" UNIQUE("item_id"),
-	CONSTRAINT "analyzers_analyzer_serialnumber_unique" UNIQUE("analyzer_serialnumber")
+	CONSTRAINT "analyzers_detail_item_id_unique" UNIQUE("item_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "brands" (
@@ -18,7 +16,7 @@ CREATE TABLE IF NOT EXISTS "brands" (
 	CONSTRAINT "brands_brand_name_unique" UNIQUE("brand_name")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "cylinders" (
+CREATE TABLE IF NOT EXISTS "cylinders_detail" (
 	"cylinder_id" serial PRIMARY KEY NOT NULL,
 	"item_id" integer NOT NULL,
 	"cylinder_number" varchar(30) NOT NULL,
@@ -33,7 +31,7 @@ CREATE TABLE IF NOT EXISTS "inventory" (
 	"station_id" integer NOT NULL,
 	"quantity" integer NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now(),
 	"updated_by" varchar(100),
 	"is_deleted" boolean DEFAULT false NOT NULL,
 	"deleted_at" timestamp
@@ -44,10 +42,11 @@ CREATE TABLE IF NOT EXISTS "items" (
 	"item_type" varchar(20) NOT NULL,
 	"item_name" varchar(100) NOT NULL,
 	"item_code" varchar(40) NOT NULL,
+	"part_serialnumber" varchar(40) NOT NULL,
 	"item_description" text,
 	"item_adquisition_date" date NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now(),
 	"updated_by" varchar(100),
 	"is_deleted" boolean DEFAULT false NOT NULL,
 	"deleted_at" timestamp,
@@ -60,12 +59,18 @@ CREATE TABLE IF NOT EXISTS "models" (
 	"brand_id" integer NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "parts" (
-	"part_id" serial PRIMARY KEY NOT NULL,
+CREATE TABLE IF NOT EXISTS "sparepart_analyzer" (
+	"spare_part_id" integer NOT NULL,
+	"analyzer_id" integer NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "spare_parts_detail" (
+	"spare_part_id" serial PRIMARY KEY NOT NULL,
 	"item_id" integer NOT NULL,
 	"part_number" varchar(30) NOT NULL,
 	"part_serialnumber" varchar(40) NOT NULL,
-	"part_state_id" integer NOT NULL
+	"consumable" boolean DEFAULT false NOT NULL,
+	"spare_part_state" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "stations" (
@@ -86,7 +91,7 @@ CREATE TABLE IF NOT EXISTS "traslados" (
 	"station_id_destino" integer NOT NULL,
 	"cantidad" integer NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now(),
 	"updated_by" varchar(100),
 	"is_deleted" boolean DEFAULT false NOT NULL,
 	"deleted_at" timestamp,
@@ -101,7 +106,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"password_hash" text NOT NULL,
 	"role" varchar(10) DEFAULT 'VIEWER' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now(),
 	"updated_by" varchar(100),
 	"is_deleted" boolean DEFAULT false NOT NULL,
 	"deleted_at" timestamp,
@@ -110,25 +115,25 @@ CREATE TABLE IF NOT EXISTS "users" (
 );
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "analyzers" ADD CONSTRAINT "analyzers_item_id_items_item_id_fk" FOREIGN KEY ("item_id") REFERENCES "public"."items"("item_id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "analyzers_detail" ADD CONSTRAINT "analyzers_detail_item_id_items_item_id_fk" FOREIGN KEY ("item_id") REFERENCES "public"."items"("item_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "analyzers" ADD CONSTRAINT "analyzers_brand_id_brands_brand_id_fk" FOREIGN KEY ("brand_id") REFERENCES "public"."brands"("brand_id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "analyzers_detail" ADD CONSTRAINT "analyzers_detail_brand_id_brands_brand_id_fk" FOREIGN KEY ("brand_id") REFERENCES "public"."brands"("brand_id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "analyzers" ADD CONSTRAINT "analyzers_model_id_models_model_id_fk" FOREIGN KEY ("model_id") REFERENCES "public"."models"("model_id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "analyzers_detail" ADD CONSTRAINT "analyzers_detail_model_id_models_model_id_fk" FOREIGN KEY ("model_id") REFERENCES "public"."models"("model_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "cylinders" ADD CONSTRAINT "cylinders_item_id_items_item_id_fk" FOREIGN KEY ("item_id") REFERENCES "public"."items"("item_id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "cylinders_detail" ADD CONSTRAINT "cylinders_detail_item_id_items_item_id_fk" FOREIGN KEY ("item_id") REFERENCES "public"."items"("item_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -152,7 +157,19 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "parts" ADD CONSTRAINT "parts_item_id_items_item_id_fk" FOREIGN KEY ("item_id") REFERENCES "public"."items"("item_id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "sparepart_analyzer" ADD CONSTRAINT "sparepart_analyzer_spare_part_id_spare_parts_detail_spare_part_id_fk" FOREIGN KEY ("spare_part_id") REFERENCES "public"."spare_parts_detail"("spare_part_id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "sparepart_analyzer" ADD CONSTRAINT "sparepart_analyzer_analyzer_id_analyzers_detail_analyzer_id_fk" FOREIGN KEY ("analyzer_id") REFERENCES "public"."analyzers_detail"("analyzer_id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "spare_parts_detail" ADD CONSTRAINT "spare_parts_detail_item_id_items_item_id_fk" FOREIGN KEY ("item_id") REFERENCES "public"."items"("item_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

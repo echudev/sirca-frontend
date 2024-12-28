@@ -1,11 +1,11 @@
 {
-  "id": "3c867de9-0943-40d4-852a-866235d641a1",
+  "id": "9ccd24cd-edd9-4e9f-b44f-2f6159df6564",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.analyzers": {
-      "name": "analyzers",
+    "public.analyzers_detail": {
+      "name": "analyzers_detail",
       "schema": "",
       "columns": {
         "analyzer_id": {
@@ -32,15 +32,9 @@
           "primaryKey": false,
           "notNull": true
         },
-        "analyzer_state_id": {
-          "name": "analyzer_state_id",
+        "analyzer_state": {
+          "name": "analyzer_state",
           "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "analyzer_serialnumber": {
-          "name": "analyzer_serialnumber",
-          "type": "varchar(40)",
           "primaryKey": false,
           "notNull": true
         },
@@ -65,9 +59,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "analyzers_item_id_items_item_id_fk": {
-          "name": "analyzers_item_id_items_item_id_fk",
-          "tableFrom": "analyzers",
+        "analyzers_detail_item_id_items_item_id_fk": {
+          "name": "analyzers_detail_item_id_items_item_id_fk",
+          "tableFrom": "analyzers_detail",
           "tableTo": "items",
           "columnsFrom": [
             "item_id"
@@ -78,9 +72,9 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "analyzers_brand_id_brands_brand_id_fk": {
-          "name": "analyzers_brand_id_brands_brand_id_fk",
-          "tableFrom": "analyzers",
+        "analyzers_detail_brand_id_brands_brand_id_fk": {
+          "name": "analyzers_detail_brand_id_brands_brand_id_fk",
+          "tableFrom": "analyzers_detail",
           "tableTo": "brands",
           "columnsFrom": [
             "brand_id"
@@ -91,9 +85,9 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "analyzers_model_id_models_model_id_fk": {
-          "name": "analyzers_model_id_models_model_id_fk",
-          "tableFrom": "analyzers",
+        "analyzers_detail_model_id_models_model_id_fk": {
+          "name": "analyzers_detail_model_id_models_model_id_fk",
+          "tableFrom": "analyzers_detail",
           "tableTo": "models",
           "columnsFrom": [
             "model_id"
@@ -107,18 +101,11 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "analyzers_item_id_unique": {
-          "name": "analyzers_item_id_unique",
+        "analyzers_detail_item_id_unique": {
+          "name": "analyzers_detail_item_id_unique",
           "nullsNotDistinct": false,
           "columns": [
             "item_id"
-          ]
-        },
-        "analyzers_analyzer_serialnumber_unique": {
-          "name": "analyzers_analyzer_serialnumber_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "analyzer_serialnumber"
           ]
         }
       },
@@ -159,8 +146,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.cylinders": {
-      "name": "cylinders",
+    "public.cylinders_detail": {
+      "name": "cylinders_detail",
       "schema": "",
       "columns": {
         "cylinder_id": {
@@ -208,9 +195,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "cylinders_item_id_items_item_id_fk": {
-          "name": "cylinders_item_id_items_item_id_fk",
-          "tableFrom": "cylinders",
+        "cylinders_detail_item_id_items_item_id_fk": {
+          "name": "cylinders_detail_item_id_items_item_id_fk",
+          "tableFrom": "cylinders_detail",
           "tableTo": "items",
           "columnsFrom": [
             "item_id"
@@ -261,7 +248,7 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": "now()"
         },
         "updated_by": {
@@ -347,6 +334,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "part_serialnumber": {
+          "name": "part_serialnumber",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
         "item_description": {
           "name": "item_description",
           "type": "text",
@@ -370,7 +363,7 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": "now()"
         },
         "updated_by": {
@@ -454,12 +447,64 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.parts": {
-      "name": "parts",
+    "public.sparepart_analyzer": {
+      "name": "sparepart_analyzer",
       "schema": "",
       "columns": {
-        "part_id": {
-          "name": "part_id",
+        "spare_part_id": {
+          "name": "spare_part_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "analyzer_id": {
+          "name": "analyzer_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "sparepart_analyzer_spare_part_id_spare_parts_detail_spare_part_id_fk": {
+          "name": "sparepart_analyzer_spare_part_id_spare_parts_detail_spare_part_id_fk",
+          "tableFrom": "sparepart_analyzer",
+          "tableTo": "spare_parts_detail",
+          "columnsFrom": [
+            "spare_part_id"
+          ],
+          "columnsTo": [
+            "spare_part_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "sparepart_analyzer_analyzer_id_analyzers_detail_analyzer_id_fk": {
+          "name": "sparepart_analyzer_analyzer_id_analyzers_detail_analyzer_id_fk",
+          "tableFrom": "sparepart_analyzer",
+          "tableTo": "analyzers_detail",
+          "columnsFrom": [
+            "analyzer_id"
+          ],
+          "columnsTo": [
+            "analyzer_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.spare_parts_detail": {
+      "name": "spare_parts_detail",
+      "schema": "",
+      "columns": {
+        "spare_part_id": {
+          "name": "spare_part_id",
           "type": "serial",
           "primaryKey": true,
           "notNull": true
@@ -482,8 +527,15 @@
           "primaryKey": false,
           "notNull": true
         },
-        "part_state_id": {
-          "name": "part_state_id",
+        "consumable": {
+          "name": "consumable",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "spare_part_state": {
+          "name": "spare_part_state",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -491,9 +543,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "parts_item_id_items_item_id_fk": {
-          "name": "parts_item_id_items_item_id_fk",
-          "tableFrom": "parts",
+        "spare_parts_detail_item_id_items_item_id_fk": {
+          "name": "spare_parts_detail_item_id_items_item_id_fk",
+          "tableFrom": "spare_parts_detail",
           "tableTo": "items",
           "columnsFrom": [
             "item_id"
@@ -617,7 +669,7 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": "now()"
         },
         "updated_by": {
@@ -754,7 +806,7 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": "now()"
         },
         "updated_by": {

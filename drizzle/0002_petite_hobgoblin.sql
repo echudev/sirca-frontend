@@ -1,1 +1,0 @@
-ALTER TABLE "parts" ADD COLUMN "part_type" varchar(20) NOT NULL;

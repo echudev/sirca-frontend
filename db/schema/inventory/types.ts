@@ -8,13 +8,7 @@ export enum ItemType {
   DATALOGGER = "DATALOGGER",
 }
 
-export enum PartType {
-  CONSUMABLE = "CONSUMABLE",
-  REPLACEABLE = "REPLACEABLE",
-  REPAIRABLE = "REPAIRABLE",
-}
-
-export enum PartState {
+export enum SparePartState {
   NEW = "NEW",
   USED = "USED",
   REPAIRED = "REPAIRED",

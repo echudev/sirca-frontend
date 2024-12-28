@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1734460555916,
-      "tag": "0000_confused_golden_guardian",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1734554455459,
-      "tag": "0001_amazing_smasher",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1735395075745,
-      "tag": "0002_petite_hobgoblin",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1735396657465,
-      "tag": "0003_tense_sue_storm",
+      "when": 1735427821478,
+      "tag": "0000_sour_nightmare",
       "breakpoints": true
     }
   ]
