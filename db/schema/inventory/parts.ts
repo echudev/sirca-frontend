@@ -10,7 +10,8 @@ export const parts = pgTable("parts", {
     .references(() => items.id, { onDelete: "cascade" }),
   partNumber: varchar("part_number", { length: 30 }).notNull(),
   serialNumber: varchar("part_serialnumber", { length: 40 }).notNull(),
-  stateId: integer("part_state_id").notNull().$type<PartState>(),
+  partType: varchar("part_type", { length: 20 }).notNull(),
+  partState: integer("part_state").notNull().$type<PartState>(),
 });
 
 export const partsRelations = relations(parts, ({ one }) => ({

@@ -6,14 +6,21 @@ export enum ItemType {
   FLOW_METER = "FLOW_METER",
   PROBE = "PROBE",
   DATALOGGER = "DATALOGGER",
+}
+
+export enum PartType {
   CONSUMABLE = "CONSUMABLE",
+  REPLACEABLE = "REPLACEABLE",
+  REPAIRABLE = "REPAIRABLE",
 }
 
 export enum PartState {
-  NEW = "NEW", // Fresh from manufacturer
-  USED = "USED", // In use
-  EXPIRED = "EXPIRED", // Past usable life
-  BROKEN = "BROKEN", // Broken
+  NEW = "NEW",
+  USED = "USED",
+  REPAIRED = "REPAIRED",
+  EXHAUSTED = "EXHAUSTED",
+  EXPIRED = "EXPIRED",
+  BROKEN = "BROKEN",
 }
 
 export enum AnalyzerState {
