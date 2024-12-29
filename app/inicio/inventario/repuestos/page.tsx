@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 const title = "Partes y Repuestos";
 const description = "Listado con los repuestos nuevos y usados en la red";
 
-export default function Partes() {
+export default function Repuestos() {
   return (
     <div className="flex flex-col h-full px-4 overflow-auto">
       <PageHeader title={title} description={description} />
