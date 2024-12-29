@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "App de inventario de la red",
 };
 
-const title = "Partes y Repuestos";
+const title = "Repuestos";
 const description = "Listado con los repuestos nuevos y usados en la red";
 
 export default function Repuestos() {
