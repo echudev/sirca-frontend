@@ -8,12 +8,17 @@ export enum ItemType {
   DATALOGGER = "DATALOGGER",
 }
 
+export enum SparePartType {
+  FILTER = "FILTER",
+  PUMP_KIT = "PUMP_KIT",
+  OTHER = "OTHER",
+}
+
 export enum SparePartState {
   NEW = "NEW",
   USED = "USED",
   REPAIRED = "REPAIRED",
   EXHAUSTED = "EXHAUSTED",
-  EXPIRED = "EXPIRED",
   BROKEN = "BROKEN",
 }
 

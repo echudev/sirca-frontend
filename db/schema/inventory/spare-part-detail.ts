@@ -1,12 +1,6 @@
-import {
-  integer,
-  pgTable,
-  varchar,
-  serial,
-  boolean,
-} from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar, serial } from "drizzle-orm/pg-core";
 import { items } from "./items";
-import { SparePartState } from "./types";
+import { SparePartState, SparePartType } from "./types";
 import { relations } from "drizzle-orm";
 
 export const sparePartsDetail = pgTable("spare_parts_detail", {
@@ -16,8 +10,12 @@ export const sparePartsDetail = pgTable("spare_parts_detail", {
     .references(() => items.id, { onDelete: "cascade" }),
   partNumber: varchar("part_number", { length: 30 }).notNull(),
   serialNumber: varchar("part_serialnumber", { length: 40 }).notNull(),
-  consumable: boolean("consumable").default(false).notNull(),
-  sparePartState: integer("spare_part_state").notNull().$type<SparePartState>(),
+  sparePartType: varchar("spare_part_type", { length: 20 })
+    .notNull()
+    .$type<SparePartType>(),
+  sparePartState: varchar("spare_part_state", { length: 20 })
+    .notNull()
+    .$type<SparePartState>(),
 });
 
 export const sparePartRelations = relations(sparePartsDetail, ({ one }) => ({
