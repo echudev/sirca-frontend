@@ -1,11 +1,13 @@
 export enum ItemType {
   ANALYZER = "ANALYZER",
-  PART = "PART",
+  ACCESSORY = "ACCESSORY",
+  SPARE_PART = "SPARE_PART",
   CYLINDER = "CYLINDER",
-  PUMP = "PUMP",
+  EXTERNAL_PUMP = "EXTERNAL_PUMP",
   FLOW_METER = "FLOW_METER",
-  PROBE = "PROBE",
   DATALOGGER = "DATALOGGER",
+  UPS = "UPS",
+  OTHER = "OTHER",
 }
 
 export enum SparePartType {
