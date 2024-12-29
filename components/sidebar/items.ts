@@ -46,8 +46,8 @@ export const inventario = {
       url: "/inicio/inventario/equipos",
     },
     {
-      title: "Partes",
-      url: "/inicio/inventario/partes",
+      title: "Repuestos",
+      url: "/inicio/inventario/repuestos",
     },
     {
       title: "Gases",
