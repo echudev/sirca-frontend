@@ -27,6 +27,7 @@ export const items = pgTable("items", {
   code: varchar("item_code", { length: 40 }).notNull().unique(),
   serialNumber: varchar("part_serialnumber", { length: 40 }).notNull(),
   description: text("item_description"),
+  itemImage: text("item_image"),
   adquisitionDate: date("item_adquisition_date").notNull(),
   ...commonColumns,
 });
