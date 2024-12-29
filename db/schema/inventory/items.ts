@@ -27,12 +27,12 @@ export const items = pgTable("items", {
   models: integer("item_model_id")
     .notNull()
     .references(() => models.id, { onDelete: "cascade" }),
-  name: varchar("item_name", { length: 100 }).notNull(),
-  code: varchar("item_code", { length: 40 }).notNull().unique(),
-  serialNumber: varchar("part_serialnumber", { length: 40 }).notNull(),
-  description: text("item_description"),
+  itemShortName: varchar("item_short_name", { length: 30 }).notNull(),
+  itemCode: varchar("item_code", { length: 40 }).notNull().unique(),
+  itemSerialNumber: varchar("item_serial_number", { length: 40 }).notNull(),
+  itemDescription: text("item_description"),
   itemImage: text("item_image"),
-  adquisitionDate: date("item_adquisition_date").notNull(),
+  itemAdquisitionDate: date("item_adquisition_date").notNull(),
   ...commonColumns,
 });
 
