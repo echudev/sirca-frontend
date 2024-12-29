@@ -9,13 +9,12 @@ export const metadata: Metadata = {
   description: "App de inventario de la red",
 };
 
-const title = "Repuestos";
-const description = "Listado con los repuestos nuevos y usados en la red";
+const title = "Listado de repuestos y consumibles";
 
 export default function Repuestos() {
   return (
     <div className="flex flex-col h-full px-4 overflow-auto">
-      <PageHeader title={title} description={description} />
+      <PageHeader title={title} />
       <Suspense fallback={<Loader />}>
         <TablaPartes />
       </Suspense>
