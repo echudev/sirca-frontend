@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1735427821478,
-      "tag": "0000_sour_nightmare",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1735447162891,
-      "tag": "0001_swift_whiplash",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1735447802495,
-      "tag": "0002_worthless_doomsday",
+      "when": 1735771360037,
+      "tag": "0000_curvy_microchip",
       "breakpoints": true
     }
   ]

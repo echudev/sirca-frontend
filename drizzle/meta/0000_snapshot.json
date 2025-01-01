@@ -1,5 +1,5 @@
 {
-  "id": "9ccd24cd-edd9-4e9f-b44f-2f6159df6564",
+  "id": "bf6caef0-a9a0-4d54-8880-b7cb49b452ae",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -10,9 +10,10 @@
       "columns": {
         "analyzer_id": {
           "name": "analyzer_id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "GENERATED ALLWAYS AS IDENTITY"
         },
         "item_id": {
           "name": "item_id",
@@ -20,21 +21,15 @@
           "primaryKey": false,
           "notNull": true
         },
-        "brand_id": {
-          "name": "brand_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "model_id": {
-          "name": "model_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
         "analyzer_state": {
           "name": "analyzer_state",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "item_serial_number": {
+          "name": "item_serial_number",
+          "type": "varchar(40)",
           "primaryKey": false,
           "notNull": true
         },
@@ -71,32 +66,6 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
-        },
-        "analyzers_detail_brand_id_brands_brand_id_fk": {
-          "name": "analyzers_detail_brand_id_brands_brand_id_fk",
-          "tableFrom": "analyzers_detail",
-          "tableTo": "brands",
-          "columnsFrom": [
-            "brand_id"
-          ],
-          "columnsTo": [
-            "brand_id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "analyzers_detail_model_id_models_model_id_fk": {
-          "name": "analyzers_detail_model_id_models_model_id_fk",
-          "tableFrom": "analyzers_detail",
-          "tableTo": "models",
-          "columnsFrom": [
-            "model_id"
-          ],
-          "columnsTo": [
-            "model_id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -113,35 +82,48 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.brands": {
-      "name": "brands",
+    "public.spare_parts_detail": {
+      "name": "spare_parts_detail",
       "schema": "",
       "columns": {
-        "brand_id": {
-          "name": "brand_id",
-          "type": "serial",
+        "sparepart_id": {
+          "name": "sparepart_id",
+          "type": "integer",
           "primaryKey": true,
+          "notNull": true,
+          "default": "GENERATED ALLWAYS AS IDENTITY"
+        },
+        "item_id": {
+          "name": "item_id",
+          "type": "integer",
+          "primaryKey": false,
           "notNull": true
         },
-        "brand_name": {
-          "name": "brand_name",
-          "type": "varchar(40)",
+        "sparepart_state": {
+          "name": "sparepart_state",
+          "type": "varchar(20)",
           "primaryKey": false,
           "notNull": true
         }
       },
       "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "brands_brand_name_unique": {
-          "name": "brands_brand_name_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "brand_name"
-          ]
+      "foreignKeys": {
+        "spare_parts_detail_item_id_items_item_id_fk": {
+          "name": "spare_parts_detail_item_id_items_item_id_fk",
+          "tableFrom": "spare_parts_detail",
+          "tableTo": "items",
+          "columnsFrom": [
+            "item_id"
+          ],
+          "columnsTo": [
+            "item_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -152,9 +134,10 @@
       "columns": {
         "cylinder_id": {
           "name": "cylinder_id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "GENERATED ALLWAYS AS IDENTITY"
         },
         "item_id": {
           "name": "item_id",
@@ -306,58 +289,62 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.items": {
-      "name": "items",
+    "public.brands": {
+      "name": "brands",
       "schema": "",
       "columns": {
-        "item_id": {
-          "name": "item_id",
-          "type": "serial",
+        "id": {
+          "name": "id",
+          "type": "integer",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "GENERATED ALLWAYS AS IDENTITY"
         },
-        "item_type": {
-          "name": "item_type",
-          "type": "varchar(20)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "item_name": {
-          "name": "item_name",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "item_code": {
-          "name": "item_code",
+        "name": {
+          "name": "name",
           "type": "varchar(40)",
           "primaryKey": false,
           "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "brands_name_unique": {
+          "name": "brands_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.item_subcategories": {
+      "name": "item_subcategories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "GENERATED ALLWAYS AS IDENTITY"
         },
-        "part_serialnumber": {
-          "name": "part_serialnumber",
-          "type": "varchar(40)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "item_description": {
-          "name": "item_description",
+        "name": {
+          "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
-        },
-        "item_adquisition_date": {
-          "name": "item_adquisition_date",
-          "type": "date",
-          "primaryKey": false,
           "notNull": true
         },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
+        "category_id": {
+          "name": "category_id",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": true
         },
         "updated_at": {
           "name": "updated_at",
@@ -365,39 +352,26 @@
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
-        },
-        "updated_by": {
-          "name": "updated_by",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "is_deleted": {
-          "name": "is_deleted",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "items_item_code_unique": {
-          "name": "items_item_code_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "item_code"
-          ]
+      "foreignKeys": {
+        "item_subcategories_category_id_item_subcategories_id_fk": {
+          "name": "item_subcategories_category_id_item_subcategories_id_fk",
+          "tableFrom": "item_subcategories",
+          "tableTo": "item_subcategories",
+          "columnsFrom": [
+            "category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -408,9 +382,10 @@
       "columns": {
         "model_id": {
           "name": "model_id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "GENERATED ALLWAYS AS IDENTITY"
         },
         "model_name": {
           "name": "model_name",
@@ -427,15 +402,15 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "models_brand_id_brands_brand_id_fk": {
-          "name": "models_brand_id_brands_brand_id_fk",
+        "models_brand_id_brands_id_fk": {
+          "name": "models_brand_id_brands_id_fk",
           "tableFrom": "models",
           "tableTo": "brands",
           "columnsFrom": [
             "brand_id"
           ],
           "columnsTo": [
-            "brand_id"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -443,6 +418,117 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.items": {
+      "name": "items",
+      "schema": "",
+      "columns": {
+        "item_id": {
+          "name": "item_id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "GENERATED ALLWAYS AS IDENTITY"
+        },
+        "item_name": {
+          "name": "item_name",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "item_subcategory_id": {
+          "name": "item_subcategory_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "item_code": {
+          "name": "item_code",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "brand_id": {
+          "name": "brand_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "model_id": {
+          "name": "model_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "acquisition_date": {
+          "name": "acquisition_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "items_item_subcategory_id_item_subcategories_id_fk": {
+          "name": "items_item_subcategory_id_item_subcategories_id_fk",
+          "tableFrom": "items",
+          "tableTo": "item_subcategories",
+          "columnsFrom": [
+            "item_subcategory_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "items_brand_id_brands_id_fk": {
+          "name": "items_brand_id_brands_id_fk",
+          "tableFrom": "items",
+          "tableTo": "brands",
+          "columnsFrom": [
+            "brand_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "items_model_id_models_model_id_fk": {
+          "name": "items_model_id_models_model_id_fk",
+          "tableFrom": "items",
+          "tableTo": "models",
+          "columnsFrom": [
+            "model_id"
+          ],
+          "columnsTo": [
+            "model_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "items_item_code_unique": {
+          "name": "items_item_code_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "item_code"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -466,15 +552,15 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "sparepart_analyzer_spare_part_id_spare_parts_detail_spare_part_id_fk": {
-          "name": "sparepart_analyzer_spare_part_id_spare_parts_detail_spare_part_id_fk",
+        "sparepart_analyzer_spare_part_id_spare_parts_detail_sparepart_id_fk": {
+          "name": "sparepart_analyzer_spare_part_id_spare_parts_detail_sparepart_id_fk",
           "tableFrom": "sparepart_analyzer",
           "tableTo": "spare_parts_detail",
           "columnsFrom": [
             "spare_part_id"
           ],
           "columnsTo": [
-            "spare_part_id"
+            "sparepart_id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -499,79 +585,16 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.spare_parts_detail": {
-      "name": "spare_parts_detail",
-      "schema": "",
-      "columns": {
-        "spare_part_id": {
-          "name": "spare_part_id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "item_id": {
-          "name": "item_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "part_number": {
-          "name": "part_number",
-          "type": "varchar(30)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "part_serialnumber": {
-          "name": "part_serialnumber",
-          "type": "varchar(40)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "consumable": {
-          "name": "consumable",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
-        "spare_part_state": {
-          "name": "spare_part_state",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "spare_parts_detail_item_id_items_item_id_fk": {
-          "name": "spare_parts_detail_item_id_items_item_id_fk",
-          "tableFrom": "spare_parts_detail",
-          "tableTo": "items",
-          "columnsFrom": [
-            "item_id"
-          ],
-          "columnsTo": [
-            "item_id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.stations": {
       "name": "stations",
       "schema": "",
       "columns": {
         "station_id": {
           "name": "station_id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "GENERATED ALLWAYS AS IDENTITY"
         },
         "station_name": {
           "name": "station_name",
@@ -630,9 +653,10 @@
       "columns": {
         "traslado_id": {
           "name": "traslado_id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "GENERATED ALLWAYS AS IDENTITY"
         },
         "item_id": {
           "name": "item_id",
@@ -658,38 +682,12 @@
           "primaryKey": false,
           "notNull": true
         },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
-        },
-        "updated_by": {
-          "name": "updated_by",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "is_deleted": {
-          "name": "is_deleted",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {},
