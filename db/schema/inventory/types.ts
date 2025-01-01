@@ -1,27 +1,12 @@
-export enum ItemType {
-  ANALYZER = "ANALYZER",
-  ACCESSORY = "ACCESSORY",
-  SPARE_PART = "SPARE_PART",
-  CYLINDER = "CYLINDER",
-  EXTERNAL_PUMP = "EXTERNAL_PUMP",
-  FLOW_METER = "FLOW_METER",
-  DATALOGGER = "DATALOGGER",
-  UPS = "UPS",
-  OTHER = "OTHER",
-}
-
-export enum SparePartType {
-  FILTER = "FILTER",
-  PUMP_KIT = "PUMP_KIT",
-  OTHER = "OTHER",
-}
-
 export enum SparePartState {
   NEW = "NEW",
   USED = "USED",
   REPAIRED = "REPAIRED",
-  EXHAUSTED = "EXHAUSTED",
   BROKEN = "BROKEN",
+}
+
+export enum ConsumableState {
+  EXHAUSTED = "EXHAUSTED",
 }
 
 export enum AnalyzerState {

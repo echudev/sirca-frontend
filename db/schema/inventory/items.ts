@@ -1,47 +1,41 @@
-import {
-  pgTable,
-  varchar,
-  text,
-  serial,
-  date,
-  integer,
-} from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
-import { ItemType } from "./types";
-import { analyzersDetail } from "./analyzers-detail";
-import { cylindersDetail } from "./cylinders-detail";
-import { sparePartsDetail } from "./spare-part-detail";
-import { sparePartAnalyzer } from "./spare-part-analyzer";
+import { pgTable, varchar, date, integer } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
+import { analyzerDetail } from "./detail-analyzers";
+import { cylinderDetail } from "./detail-cylinders";
+import { sparepartDetail } from "./detail-spareparts";
+import { sparePartAnalyzer } from "./sparepart-analyzer";
 import { inventory } from "./inventory";
 import { traslados } from "./traslados";
-import { brands } from "./brands";
-import { models } from "./models";
+import { itemSubcategories } from "./item-subcategories";
+import { itemModels } from "./item-models";
+import { itemBrands } from "./item-brands";
 import { commonColumns } from "../common-columns";
 
 export const items = pgTable("items", {
-  id: serial("item_id").primaryKey(),
-  itemType: varchar("item_type", { length: 20 }).notNull().$type<ItemType>(),
-  brands: integer("item_brand_id")
+  id: integer("item_id")
+    .primaryKey()
+    .default(sql`GENERATED ALLWAYS AS IDENTITY`),
+  itemName: varchar("item_name", { length: 30 }).notNull(),
+  itemSubcategoryID: integer("item_subcategory_id")
     .notNull()
-    .references(() => brands.id, { onDelete: "cascade" }),
-  models: integer("item_model_id")
-    .notNull()
-    .references(() => models.id, { onDelete: "cascade" }),
-  itemShortName: varchar("item_short_name", { length: 30 }).notNull(),
+    .references(() => itemSubcategories.id, { onDelete: "cascade" }),
   itemCode: varchar("item_code", { length: 40 }).notNull().unique(),
-  itemSerialNumber: varchar("item_serial_number", { length: 40 }).notNull(),
-  itemDescription: text("item_description"),
-  itemImage: text("item_image"),
-  itemAdquisitionDate: date("item_adquisition_date").notNull(),
-  ...commonColumns,
+  brandId: integer("brand_id").references(() => itemBrands.id, {
+    onDelete: "cascade",
+  }),
+  modelId: integer("model_id").references(() => itemModels.id, {
+    onDelete: "cascade",
+  }),
+  acquisitionDate: date("acquisition_date").notNull(),
+  updatedAt: commonColumns.updatedAt,
 });
 
 export const itemsRelations = relations(items, ({ one, many }) => ({
-  analyzer: one(analyzersDetail),
-  cylinder: one(cylindersDetail),
-  brand: one(brands),
-  model: one(models),
-  spareParts: one(sparePartsDetail),
+  analyzer: one(analyzerDetail),
+  cylinder: one(cylinderDetail),
+  subcategory: one(itemSubcategories),
+  model: one(itemModels),
+  spareParts: one(sparepartDetail),
   inventory: many(inventory),
   traslados: many(traslados),
   repuestoLinks: many(sparePartAnalyzer),

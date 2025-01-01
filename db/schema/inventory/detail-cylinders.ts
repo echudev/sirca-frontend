@@ -3,15 +3,16 @@ import {
   pgTable,
   varchar,
   text,
-  serial,
   decimal,
   date,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { items } from "./items";
 
-export const cylindersDetail = pgTable("cylinders_detail", {
-  id: serial("cylinder_id").primaryKey(),
+export const cylinderDetail = pgTable("cylinders_detail", {
+  id: integer("cylinder_id")
+    .primaryKey()
+    .default(sql`GENERATED ALLWAYS AS IDENTITY`),
   itemId: integer("item_id")
     .notNull()
     .references(() => items.id, { onDelete: "cascade" }),
@@ -22,9 +23,9 @@ export const cylindersDetail = pgTable("cylinders_detail", {
   certificate: text("cylinder_certificate"),
 });
 
-export const cylindersRelations = relations(cylindersDetail, ({ one }) => ({
+export const CylinderDetailRelations = relations(cylinderDetail, ({ one }) => ({
   item: one(items, {
-    fields: [cylindersDetail.itemId],
+    fields: [cylinderDetail.itemId],
     references: [items.id],
   }),
 }));

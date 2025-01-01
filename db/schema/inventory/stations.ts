@@ -2,16 +2,18 @@ import {
   pgTable,
   varchar,
   text,
-  serial,
+  integer,
   decimal,
   date,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { inventory } from "./inventory";
 import { traslados } from "./traslados";
 
 export const stations = pgTable("stations", {
-  id: serial("station_id").primaryKey(),
+  id: integer("station_id")
+    .primaryKey()
+    .default(sql`GENERATED ALLWAYS AS IDENTITY`),
   name: varchar("station_name", { length: 100 }).notNull(),
   imageUrl: text("station_image_url"),
   latitude: decimal("station_latitude", { precision: 9, scale: 6 }),
