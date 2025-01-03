@@ -92,15 +92,15 @@ CREATE TABLE IF NOT EXISTS "station" (
 	"operational_since" date
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "traslados" (
-	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "traslados_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
+CREATE TABLE IF NOT EXISTS "transaction" (
+	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "transaction_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
 	"item_id" integer NOT NULL,
 	"station_id_origen" integer NOT NULL,
 	"station_id_destino" integer NOT NULL,
 	"cantidad" integer NOT NULL,
 	"updated_at" timestamp DEFAULT now(),
-	CONSTRAINT "station_check" CHECK ("traslados"."station_id_origen" <> "traslados"."station_id_destino"),
-	CONSTRAINT "cantidad_check" CHECK ("traslados"."cantidad" > 0)
+	CONSTRAINT "station_check" CHECK ("transaction"."station_id_origen" <> "transaction"."station_id_destino"),
+	CONSTRAINT "cantidad_check" CHECK ("transaction"."cantidad" > 0)
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "user" (
@@ -191,19 +191,19 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "traslados" ADD CONSTRAINT "traslados_item_id_item_id_fk" FOREIGN KEY ("item_id") REFERENCES "public"."item"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "transaction" ADD CONSTRAINT "transaction_item_id_item_id_fk" FOREIGN KEY ("item_id") REFERENCES "public"."item"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "traslados" ADD CONSTRAINT "traslados_station_id_origen_station_id_fk" FOREIGN KEY ("station_id_origen") REFERENCES "public"."station"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "transaction" ADD CONSTRAINT "transaction_station_id_origen_station_id_fk" FOREIGN KEY ("station_id_origen") REFERENCES "public"."station"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "traslados" ADD CONSTRAINT "traslados_station_id_destino_station_id_fk" FOREIGN KEY ("station_id_destino") REFERENCES "public"."station"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "transaction" ADD CONSTRAINT "transaction_station_id_destino_station_id_fk" FOREIGN KEY ("station_id_destino") REFERENCES "public"."station"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

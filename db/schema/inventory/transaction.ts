@@ -5,8 +5,8 @@ import { item } from "./item";
 import { station } from "./station";
 import { commonColumns } from "../common-columns";
 
-export const traslados = table(
-  "traslados",
+export const transaction = table(
+  "transaction",
   {
     id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
     itemId: t
@@ -33,17 +33,17 @@ export const traslados = table(
   ]
 );
 
-export const trasladosRelations = relations(traslados, ({ one }) => ({
+export const TransactionRelations = relations(transaction, ({ one }) => ({
   item: one(item, {
-    fields: [traslados.itemId],
+    fields: [transaction.itemId],
     references: [item.id],
   }),
   fromStation: one(station, {
-    fields: [traslados.fromStationId],
+    fields: [transaction.fromStationId],
     references: [station.id],
   }),
   toStation: one(station, {
-    fields: [traslados.toStationId],
+    fields: [transaction.toStationId],
     references: [station.id],
   }),
 }));

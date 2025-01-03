@@ -1,5 +1,5 @@
 {
-  "id": "f1772585-c26b-434a-a058-b45fc956b9ba",
+  "id": "f45e7de4-b92a-43e1-ad00-8248e8cafe65",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -790,8 +790,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.traslados": {
-      "name": "traslados",
+    "public.transaction": {
+      "name": "transaction",
       "schema": "",
       "columns": {
         "id": {
@@ -801,7 +801,7 @@
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "traslados_id_seq",
+            "name": "transaction_id_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -845,9 +845,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "traslados_item_id_item_id_fk": {
-          "name": "traslados_item_id_item_id_fk",
-          "tableFrom": "traslados",
+        "transaction_item_id_item_id_fk": {
+          "name": "transaction_item_id_item_id_fk",
+          "tableFrom": "transaction",
           "tableTo": "item",
           "columnsFrom": [
             "item_id"
@@ -858,9 +858,9 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "traslados_station_id_origen_station_id_fk": {
-          "name": "traslados_station_id_origen_station_id_fk",
-          "tableFrom": "traslados",
+        "transaction_station_id_origen_station_id_fk": {
+          "name": "transaction_station_id_origen_station_id_fk",
+          "tableFrom": "transaction",
           "tableTo": "station",
           "columnsFrom": [
             "station_id_origen"
@@ -871,9 +871,9 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "traslados_station_id_destino_station_id_fk": {
-          "name": "traslados_station_id_destino_station_id_fk",
-          "tableFrom": "traslados",
+        "transaction_station_id_destino_station_id_fk": {
+          "name": "transaction_station_id_destino_station_id_fk",
+          "tableFrom": "transaction",
           "tableTo": "station",
           "columnsFrom": [
             "station_id_destino"
@@ -891,11 +891,11 @@
       "checkConstraints": {
         "station_check": {
           "name": "station_check",
-          "value": "\"traslados\".\"station_id_origen\" <> \"traslados\".\"station_id_destino\""
+          "value": "\"transaction\".\"station_id_origen\" <> \"transaction\".\"station_id_destino\""
         },
         "cantidad_check": {
           "name": "cantidad_check",
-          "value": "\"traslados\".\"cantidad\" > 0"
+          "value": "\"transaction\".\"cantidad\" > 0"
         }
       },
       "isRLSEnabled": false

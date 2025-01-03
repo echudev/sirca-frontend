@@ -6,7 +6,7 @@ import { detailCylinder } from "./detail-cylinders";
 import { detailSparepart } from "./detail-sparepart";
 import { equipmentToSpareparts } from "./equipment-to-spareparts";
 import { inventory } from "./inventory";
-import { traslados } from "./traslados";
+import { transaction } from "./transaction";
 import { itemSubcategories } from "./item-subcategories";
 import { model } from "./model";
 import { brand } from "./brand";
@@ -32,7 +32,7 @@ export const itemsRelations = relations(item, ({ one, many }) => ({
   itemBrands: one(brand),
   itemModels: one(model),
   inventory: many(inventory),
-  traslados: many(traslados),
+  traslados: many(transaction),
   equipmentToSpareparts: many(equipmentToSpareparts),
   sparepartsToEquipment: many(equipmentToSpareparts),
 }));
