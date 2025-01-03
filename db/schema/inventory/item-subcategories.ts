@@ -1,14 +1,14 @@
-import { relations, sql } from "drizzle-orm";
-import { integer, text, pgTable } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import * as t from "drizzle-orm/pg-core";
+import { pgTable as table } from "drizzle-orm/pg-core";
 import { itemCategories } from "./item-categories";
 import { commonColumns } from "../common-columns";
 
-export const itemSubcategories = pgTable("item_subcategories", {
-  id: integer("id")
-    .primaryKey()
-    .default(sql`GENERATED ALLWAYS AS IDENTITY`),
-  name: text("name").notNull(),
-  categoryId: integer("category_id")
+export const itemSubcategories = table("item_subcategories", {
+  id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
+  name: t.text("name").notNull(),
+  categoryId: t
+    .integer("category_id")
     .notNull()
     .references(() => itemCategories.id, {
       onDelete: "cascade",

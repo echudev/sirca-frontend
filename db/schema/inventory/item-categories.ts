@@ -1,11 +1,9 @@
-import { integer, text, pgTable } from "drizzle-orm/pg-core";
+import * as t from "drizzle-orm/pg-core";
+import { pgTable as table } from "drizzle-orm/pg-core";
 import { commonColumns } from "../common-columns";
-import { sql } from "drizzle-orm";
 
-export const itemCategories = pgTable("item_subcategories", {
-  id: integer("id")
-    .primaryKey()
-    .default(sql`GENERATED ALLWAYS AS IDENTITY`),
-  name: text("name").notNull(),
+export const itemCategories = table("item_subcategories", {
+  id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
+  name: t.text("name").notNull(),
   updatedAt: commonColumns.updatedAt,
 });

@@ -1,30 +1,35 @@
-import { integer, pgTable, check } from "drizzle-orm/pg-core";
+import * as t from "drizzle-orm/pg-core";
+import { pgTable as table } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 import { items } from "./items";
 import { stations } from "./stations";
 import { commonColumns } from "../common-columns";
 
-export const traslados = pgTable(
+export const traslados = table(
   "traslados",
   {
-    id: integer("traslado_id")
-      .primaryKey()
-      .default(sql`GENERATED ALLWAYS AS IDENTITY`),
-    itemId: integer("item_id")
+    id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
+    itemId: t
+      .integer("item_id")
       .notNull()
       .references(() => items.id, { onDelete: "cascade" }),
-    fromStationId: integer("station_id_origen")
+    fromStationId: t
+      .integer("station_id_origen")
       .notNull()
       .references(() => stations.id, { onDelete: "cascade" }),
-    toStationId: integer("station_id_destino")
+    toStationId: t
+      .integer("station_id_destino")
       .notNull()
       .references(() => stations.id, { onDelete: "cascade" }),
-    quantity: integer("cantidad").notNull(),
+    quantity: t.integer("cantidad").notNull(),
     updatedAt: commonColumns.updatedAt,
   },
   (table) => [
-    check("station_check", sql`${table.fromStationId} <> ${table.toStationId}`),
-    check("cantidad_check", sql`${table.quantity} > 0`),
+    t.check(
+      "station_check",
+      sql`${table.fromStationId} <> ${table.toStationId}`
+    ),
+    t.check("cantidad_check", sql`${table.quantity} > 0`),
   ]
 );
 

@@ -1,9 +1,10 @@
-import { pgTable, varchar, date, integer } from "drizzle-orm/pg-core";
-import { relations, sql } from "drizzle-orm";
+import * as t from "drizzle-orm/pg-core";
+import { pgTable as table } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { analyzerDetail } from "./detail-analyzers";
 import { cylinderDetail } from "./detail-cylinders";
 import { sparepartDetail } from "./detail-spareparts";
-import { sparePartAnalyzer } from "./sparepart-analyzer";
+import { equipmentToSpareparts } from "./equipment-to-spareparts";
 import { inventory } from "./inventory";
 import { traslados } from "./traslados";
 import { itemSubcategories } from "./item-subcategories";
@@ -11,33 +12,33 @@ import { itemModels } from "./item-models";
 import { itemBrands } from "./item-brands";
 import { commonColumns } from "../common-columns";
 
-export const items = pgTable("items", {
-  id: integer("item_id")
-    .primaryKey()
-    .default(sql`GENERATED ALLWAYS AS IDENTITY`),
-  itemName: varchar("item_name", { length: 30 }).notNull(),
-  itemSubcategoryID: integer("item_subcategory_id")
+export const items = table("items", {
+  id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
+  name: t.varchar("name", { length: 30 }).notNull(),
+  subcategoryID: t
+    .integer("subcategory_id")
     .notNull()
     .references(() => itemSubcategories.id, { onDelete: "cascade" }),
-  itemCode: varchar("item_code", { length: 40 }).notNull().unique(),
-  brandId: integer("brand_id").references(() => itemBrands.id, {
+  itemCode: t.varchar("item_code", { length: 40 }).notNull().unique(),
+  brandId: t.integer("brand_id").references(() => itemBrands.id, {
     onDelete: "cascade",
   }),
-  modelId: integer("model_id").references(() => itemModels.id, {
+  modelId: t.integer("model_id").references(() => itemModels.id, {
     onDelete: "cascade",
   }),
-  acquisitionDate: date("acquisition_date").notNull(),
+  acquisitionDate: t.date("acquisition_date").notNull(),
   updatedAt: commonColumns.updatedAt,
 });
 
 export const itemsRelations = relations(items, ({ one, many }) => ({
-  analyzer: one(analyzerDetail),
-  cylinder: one(cylinderDetail),
-  subcategory: one(itemSubcategories),
-  model: one(itemModels),
+  analyzerDetail: one(analyzerDetail),
+  cylinderDetail: one(cylinderDetail),
   spareParts: one(sparepartDetail),
+  subcategory: one(itemSubcategories),
+  itemBrands: one(itemBrands),
+  itemModels: one(itemModels),
   inventory: many(inventory),
   traslados: many(traslados),
-  repuestoLinks: many(sparePartAnalyzer),
-  analizadorLinks: many(sparePartAnalyzer),
+  equipmentToSpareparts: many(equipmentToSpareparts),
+  sparepartsToEquipment: many(equipmentToSpareparts),
 }));

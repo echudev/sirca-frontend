@@ -1,5 +1,5 @@
 {
-  "id": "bf6caef0-a9a0-4d54-8880-b7cb49b452ae",
+  "id": "21dafa6a-20c7-46d6-8571-0b22ad67af13",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -8,12 +8,22 @@
       "name": "analyzers_detail",
       "schema": "",
       "columns": {
-        "analyzer_id": {
-          "name": "analyzer_id",
+        "id": {
+          "name": "id",
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
-          "default": "GENERATED ALLWAYS AS IDENTITY"
+          "identity": {
+            "type": "always",
+            "name": "analyzers_detail_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "item_id": {
           "name": "item_id",
@@ -54,15 +64,15 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "analyzers_detail_item_id_items_item_id_fk": {
-          "name": "analyzers_detail_item_id_items_item_id_fk",
+        "analyzers_detail_item_id_items_id_fk": {
+          "name": "analyzers_detail_item_id_items_id_fk",
           "tableFrom": "analyzers_detail",
           "tableTo": "items",
           "columnsFrom": [
             "item_id"
           ],
           "columnsTo": [
-            "item_id"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -86,12 +96,22 @@
       "name": "spare_parts_detail",
       "schema": "",
       "columns": {
-        "sparepart_id": {
-          "name": "sparepart_id",
+        "id": {
+          "name": "id",
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
-          "default": "GENERATED ALLWAYS AS IDENTITY"
+          "identity": {
+            "type": "always",
+            "name": "spare_parts_detail_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "item_id": {
           "name": "item_id",
@@ -108,15 +128,15 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "spare_parts_detail_item_id_items_item_id_fk": {
-          "name": "spare_parts_detail_item_id_items_item_id_fk",
+        "spare_parts_detail_item_id_items_id_fk": {
+          "name": "spare_parts_detail_item_id_items_id_fk",
           "tableFrom": "spare_parts_detail",
           "tableTo": "items",
           "columnsFrom": [
             "item_id"
           ],
           "columnsTo": [
-            "item_id"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -132,12 +152,22 @@
       "name": "cylinders_detail",
       "schema": "",
       "columns": {
-        "cylinder_id": {
-          "name": "cylinder_id",
+        "id": {
+          "name": "id",
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
-          "default": "GENERATED ALLWAYS AS IDENTITY"
+          "identity": {
+            "type": "always",
+            "name": "cylinders_detail_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "item_id": {
           "name": "item_id",
@@ -178,15 +208,15 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "cylinders_detail_item_id_items_item_id_fk": {
-          "name": "cylinders_detail_item_id_items_item_id_fk",
+        "cylinders_detail_item_id_items_id_fk": {
+          "name": "cylinders_detail_item_id_items_id_fk",
           "tableFrom": "cylinders_detail",
           "tableTo": "items",
           "columnsFrom": [
             "item_id"
           ],
           "columnsTo": [
-            "item_id"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -196,6 +226,71 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.equipment_to_spareparts": {
+      "name": "equipment_to_spareparts",
+      "schema": "",
+      "columns": {
+        "equipment_id": {
+          "name": "equipment_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sparepart_id": {
+          "name": "sparepart_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "equipment_to_spareparts_equipment_id_items_id_fk": {
+          "name": "equipment_to_spareparts_equipment_id_items_id_fk",
+          "tableFrom": "equipment_to_spareparts",
+          "tableTo": "items",
+          "columnsFrom": [
+            "equipment_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "equipment_to_spareparts_sparepart_id_items_id_fk": {
+          "name": "equipment_to_spareparts_sparepart_id_items_id_fk",
+          "tableFrom": "equipment_to_spareparts",
+          "tableTo": "items",
+          "columnsFrom": [
+            "sparepart_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "equipment_to_spareparts_equipment_id_sparepart_id_pk": {
+          "name": "equipment_to_spareparts_equipment_id_sparepart_id_pk",
+          "columns": [
+            "equipment_id",
+            "sparepart_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "no_self_reference": {
+          "name": "no_self_reference",
+          "value": "\"equipment_to_spareparts\".\"sparepart_id\" <> \"equipment_to_spareparts\".\"equipment_id\""
+        }
+      },
       "isRLSEnabled": false
     },
     "public.inventory": {
@@ -256,37 +351,50 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "inventory_item_id_items_item_id_fk": {
-          "name": "inventory_item_id_items_item_id_fk",
+        "inventory_item_id_items_id_fk": {
+          "name": "inventory_item_id_items_id_fk",
           "tableFrom": "inventory",
           "tableTo": "items",
           "columnsFrom": [
             "item_id"
           ],
           "columnsTo": [
-            "item_id"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "inventory_station_id_stations_station_id_fk": {
-          "name": "inventory_station_id_stations_station_id_fk",
+        "inventory_station_id_stations_id_fk": {
+          "name": "inventory_station_id_stations_id_fk",
           "tableFrom": "inventory",
           "tableTo": "stations",
           "columnsFrom": [
             "station_id"
           ],
           "columnsTo": [
-            "station_id"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "inventory_item_id_station_id_pk": {
+          "name": "inventory_item_id_station_id_pk",
+          "columns": [
+            "item_id",
+            "station_id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "policies": {},
-      "checkConstraints": {},
+      "checkConstraints": {
+        "quantity_check": {
+          "name": "quantity_check",
+          "value": "\"inventory\".\"quantity\" >= 0"
+        }
+      },
       "isRLSEnabled": false
     },
     "public.brands": {
@@ -298,7 +406,17 @@
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
-          "default": "GENERATED ALLWAYS AS IDENTITY"
+          "identity": {
+            "type": "always",
+            "name": "brands_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "name": {
           "name": "name",
@@ -332,7 +450,17 @@
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
-          "default": "GENERATED ALLWAYS AS IDENTITY"
+          "identity": {
+            "type": "always",
+            "name": "item_subcategories_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "name": {
           "name": "name",
@@ -380,12 +508,22 @@
       "name": "models",
       "schema": "",
       "columns": {
-        "model_id": {
-          "name": "model_id",
+        "id": {
+          "name": "id",
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
-          "default": "GENERATED ALLWAYS AS IDENTITY"
+          "identity": {
+            "type": "always",
+            "name": "models_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "model_name": {
           "name": "model_name",
@@ -426,21 +564,31 @@
       "name": "items",
       "schema": "",
       "columns": {
-        "item_id": {
-          "name": "item_id",
+        "id": {
+          "name": "id",
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
-          "default": "GENERATED ALLWAYS AS IDENTITY"
+          "identity": {
+            "type": "always",
+            "name": "items_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
         },
-        "item_name": {
-          "name": "item_name",
+        "name": {
+          "name": "name",
           "type": "varchar(30)",
           "primaryKey": false,
           "notNull": true
         },
-        "item_subcategory_id": {
-          "name": "item_subcategory_id",
+        "subcategory_id": {
+          "name": "subcategory_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -479,12 +627,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "items_item_subcategory_id_item_subcategories_id_fk": {
-          "name": "items_item_subcategory_id_item_subcategories_id_fk",
+        "items_subcategory_id_item_subcategories_id_fk": {
+          "name": "items_subcategory_id_item_subcategories_id_fk",
           "tableFrom": "items",
           "tableTo": "item_subcategories",
           "columnsFrom": [
-            "item_subcategory_id"
+            "subcategory_id"
           ],
           "columnsTo": [
             "id"
@@ -505,15 +653,15 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "items_model_id_models_model_id_fk": {
-          "name": "items_model_id_models_model_id_fk",
+        "items_model_id_models_id_fk": {
+          "name": "items_model_id_models_id_fk",
           "tableFrom": "items",
           "tableTo": "models",
           "columnsFrom": [
             "model_id"
           ],
           "columnsTo": [
-            "model_id"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -533,68 +681,26 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.sparepart_analyzer": {
-      "name": "sparepart_analyzer",
-      "schema": "",
-      "columns": {
-        "spare_part_id": {
-          "name": "spare_part_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "analyzer_id": {
-          "name": "analyzer_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "sparepart_analyzer_spare_part_id_spare_parts_detail_sparepart_id_fk": {
-          "name": "sparepart_analyzer_spare_part_id_spare_parts_detail_sparepart_id_fk",
-          "tableFrom": "sparepart_analyzer",
-          "tableTo": "spare_parts_detail",
-          "columnsFrom": [
-            "spare_part_id"
-          ],
-          "columnsTo": [
-            "sparepart_id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "sparepart_analyzer_analyzer_id_analyzers_detail_analyzer_id_fk": {
-          "name": "sparepart_analyzer_analyzer_id_analyzers_detail_analyzer_id_fk",
-          "tableFrom": "sparepart_analyzer",
-          "tableTo": "analyzers_detail",
-          "columnsFrom": [
-            "analyzer_id"
-          ],
-          "columnsTo": [
-            "analyzer_id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.stations": {
       "name": "stations",
       "schema": "",
       "columns": {
-        "station_id": {
-          "name": "station_id",
+        "id": {
+          "name": "id",
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
-          "default": "GENERATED ALLWAYS AS IDENTITY"
+          "identity": {
+            "type": "always",
+            "name": "stations_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "station_name": {
           "name": "station_name",
@@ -651,12 +757,22 @@
       "name": "traslados",
       "schema": "",
       "columns": {
-        "traslado_id": {
-          "name": "traslado_id",
+        "id": {
+          "name": "id",
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
-          "default": "GENERATED ALLWAYS AS IDENTITY"
+          "identity": {
+            "type": "always",
+            "name": "traslados_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "item_id": {
           "name": "item_id",
@@ -692,41 +808,41 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "traslados_item_id_items_item_id_fk": {
-          "name": "traslados_item_id_items_item_id_fk",
+        "traslados_item_id_items_id_fk": {
+          "name": "traslados_item_id_items_id_fk",
           "tableFrom": "traslados",
           "tableTo": "items",
           "columnsFrom": [
             "item_id"
           ],
           "columnsTo": [
-            "item_id"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "traslados_station_id_origen_stations_station_id_fk": {
-          "name": "traslados_station_id_origen_stations_station_id_fk",
+        "traslados_station_id_origen_stations_id_fk": {
+          "name": "traslados_station_id_origen_stations_id_fk",
           "tableFrom": "traslados",
           "tableTo": "stations",
           "columnsFrom": [
             "station_id_origen"
           ],
           "columnsTo": [
-            "station_id"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "traslados_station_id_destino_stations_station_id_fk": {
-          "name": "traslados_station_id_destino_stations_station_id_fk",
+        "traslados_station_id_destino_stations_id_fk": {
+          "name": "traslados_station_id_destino_stations_id_fk",
           "tableFrom": "traslados",
           "tableTo": "stations",
           "columnsFrom": [
             "station_id_destino"
           ],
           "columnsTo": [
-            "station_id"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"

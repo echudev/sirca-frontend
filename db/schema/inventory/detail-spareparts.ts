@@ -1,16 +1,17 @@
-import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
+import * as t from "drizzle-orm/pg-core";
+import { pgTable as table } from "drizzle-orm/pg-core";
 import { items } from "./items";
 import { SparePartState } from "./types";
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 
-export const sparepartDetail = pgTable("spare_parts_detail", {
-  sparepartID: integer("sparepart_id")
-    .primaryKey()
-    .default(sql`GENERATED ALLWAYS AS IDENTITY`),
-  itemID: integer("item_id")
+export const sparepartDetail = table("spare_parts_detail", {
+  id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
+  itemID: t
+    .integer("item_id")
     .notNull()
     .references(() => items.id, { onDelete: "cascade" }),
-  sparepartState: varchar("sparepart_state", { length: 20 })
+  sparepartState: t
+    .varchar("sparepart_state", { length: 20 })
     .notNull()
     .$type<SparePartState>(),
 });
