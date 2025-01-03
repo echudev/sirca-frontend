@@ -1,8 +1,8 @@
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
-import { items } from "./items";
-import { stations } from "./stations";
+import { item } from "./item";
+import { station } from "./station";
 import { commonColumns } from "../common-columns";
 
 export const inventory = table(
@@ -11,11 +11,11 @@ export const inventory = table(
     itemId: t
       .integer("item_id")
       .notNull()
-      .references(() => items.id, { onDelete: "cascade" }),
+      .references(() => item.id, { onDelete: "cascade" }),
     stationId: t
       .integer("station_id")
       .notNull()
-      .references(() => stations.id, { onDelete: "cascade" }),
+      .references(() => station.id, { onDelete: "cascade" }),
     quantity: t.integer("quantity").notNull(),
     ...commonColumns,
   },
@@ -26,12 +26,12 @@ export const inventory = table(
 );
 
 export const inventoryRelations = relations(inventory, ({ one }) => ({
-  item: one(items, {
+  item: one(item, {
     fields: [inventory.itemId],
-    references: [items.id],
+    references: [item.id],
   }),
-  station: one(stations, {
+  station: one(station, {
     fields: [inventory.stationId],
-    references: [stations.id],
+    references: [station.id],
   }),
 }));

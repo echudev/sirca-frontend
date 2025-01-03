@@ -1,14 +1,14 @@
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { items } from "./items";
+import { item } from "./item";
 
-export const cylinderDetail = table("cylinders_detail", {
+export const detailCylinder = table("detail_cylinder", {
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
   itemId: t
     .integer("item_id")
     .notNull()
-    .references(() => items.id, { onDelete: "cascade" }),
+    .references(() => item.id, { onDelete: "cascade" }),
   number: t.varchar("cylinder_number", { length: 30 }).notNull(),
   concentration: t.decimal("cylinder_concentration", {
     precision: 10,
@@ -19,9 +19,9 @@ export const cylinderDetail = table("cylinders_detail", {
   certificate: t.text("cylinder_certificate"),
 });
 
-export const CylinderDetailRelations = relations(cylinderDetail, ({ one }) => ({
-  item: one(items, {
-    fields: [cylinderDetail.itemId],
-    references: [items.id],
+export const DetailCylinderRelations = relations(detailCylinder, ({ one }) => ({
+  item: one(item, {
+    fields: [detailCylinder.itemId],
+    references: [item.id],
   }),
 }));

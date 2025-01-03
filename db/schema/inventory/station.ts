@@ -4,7 +4,7 @@ import { relations } from "drizzle-orm";
 import { inventory } from "./inventory";
 import { traslados } from "./traslados";
 
-export const stations = table("stations", {
+export const station = table("station", {
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
   name: t.varchar("station_name", { length: 100 }).notNull(),
   imageUrl: t.text("station_image_url"),
@@ -15,7 +15,7 @@ export const stations = table("stations", {
   operationalSince: t.date("operational_since"),
 });
 
-export const stationsRelations = relations(stations, ({ many }) => ({
+export const stationsRelations = relations(station, ({ many }) => ({
   inventory: many(inventory),
   traslados: many(traslados),
 }));

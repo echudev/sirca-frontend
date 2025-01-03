@@ -1,11 +1,11 @@
 {
-  "id": "21dafa6a-20c7-46d6-8571-0b22ad67af13",
+  "id": "f1772585-c26b-434a-a058-b45fc956b9ba",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.analyzers_detail": {
-      "name": "analyzers_detail",
+    "public.brand": {
+      "name": "brand",
       "schema": "",
       "columns": {
         "id": {
@@ -15,7 +15,51 @@
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "analyzers_detail_id_seq",
+            "name": "brand_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "brand_name_unique": {
+          "name": "brand_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.detail_analyzer": {
+      "name": "detail_analyzer",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "detail_analyzer_id_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -30,6 +74,12 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true
+        },
+        "model": {
+          "name": "model",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         },
         "analyzer_state": {
           "name": "analyzer_state",
@@ -64,10 +114,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "analyzers_detail_item_id_items_id_fk": {
-          "name": "analyzers_detail_item_id_items_id_fk",
-          "tableFrom": "analyzers_detail",
-          "tableTo": "items",
+        "detail_analyzer_item_id_item_id_fk": {
+          "name": "detail_analyzer_item_id_item_id_fk",
+          "tableFrom": "detail_analyzer",
+          "tableTo": "item",
           "columnsFrom": [
             "item_id"
           ],
@@ -76,12 +126,25 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "detail_analyzer_model_model_id_fk": {
+          "name": "detail_analyzer_model_model_id_fk",
+          "tableFrom": "detail_analyzer",
+          "tableTo": "model",
+          "columnsFrom": [
+            "model"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "analyzers_detail_item_id_unique": {
-          "name": "analyzers_detail_item_id_unique",
+        "detail_analyzer_item_id_unique": {
+          "name": "detail_analyzer_item_id_unique",
           "nullsNotDistinct": false,
           "columns": [
             "item_id"
@@ -92,8 +155,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.spare_parts_detail": {
-      "name": "spare_parts_detail",
+    "public.detail_consumable": {
+      "name": "detail_consumable",
       "schema": "",
       "columns": {
         "id": {
@@ -103,7 +166,7 @@
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "spare_parts_detail_id_seq",
+            "name": "detail_consumable_id_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -119,8 +182,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "sparepart_state": {
-          "name": "sparepart_state",
+        "consumable_state": {
+          "name": "consumable_state",
           "type": "varchar(20)",
           "primaryKey": false,
           "notNull": true
@@ -128,10 +191,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "spare_parts_detail_item_id_items_id_fk": {
-          "name": "spare_parts_detail_item_id_items_id_fk",
-          "tableFrom": "spare_parts_detail",
-          "tableTo": "items",
+        "detail_consumable_item_id_item_id_fk": {
+          "name": "detail_consumable_item_id_item_id_fk",
+          "tableFrom": "detail_consumable",
+          "tableTo": "item",
           "columnsFrom": [
             "item_id"
           ],
@@ -148,8 +211,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.cylinders_detail": {
-      "name": "cylinders_detail",
+    "public.detail_cylinder": {
+      "name": "detail_cylinder",
       "schema": "",
       "columns": {
         "id": {
@@ -159,7 +222,7 @@
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "cylinders_detail_id_seq",
+            "name": "detail_cylinder_id_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -208,10 +271,66 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "cylinders_detail_item_id_items_id_fk": {
-          "name": "cylinders_detail_item_id_items_id_fk",
-          "tableFrom": "cylinders_detail",
-          "tableTo": "items",
+        "detail_cylinder_item_id_item_id_fk": {
+          "name": "detail_cylinder_item_id_item_id_fk",
+          "tableFrom": "detail_cylinder",
+          "tableTo": "item",
+          "columnsFrom": [
+            "item_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.detail_sparepart": {
+      "name": "detail_sparepart",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "detail_sparepart_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "item_id": {
+          "name": "item_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sparepart_state": {
+          "name": "sparepart_state",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "detail_sparepart_item_id_item_id_fk": {
+          "name": "detail_sparepart_item_id_item_id_fk",
+          "tableFrom": "detail_sparepart",
+          "tableTo": "item",
           "columnsFrom": [
             "item_id"
           ],
@@ -247,10 +366,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "equipment_to_spareparts_equipment_id_items_id_fk": {
-          "name": "equipment_to_spareparts_equipment_id_items_id_fk",
+        "equipment_to_spareparts_equipment_id_item_id_fk": {
+          "name": "equipment_to_spareparts_equipment_id_item_id_fk",
           "tableFrom": "equipment_to_spareparts",
-          "tableTo": "items",
+          "tableTo": "item",
           "columnsFrom": [
             "equipment_id"
           ],
@@ -260,10 +379,10 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "equipment_to_spareparts_sparepart_id_items_id_fk": {
-          "name": "equipment_to_spareparts_sparepart_id_items_id_fk",
+        "equipment_to_spareparts_sparepart_id_item_id_fk": {
+          "name": "equipment_to_spareparts_sparepart_id_item_id_fk",
           "tableFrom": "equipment_to_spareparts",
-          "tableTo": "items",
+          "tableTo": "item",
           "columnsFrom": [
             "sparepart_id"
           ],
@@ -351,10 +470,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "inventory_item_id_items_id_fk": {
-          "name": "inventory_item_id_items_id_fk",
+        "inventory_item_id_item_id_fk": {
+          "name": "inventory_item_id_item_id_fk",
           "tableFrom": "inventory",
-          "tableTo": "items",
+          "tableTo": "item",
           "columnsFrom": [
             "item_id"
           ],
@@ -364,10 +483,10 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "inventory_station_id_stations_id_fk": {
-          "name": "inventory_station_id_stations_id_fk",
+        "inventory_station_id_station_id_fk": {
+          "name": "inventory_station_id_station_id_fk",
           "tableFrom": "inventory",
-          "tableTo": "stations",
+          "tableTo": "station",
           "columnsFrom": [
             "station_id"
           ],
@@ -395,50 +514,6 @@
           "value": "\"inventory\".\"quantity\" >= 0"
         }
       },
-      "isRLSEnabled": false
-    },
-    "public.brands": {
-      "name": "brands",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "brands_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(40)",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "brands_name_unique": {
-          "name": "brands_name_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
       "isRLSEnabled": false
     },
     "public.item_subcategories": {
@@ -504,8 +579,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.models": {
-      "name": "models",
+    "public.item": {
+      "name": "item",
       "schema": "",
       "columns": {
         "id": {
@@ -515,7 +590,90 @@
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "models_id_seq",
+            "name": "item_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "item_code": {
+          "name": "item_code",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subcategory_id": {
+          "name": "subcategory_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "acquisition_date": {
+          "name": "acquisition_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "item_subcategory_id_item_subcategories_id_fk": {
+          "name": "item_subcategory_id_item_subcategories_id_fk",
+          "tableFrom": "item",
+          "tableTo": "item_subcategories",
+          "columnsFrom": [
+            "subcategory_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "item_item_code_unique": {
+          "name": "item_item_code_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "item_code"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.model": {
+      "name": "model",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "model_id_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -540,10 +698,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "models_brand_id_brands_id_fk": {
-          "name": "models_brand_id_brands_id_fk",
-          "tableFrom": "models",
-          "tableTo": "brands",
+        "model_brand_id_brand_id_fk": {
+          "name": "model_brand_id_brand_id_fk",
+          "tableFrom": "model",
+          "tableTo": "brand",
           "columnsFrom": [
             "brand_id"
           ],
@@ -560,8 +718,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.items": {
-      "name": "items",
+    "public.station": {
+      "name": "station",
       "schema": "",
       "columns": {
         "id": {
@@ -571,128 +729,7 @@
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "items_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(30)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "subcategory_id": {
-          "name": "subcategory_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "item_code": {
-          "name": "item_code",
-          "type": "varchar(40)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "brand_id": {
-          "name": "brand_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "model_id": {
-          "name": "model_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "acquisition_date": {
-          "name": "acquisition_date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "items_subcategory_id_item_subcategories_id_fk": {
-          "name": "items_subcategory_id_item_subcategories_id_fk",
-          "tableFrom": "items",
-          "tableTo": "item_subcategories",
-          "columnsFrom": [
-            "subcategory_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "items_brand_id_brands_id_fk": {
-          "name": "items_brand_id_brands_id_fk",
-          "tableFrom": "items",
-          "tableTo": "brands",
-          "columnsFrom": [
-            "brand_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "items_model_id_models_id_fk": {
-          "name": "items_model_id_models_id_fk",
-          "tableFrom": "items",
-          "tableTo": "models",
-          "columnsFrom": [
-            "model_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "items_item_code_unique": {
-          "name": "items_item_code_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "item_code"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.stations": {
-      "name": "stations",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "stations_id_seq",
+            "name": "station_id_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -808,10 +845,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "traslados_item_id_items_id_fk": {
-          "name": "traslados_item_id_items_id_fk",
+        "traslados_item_id_item_id_fk": {
+          "name": "traslados_item_id_item_id_fk",
           "tableFrom": "traslados",
-          "tableTo": "items",
+          "tableTo": "item",
           "columnsFrom": [
             "item_id"
           ],
@@ -821,10 +858,10 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "traslados_station_id_origen_stations_id_fk": {
-          "name": "traslados_station_id_origen_stations_id_fk",
+        "traslados_station_id_origen_station_id_fk": {
+          "name": "traslados_station_id_origen_station_id_fk",
           "tableFrom": "traslados",
-          "tableTo": "stations",
+          "tableTo": "station",
           "columnsFrom": [
             "station_id_origen"
           ],
@@ -834,10 +871,10 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "traslados_station_id_destino_stations_id_fk": {
-          "name": "traslados_station_id_destino_stations_id_fk",
+        "traslados_station_id_destino_station_id_fk": {
+          "name": "traslados_station_id_destino_station_id_fk",
           "tableFrom": "traslados",
-          "tableTo": "stations",
+          "tableTo": "station",
           "columnsFrom": [
             "station_id_destino"
           ],
@@ -863,8 +900,8 @@
       },
       "isRLSEnabled": false
     },
-    "public.users": {
-      "name": "users",
+    "public.user": {
+      "name": "user",
       "schema": "",
       "columns": {
         "id": {
@@ -874,7 +911,7 @@
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "users_id_seq",
+            "name": "user_id_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -947,15 +984,15 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "users_name_unique": {
-          "name": "users_name_unique",
+        "user_name_unique": {
+          "name": "user_name_unique",
           "nullsNotDistinct": false,
           "columns": [
             "name"
           ]
         },
-        "users_email_unique": {
-          "name": "users_email_unique",
+        "user_email_unique": {
+          "name": "user_email_unique",
           "nullsNotDistinct": false,
           "columns": [
             "email"

@@ -1,15 +1,15 @@
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
-import { items } from "./items";
+import { item } from "./item";
 import { SparePartState } from "./types";
 import { relations } from "drizzle-orm";
 
-export const sparepartDetail = table("spare_parts_detail", {
+export const detailSparepart = table("detail_sparepart", {
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
   itemID: t
     .integer("item_id")
     .notNull()
-    .references(() => items.id, { onDelete: "cascade" }),
+    .references(() => item.id, { onDelete: "cascade" }),
   sparepartState: t
     .varchar("sparepart_state", { length: 20 })
     .notNull()
@@ -17,11 +17,11 @@ export const sparepartDetail = table("spare_parts_detail", {
 });
 
 export const SparepartDetailRelations = relations(
-  sparepartDetail,
+  detailSparepart,
   ({ one }) => ({
-    item: one(items, {
-      fields: [sparepartDetail.itemID],
-      references: [items.id],
+    item: one(item, {
+      fields: [detailSparepart.itemID],
+      references: [item.id],
     }),
   })
 );

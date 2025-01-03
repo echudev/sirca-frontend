@@ -1,6 +1,6 @@
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
-import { items } from "./items";
+import { item } from "./item";
 import { relations, sql } from "drizzle-orm";
 
 export const equipmentToSpareparts = table(
@@ -9,11 +9,11 @@ export const equipmentToSpareparts = table(
     equipmentID: t
       .integer("equipment_id")
       .notNull()
-      .references(() => items.id, { onDelete: "cascade" }),
+      .references(() => item.id, { onDelete: "cascade" }),
     sparepartID: t
       .integer("sparepart_id")
       .notNull()
-      .references(() => items.id, { onDelete: "cascade" }),
+      .references(() => item.id, { onDelete: "cascade" }),
   },
   (table) => [
     t.primaryKey({ columns: [table.equipmentID, table.sparepartID] }),
@@ -28,13 +28,13 @@ export const equipmentToSpareparts = table(
 export const repuestoAnalyzadorRelations = relations(
   equipmentToSpareparts,
   ({ one }) => ({
-    repuesto: one(items, {
+    repuesto: one(item, {
       fields: [equipmentToSpareparts.sparepartID],
-      references: [items.id],
+      references: [item.id],
     }),
-    analizador: one(items, {
+    analizador: one(item, {
       fields: [equipmentToSpareparts.equipmentID],
-      references: [items.id],
+      references: [item.id],
     }),
   })
 );

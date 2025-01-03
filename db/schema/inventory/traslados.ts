@@ -1,8 +1,8 @@
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
-import { items } from "./items";
-import { stations } from "./stations";
+import { item } from "./item";
+import { station } from "./station";
 import { commonColumns } from "../common-columns";
 
 export const traslados = table(
@@ -12,15 +12,15 @@ export const traslados = table(
     itemId: t
       .integer("item_id")
       .notNull()
-      .references(() => items.id, { onDelete: "cascade" }),
+      .references(() => item.id, { onDelete: "cascade" }),
     fromStationId: t
       .integer("station_id_origen")
       .notNull()
-      .references(() => stations.id, { onDelete: "cascade" }),
+      .references(() => station.id, { onDelete: "cascade" }),
     toStationId: t
       .integer("station_id_destino")
       .notNull()
-      .references(() => stations.id, { onDelete: "cascade" }),
+      .references(() => station.id, { onDelete: "cascade" }),
     quantity: t.integer("cantidad").notNull(),
     updatedAt: commonColumns.updatedAt,
   },
@@ -34,16 +34,16 @@ export const traslados = table(
 );
 
 export const trasladosRelations = relations(traslados, ({ one }) => ({
-  items: one(items, {
+  item: one(item, {
     fields: [traslados.itemId],
-    references: [items.id],
+    references: [item.id],
   }),
-  fromStation: one(stations, {
+  fromStation: one(station, {
     fields: [traslados.fromStationId],
-    references: [stations.id],
+    references: [station.id],
   }),
-  toStation: one(stations, {
+  toStation: one(station, {
     fields: [traslados.toStationId],
-    references: [stations.id],
+    references: [station.id],
   }),
 }));

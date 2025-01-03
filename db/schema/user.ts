@@ -2,7 +2,7 @@ import { integer, pgTable, varchar, text } from "drizzle-orm/pg-core";
 import { InferSelectModel, InferInsertModel } from "drizzle-orm";
 import { commonColumns } from "./common-columns";
 
-export const usersTable = pgTable("users", {
+export const user = pgTable("user", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: varchar({ length: 40 }).notNull().unique(),
   email: varchar({ length: 40 }).notNull().unique(),
@@ -10,5 +10,5 @@ export const usersTable = pgTable("users", {
   role: varchar({ length: 10 }).default("VIEWER").notNull(),
   ...commonColumns,
 });
-export type User = InferSelectModel<typeof usersTable>;
-export type NewUser = InferInsertModel<typeof usersTable>;
+export type User = InferSelectModel<typeof user>;
+export type NewUser = InferInsertModel<typeof user>;
