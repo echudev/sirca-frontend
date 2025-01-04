@@ -1,24 +1,24 @@
 import { relations } from "drizzle-orm";
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
-import { itemCategories } from "./item-categories";
+import { itemCategory } from "./item-category";
 import { commonColumns } from "../common-columns";
 
-export const itemSubcategories = table("item_subcategories", {
+export const itemSubcategory = table("item_subcategory", {
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
   name: t.text("name").notNull(),
   categoryId: t
     .integer("category_id")
     .notNull()
-    .references(() => itemCategories.id, {
+    .references(() => itemCategory.id, {
       onDelete: "cascade",
     }),
   updatedAt: commonColumns.updatedAt,
 });
 
 export const itemSubcategoriesRelations = relations(
-  itemSubcategories,
+  itemSubcategory,
   ({ one }) => ({
-    category: one(itemCategories),
+    category: one(itemCategory),
   })
 );

@@ -7,7 +7,7 @@ import { detailSparepart } from "./detail-sparepart";
 import { equipmentToSpareparts } from "./equipment-to-spareparts";
 import { inventory } from "./inventory";
 import { transaction } from "./transaction";
-import { itemSubcategories } from "./item-subcategories";
+import { itemSubcategory } from "./item-subcategory";
 import { model } from "./model";
 import { brand } from "./brand";
 import { commonColumns } from "../common-columns";
@@ -19,7 +19,7 @@ export const item = table("item", {
   subcategoryID: t
     .integer("subcategory_id")
     .notNull()
-    .references(() => itemSubcategories.id, { onDelete: "cascade" }),
+    .references(() => itemSubcategory.id, { onDelete: "cascade" }),
   acquisitionDate: t.date("acquisition_date").notNull(),
   updatedAt: commonColumns.updatedAt,
 });
@@ -28,7 +28,7 @@ export const itemsRelations = relations(item, ({ one, many }) => ({
   analyzerDetail: one(detailAnalizer),
   cylinderDetail: one(detailCylinder),
   spareParts: one(detailSparepart),
-  subcategory: one(itemSubcategories),
+  subcategory: one(itemSubcategory),
   itemBrands: one(brand),
   itemModels: one(model),
   inventory: many(inventory),

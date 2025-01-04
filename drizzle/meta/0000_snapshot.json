@@ -1,5 +1,5 @@
 {
-  "id": "f45e7de4-b92a-43e1-ad00-8248e8cafe65",
+  "id": "75f90ae9-840e-4d68-a352-1d9f9168cca4",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -516,8 +516,8 @@
       },
       "isRLSEnabled": false
     },
-    "public.item_subcategories": {
-      "name": "item_subcategories",
+    "public.item_category": {
+      "name": "item_category",
       "schema": "",
       "columns": {
         "id": {
@@ -527,7 +527,50 @@
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "item_subcategories_id_seq",
+            "name": "item_category_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.item_subcategory": {
+      "name": "item_subcategory",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "item_subcategory_id_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -559,10 +602,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "item_subcategories_category_id_item_subcategories_id_fk": {
-          "name": "item_subcategories_category_id_item_subcategories_id_fk",
-          "tableFrom": "item_subcategories",
-          "tableTo": "item_subcategories",
+        "item_subcategory_category_id_item_category_id_fk": {
+          "name": "item_subcategory_category_id_item_category_id_fk",
+          "tableFrom": "item_subcategory",
+          "tableTo": "item_category",
           "columnsFrom": [
             "category_id"
           ],
@@ -634,10 +677,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "item_subcategory_id_item_subcategories_id_fk": {
-          "name": "item_subcategory_id_item_subcategories_id_fk",
+        "item_subcategory_id_item_subcategory_id_fk": {
+          "name": "item_subcategory_id_item_subcategory_id_fk",
           "tableFrom": "item",
-          "tableTo": "item_subcategories",
+          "tableTo": "item_subcategory",
           "columnsFrom": [
             "subcategory_id"
           ],

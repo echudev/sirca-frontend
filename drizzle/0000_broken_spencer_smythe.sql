@@ -58,8 +58,14 @@ CREATE TABLE IF NOT EXISTS "inventory" (
 	CONSTRAINT "quantity_check" CHECK ("inventory"."quantity" >= 0)
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "item_subcategories" (
-	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "item_subcategories_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
+CREATE TABLE IF NOT EXISTS "item_category" (
+	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "item_category_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
+	"name" text NOT NULL,
+	"updated_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "item_subcategory" (
+	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "item_subcategory_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
 	"name" text NOT NULL,
 	"category_id" integer NOT NULL,
 	"updated_at" timestamp DEFAULT now()
@@ -173,13 +179,13 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "item_subcategories" ADD CONSTRAINT "item_subcategories_category_id_item_subcategories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."item_subcategories"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "item_subcategory" ADD CONSTRAINT "item_subcategory_category_id_item_category_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."item_category"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "item" ADD CONSTRAINT "item_subcategory_id_item_subcategories_id_fk" FOREIGN KEY ("subcategory_id") REFERENCES "public"."item_subcategories"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "item" ADD CONSTRAINT "item_subcategory_id_item_subcategory_id_fk" FOREIGN KEY ("subcategory_id") REFERENCES "public"."item_subcategory"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
