@@ -1,5 +1,5 @@
 {
-  "id": "3c1b3db6-c3cd-4a89-b4da-8b93c61846ef",
+  "id": "27d7d4c8-433f-45c0-a786-389e070ebc93",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -626,10 +626,11 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "item_subcategory_name_unique": {
-          "name": "item_subcategory_name_unique",
+        "item_subcategory_id_name_unique": {
+          "name": "item_subcategory_id_name_unique",
           "nullsNotDistinct": false,
           "columns": [
+            "id",
             "name"
           ]
         }

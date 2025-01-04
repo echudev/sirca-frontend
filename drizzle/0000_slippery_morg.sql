@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS "item_subcategory" (
 	"name" text NOT NULL,
 	"category_id" integer NOT NULL,
 	"updated_at" timestamp DEFAULT now(),
-	CONSTRAINT "item_subcategory_name_unique" UNIQUE("name")
+	CONSTRAINT "item_subcategory_id_name_unique" UNIQUE("id","name")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "item" (
