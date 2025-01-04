@@ -4,6 +4,6 @@ import { commonColumns } from "../common-columns";
 
 export const itemCategory = table("item_category", {
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
-  name: t.text("name").notNull(),
+  name: t.text("name").notNull().unique(),
   updatedAt: commonColumns.updatedAt,
 });

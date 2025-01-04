@@ -6,7 +6,7 @@ import { commonColumns } from "../common-columns";
 
 export const itemSubcategory = table("item_subcategory", {
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
-  name: t.text("name").notNull(),
+  name: t.text("name").notNull().unique(),
   categoryId: t
     .integer("category_id")
     .notNull()
