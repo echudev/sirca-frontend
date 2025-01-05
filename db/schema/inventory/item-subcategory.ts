@@ -17,7 +17,7 @@ export const itemSubcategory = table(
       }),
     updatedAt: commonColumns.updatedAt,
   },
-  (table) => [t.unique().on(table.id, table.name)]
+  (table) => [t.unique().on(table.categoryId, table.name)]
 );
 
 export const itemSubcategoriesRelations = relations(
