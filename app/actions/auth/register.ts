@@ -4,8 +4,8 @@ import {
   RegisterFormSchema,
   RegisterFormState,
 } from "@/lib/auth/form-validations";
+import { NewUserModel } from "@/db/schema/user";
 import { registerUser } from "@/lib/auth/service";
-import { RegisterUserDTO } from "@/lib/auth/dto";
 
 export async function register(state: RegisterFormState, formData: FormData) {
   // 1. Valido campos del formulario
@@ -22,7 +22,7 @@ export async function register(state: RegisterFormState, formData: FormData) {
     };
   }
   // 2. Llamo al servicio registro
-  const result = await registerUser(validatedFields.data as RegisterUserDTO);
+  const result = await registerUser(validatedFields.data as NewUserModel);
 
   if (!result.success) {
     return { success: false, message: result.message };

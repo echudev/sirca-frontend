@@ -1,16 +1,19 @@
 import bcrypt from "bcrypt";
 import { createSession } from "@/lib/auth-session";
 import { getUserByName, insertUser } from "./repository";
-import {
-  LoginUserDTO,
-  LoginUserResponseDTO,
-  RegisterUserResponseDTO,
-  RegisterUserDTO,
-} from "./dto";
+import { NewUserModel, UserModel } from "@/db/schema/user";
 
-export async function loginUser(
-  data: LoginUserDTO
-): Promise<LoginUserResponseDTO> {
+export interface AuthResponse {
+  success: boolean;
+  data?: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  message?: string;
+}
+
+export async function loginUser(data: UserModel): Promise<AuthResponse> {
   // Obtener el usuario desde la base de datos
   const usuario = await getUserByName(data.name);
   if (!usuario) {
@@ -27,12 +30,13 @@ export async function loginUser(
   await createSession(usuario.id.toString(), usuario.name, usuario.role);
 
   // Retornar el nombre del usuario para posibles personalizaciones
-  return { success: true, data: { id: usuario.id, name: usuario.name } };
+  return {
+    success: true,
+    data: { id: usuario.id, name: usuario.name, email: usuario.email },
+  };
 }
 
-export async function registerUser(
-  data: RegisterUserDTO
-): Promise<RegisterUserResponseDTO> {
+export async function registerUser(data: NewUserModel): Promise<AuthResponse> {
   // Hashear la contraseña
   const password = await bcrypt.hash(data.password, 10);
 

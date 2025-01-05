@@ -10,5 +10,5 @@ export const user = pgTable("user", {
   role: varchar({ length: 10 }).default("VIEWER").notNull(),
   ...commonColumns,
 });
-export type User = InferSelectModel<typeof user>;
-export type NewUser = InferInsertModel<typeof user>;
+export type UserModel = InferSelectModel<typeof user>;
+export type NewUserModel = InferInsertModel<typeof user>;

@@ -26,12 +26,21 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { verifySession } from "@/lib/auth-session";
-import { GetCookieResponseDTO } from "@/lib/auth/dto";
 import { logout } from "@/app/actions/auth/";
+
+
+interface CookieResponse {
+  isAuth: boolean;
+  data: {
+    userId: string;
+    userName: string;
+    role: string;
+  };
+}
 
 export async function Footer() {
   // user cookie sesion data
-  const cookie: GetCookieResponseDTO = await verifySession();
+  const cookie: CookieResponse = await verifySession();
   const userName = cookie.data.userName;
   const userRole = cookie.data.role;
 

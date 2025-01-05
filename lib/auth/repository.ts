@@ -1,15 +1,14 @@
 import { db } from "@/db/connection";
-import { user } from "@/db/schema/user";
+import { user, UserModel, NewUserModel } from "@/db/schema/user";
 import { eq } from "drizzle-orm";
-import { RegisterUserDTO, GetUserResponseDTO } from "./dto";
 
-export async function getUserByName(name: string): Promise<GetUserResponseDTO> {
+export async function getUserByName(name: string): Promise<UserModel | null> {
   const db_user = await db.select().from(user).where(eq(user.name, name));
   return db_user.length > 0 ? db_user[0] : null;
 }
 
 export async function insertUser(
-  newUser: RegisterUserDTO
+  newUser: NewUserModel
 ): Promise<{ id: number }> {
   const result = await db
     .insert(user)
