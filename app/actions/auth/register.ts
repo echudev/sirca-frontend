@@ -1,6 +1,9 @@
 "use server";
 
-import { RegisterFormSchema, RegisterFormState } from "@/lib/auth/validations";
+import {
+  RegisterFormSchema,
+  RegisterFormState,
+} from "@/lib/auth/form-validations";
 import { registerUser } from "@/lib/auth/service";
 import { RegisterUserDTO } from "@/lib/auth/dto";
 

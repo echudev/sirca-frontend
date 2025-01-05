@@ -1,4 +1,4 @@
-import { usersTable } from "@/db/schema/users";
+import { user } from "@/db/schema/user";
 
 export interface LoginUserDTO {
   name: string;
@@ -33,7 +33,7 @@ export interface RegisterUserResponseDTO {
   message?: string;
 }
 
-export type GetUserResponseDTO = typeof usersTable.$inferSelect | null;
+export type GetUserResponseDTO = typeof user.$inferSelect | null;
 
 export interface CookiePayload {
   userId: string;

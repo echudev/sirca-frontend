@@ -1,6 +1,6 @@
 "use server";
 
-import { LoginFormSchema, LoginFormState } from "@/lib/auth/validations";
+import { LoginFormSchema, LoginFormState } from "@/lib/auth/form-validations";
 import { redirect } from "next/navigation";
 import { loginUser } from "@/lib/auth/service";
 import { LoginUserDTO } from "@/lib/auth/dto";

@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { Loader2, EyeIcon, EyeOffIcon } from "lucide-react";
-import { RegisterFormSchema, RegisterFormState } from "@/lib/auth/validations";
+import { RegisterFormSchema, RegisterFormState } from "@/lib/auth/form-validations";
 import { useActionState, useState, useEffect, ChangeEvent } from "react";
 import { register } from "@/app/actions/auth/";
 import { Button } from "@/components/ui/button";
@@ -161,11 +161,10 @@ export function RegisterForm() {
               name="name"
               placeholder="username1234"
               onChange={handleInputChange}
-              className={`w-full ${
-                (localErrors?.errors?.name?.length ?? 0 > 0)
+              className={`w-full ${(localErrors?.errors?.name?.length ?? 0 > 0)
                   ? "border-red-500 focus-visible:ring-red-500"
                   : ""
-              }`}
+                }`}
             />
             {localErrors?.errors?.name?.map((error) => (
               <p key={error} className="text-sm text-red-500">
@@ -181,11 +180,10 @@ export function RegisterForm() {
               name="email"
               placeholder="correo@ejemplo.com"
               onChange={handleInputChange}
-              className={`w-full ${
-                (localErrors?.errors?.email?.length ?? 0 > 0)
+              className={`w-full ${(localErrors?.errors?.email?.length ?? 0 > 0)
                   ? "border-red-500 focus-visible:ring-red-500"
                   : ""
-              }`}
+                }`}
             />
             {localErrors?.errors?.email?.map((error) => (
               <p key={error} className="text-sm text-red-500">
@@ -202,11 +200,10 @@ export function RegisterForm() {
               type={showPassword ? "text" : "password"}
               placeholder="********"
               onChange={handleInputChange}
-              className={`w-full ${
-                (localErrors?.errors?.password?.length ?? 0 > 0)
+              className={`w-full ${(localErrors?.errors?.password?.length ?? 0 > 0)
                   ? "border-red-500 focus-visible:ring-red-500"
                   : ""
-              }`}
+                }`}
             />
             <button
               type="button"

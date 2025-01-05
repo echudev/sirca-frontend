@@ -21,7 +21,10 @@ export const RegisterFormSchema = z.object({
     .string()
     .min(2, { message: "El nombre debe tener al menos 2 caracteres." })
     .trim(),
-  email: z.string().email({ message: "Por favor, introduce un correo válido." }).trim(),
+  email: z
+    .string()
+    .email({ message: "Por favor, introduce un correo válido." })
+    .trim(),
   password: z
     .string()
     .min(8, { message: "Debe tener al menos 8 caracteres." })
@@ -57,10 +60,3 @@ export type RegisterFormState =
       message?: string;
     }
   | undefined;
-
-export type SessionPayload = {
-  userId: string;
-  userName: string;
-  role: string;
-  expiresAt: Date;
-};
