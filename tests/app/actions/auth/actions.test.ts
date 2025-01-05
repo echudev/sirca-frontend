@@ -1,7 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { login, logout, register } from "@/app/actions/auth/";
 import { loginUser, registerUser } from "@/lib/auth/service";
-import { LoginFormSchema, RegisterFormSchema } from "@/lib/auth/validations";
+import {
+  LoginFormSchema,
+  RegisterFormSchema,
+} from "@/lib/auth/form-validations";
 import { deleteSession } from "@/lib/auth-session";
 import { redirect } from "next/navigation";
 
