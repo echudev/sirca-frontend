@@ -1,7 +1,7 @@
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { item } from "./item";
+import { itemTable } from "./item";
 import { AnalyzerState } from "./types";
 import { model } from "./model";
 
@@ -11,7 +11,7 @@ export const detailAnalizer = table("detail_analyzer", {
     .integer("item_id")
     .notNull()
     .unique()
-    .references(() => item.id, { onDelete: "cascade" }),
+    .references(() => itemTable.id, { onDelete: "cascade" }),
   model: t.integer("model").references(() => model.id),
   analyzerState: t.integer("analyzer_state").notNull().$type<AnalyzerState>(),
   itemerialNumber: t.varchar("item_serial_number", { length: 40 }).notNull(),
@@ -21,8 +21,8 @@ export const detailAnalizer = table("detail_analyzer", {
 });
 
 export const DetailAnalyzerRelations = relations(detailAnalizer, ({ one }) => ({
-  item: one(item, {
+  item: one(itemTable, {
     fields: [detailAnalizer.itemId],
-    references: [item.id],
+    references: [itemTable.id],
   }),
 }));

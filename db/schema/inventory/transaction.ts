@@ -1,7 +1,7 @@
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
-import { item } from "./item";
+import { itemTable } from "./item";
 import { station } from "./station";
 import { commonColumns } from "../common-columns";
 
@@ -12,7 +12,7 @@ export const transaction = table(
     itemId: t
       .integer("item_id")
       .notNull()
-      .references(() => item.id, { onDelete: "cascade" }),
+      .references(() => itemTable.id, { onDelete: "cascade" }),
     fromStationId: t
       .integer("station_id_origen")
       .notNull()
@@ -34,9 +34,9 @@ export const transaction = table(
 );
 
 export const TransactionRelations = relations(transaction, ({ one }) => ({
-  item: one(item, {
+  item: one(itemTable, {
     fields: [transaction.itemId],
-    references: [item.id],
+    references: [itemTable.id],
   }),
   fromStation: one(station, {
     fields: [transaction.fromStationId],
