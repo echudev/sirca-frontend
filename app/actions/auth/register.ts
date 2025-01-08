@@ -4,7 +4,7 @@ import {
   RegisterFormSchema,
   RegisterFormState,
 } from "@/lib/auth/form-validations";
-import { NewUserModel } from "@/db/schema/user";
+import { UserInsert } from "@/db/schema/user";
 import { registerUser } from "@/lib/auth/service";
 
 export async function register(state: RegisterFormState, formData: FormData) {
@@ -22,7 +22,7 @@ export async function register(state: RegisterFormState, formData: FormData) {
     };
   }
   // 2. Llamo al servicio registro
-  const result = await registerUser(validatedFields.data as NewUserModel);
+  const result = await registerUser(validatedFields.data as UserInsert);
 
   if (!result.success) {
     return { success: false, message: result.message };

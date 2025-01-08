@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { LoginFormSchema, LoginFormState } from "@/lib/auth/form-validations";
 import { loginUser } from "@/lib/auth/service";
-import { UserModel } from "@/db/schema/user";
+import { UserSelect } from "@/db/schema/user";
 
 export async function login(state: LoginFormState, formData: FormData) {
   // 1. Valido campos del formulario
@@ -18,7 +18,7 @@ export async function login(state: LoginFormState, formData: FormData) {
     };
   }
   // 2. Llamo al servicio login
-  const result = await loginUser(validatedFields.data as UserModel);
+  const result = await loginUser(validatedFields.data as UserSelect);
 
   if (!result.success) {
     return { success: false, message: result.message };
