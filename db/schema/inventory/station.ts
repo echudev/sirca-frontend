@@ -1,8 +1,5 @@
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
-import { inventory } from "./inventory";
-import { transaction } from "./transaction";
 
 export const station = table("station", {
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -14,8 +11,3 @@ export const station = table("station", {
   description: t.text("station_description"),
   operationalSince: t.date("operational_since"),
 });
-
-export const stationsRelations = relations(station, ({ many }) => ({
-  inventory: many(inventory),
-  traslados: many(transaction),
-}));

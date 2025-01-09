@@ -1,7 +1,7 @@
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
 import { itemTable } from "./item";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 
 export const equipmentToSpareparts = table(
   "equipment_to_spareparts",
@@ -23,18 +23,4 @@ export const equipmentToSpareparts = table(
       // agregar chequeo de categoría y subcategoría desde lógica de la app
     ),
   ]
-);
-
-export const repuestoAnalyzadorRelations = relations(
-  equipmentToSpareparts,
-  ({ one }) => ({
-    repuesto: one(itemTable, {
-      fields: [equipmentToSpareparts.sparepartID],
-      references: [itemTable.id],
-    }),
-    analizador: one(itemTable, {
-      fields: [equipmentToSpareparts.equipmentID],
-      references: [itemTable.id],
-    }),
-  })
 );

@@ -1,6 +1,5 @@
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
 import { itemTable } from "./item";
 import { AnalyzerState } from "./types";
 import { model } from "./model";
@@ -19,10 +18,3 @@ export const detailAnalizer = table("detail_analyzer", {
   analyzerLastCalibration: t.date("analyzer_last_calibration"),
   analyzerLastMaintenance: t.date("analyzer_last_maintenance"),
 });
-
-export const DetailAnalyzerRelations = relations(detailAnalizer, ({ one }) => ({
-  item: one(itemTable, {
-    fields: [detailAnalizer.itemId],
-    references: [itemTable.id],
-  }),
-}));

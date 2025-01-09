@@ -1,6 +1,5 @@
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
 import { itemTable } from "./item";
 
 export const detailCylinder = table("detail_cylinder", {
@@ -18,10 +17,3 @@ export const detailCylinder = table("detail_cylinder", {
   expirationDate: t.date("cylinder_expiration_date").notNull(),
   certificate: t.text("cylinder_certificate"),
 });
-
-export const DetailCylinderRelations = relations(detailCylinder, ({ one }) => ({
-  item: one(itemTable, {
-    fields: [detailCylinder.itemId],
-    references: [itemTable.id],
-  }),
-}));

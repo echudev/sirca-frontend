@@ -2,7 +2,6 @@ import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
 import { itemTable } from "./item";
 import { ConsumableState } from "./types";
-import { relations } from "drizzle-orm";
 
 export const detailConsumable = table("detail_consumable", {
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -15,13 +14,3 @@ export const detailConsumable = table("detail_consumable", {
     .notNull()
     .$type<ConsumableState>(),
 });
-
-export const DetailConsumableRelations = relations(
-  detailConsumable,
-  ({ one }) => ({
-    item: one(itemTable, {
-      fields: [detailConsumable.itemId],
-      references: [itemTable.id],
-    }),
-  })
-);

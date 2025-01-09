@@ -1,15 +1,7 @@
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
-import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
-import { detailAnalizer } from "./detail-analyzer";
-import { detailCylinder } from "./detail-cylinders";
-import { detailSparepart } from "./detail-sparepart";
-import { equipmentToSpareparts } from "./equipment-to-spareparts";
-import { inventory } from "./inventory";
-import { transaction } from "./transaction";
+import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { itemSubcategory } from "./item-subcategory";
-import { model } from "./model";
-import { brand } from "./brand";
 import { commonColumns } from "../common-columns";
 
 export const itemTable = table("item", {
@@ -23,19 +15,6 @@ export const itemTable = table("item", {
   acquisitionDate: t.date("acquisition_date").notNull(),
   updatedAt: commonColumns.updatedAt,
 });
-
-export const itemsRelations = relations(itemTable, ({ one, many }) => ({
-  analyzerDetail: one(detailAnalizer),
-  cylinderDetail: one(detailCylinder),
-  spareParts: one(detailSparepart),
-  subcategory: one(itemSubcategory),
-  itemBrands: one(brand),
-  itemModels: one(model),
-  inventory: many(inventory),
-  traslados: many(transaction),
-  equipmentToSpareparts: many(equipmentToSpareparts),
-  sparepartsToEquipment: many(equipmentToSpareparts),
-}));
 
 export type ItemSelect = InferSelectModel<typeof itemTable>;
 export type ItemInsert = InferInsertModel<typeof itemTable>;

@@ -1,6 +1,6 @@
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { itemTable } from "./item";
 import { station } from "./station";
 import { commonColumns } from "../common-columns";
@@ -32,18 +32,3 @@ export const transaction = table(
     t.check("cantidad_check", sql`${table.quantity} > 0`),
   ]
 );
-
-export const TransactionRelations = relations(transaction, ({ one }) => ({
-  item: one(itemTable, {
-    fields: [transaction.itemId],
-    references: [itemTable.id],
-  }),
-  fromStation: one(station, {
-    fields: [transaction.fromStationId],
-    references: [station.id],
-  }),
-  toStation: one(station, {
-    fields: [transaction.toStationId],
-    references: [station.id],
-  }),
-}));

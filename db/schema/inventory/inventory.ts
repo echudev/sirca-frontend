@@ -1,6 +1,6 @@
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { itemTable } from "./item";
 import { station } from "./station";
 import { commonColumns } from "../common-columns";
@@ -24,14 +24,3 @@ export const inventory = table(
     t.check("quantity_check", sql`${table.quantity} >= 0`),
   ]
 );
-
-export const inventoryRelations = relations(inventory, ({ one }) => ({
-  item: one(itemTable, {
-    fields: [inventory.itemId],
-    references: [itemTable.id],
-  }),
-  station: one(station, {
-    fields: [inventory.stationId],
-    references: [station.id],
-  }),
-}));
