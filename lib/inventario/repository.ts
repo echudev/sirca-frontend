@@ -11,7 +11,7 @@ export async function getPartes() {
       id: itemTable.id,
       code: itemTable.itemCode,
       name: itemTable.name,
-      subcategory: itemSubcategory.name,
+      category: itemSubcategory.name,
     })
     .from(itemTable)
     .innerJoin(itemSubcategory, eq(itemTable.subcategoryID, itemSubcategory.id))

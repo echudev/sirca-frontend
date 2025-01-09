@@ -3,13 +3,13 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { DataTableRowActions } from "@/components/data-table/data-table-row-actions";
-import { subcategorias } from "../data";
+import { categorias } from "../data";
 
 type PartesData = {
   id: number,
   name: string,
   code: string,
-  subcategory: string,
+  category: string,
 }
 
 export const columns: ColumnDef<PartesData>[] = [
@@ -62,25 +62,25 @@ export const columns: ColumnDef<PartesData>[] = [
     },
   },
   {
-    accessorKey: "subcategory",
+    accessorKey: "category",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tipo" />
+      <DataTableColumnHeader column={column} title="Categoría" />
     ),
     cell: ({ row }) => {
-      const tipo = subcategorias.find(
-        (tipo) => tipo.value === row.getValue("subcategory")
+      const categoria = categorias.find(
+        (categoria) => categoria.value === row.getValue("category")
       );
 
-      if (!tipo) {
+      if (!categoria) {
         return null;
       }
 
       return (
         <div className="flex w-[100px] items-center">
-          {tipo.icon && (
-            <tipo.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+          {categoria.icon && (
+            <categoria.icon className="mr-2 h-4 w-4 text-muted-foreground" />
           )}
-          <span>{tipo.label}</span>
+          <span>{categoria.label}</span>
         </div>
       );
     },

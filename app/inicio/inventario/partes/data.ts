@@ -1,6 +1,6 @@
 import { FilterIcon, ShipWheel, Battery } from "lucide-react";
 
-export const subcategorias = [
+export const categorias = [
   {
     value: "REPUESTO",
     label: "Repuesto",

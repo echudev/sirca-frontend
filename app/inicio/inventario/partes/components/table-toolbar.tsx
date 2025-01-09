@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/data-table/data-table-view-options";
 import { DataTableFacetedFilter } from "@/components/data-table/data-table-faceted-filter";
-import { subcategorias } from "../data";
+import { categorias } from "../data";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -28,11 +28,11 @@ export function DataTableToolbar<TData>({
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {table.getColumn("subcategory") && (
+        {table.getColumn("category") && (
           <DataTableFacetedFilter
-            column={table.getColumn("subcategory")}
-            title="Tipo de Parte"
-            options={subcategorias}
+            column={table.getColumn("category")}
+            title="Categoría"
+            options={categorias}
           />
         )}
         {isFiltered && (
