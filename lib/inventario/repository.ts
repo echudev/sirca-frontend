@@ -8,9 +8,10 @@ export async function getPartes() {
   // Unimos items -> subcategory -> category
   const result = await db
     .select({
-      item: itemTable, // esto devuelve las columnas de items
-      subcat: itemSubcategory, // y las de subcategory
-      cat: itemCategory, // y las de category
+      id: itemTable.id,
+      code: itemTable.itemCode,
+      name: itemTable.name,
+      subcategory: itemSubcategory.name,
     })
     .from(itemTable)
     .innerJoin(itemSubcategory, eq(itemTable.subcategoryID, itemSubcategory.id))
