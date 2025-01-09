@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { createSession } from "@/lib/auth-session";
 import { getUserByName, insertUser } from "./repository";
-import { NewUserModel, UserModel } from "@/db/schema/user";
+import { UserInsert, UserSelect } from "@/db/schema/user";
 
 export interface AuthResponse {
   success: boolean;
@@ -13,7 +13,7 @@ export interface AuthResponse {
   message?: string;
 }
 
-export async function loginUser(data: UserModel): Promise<AuthResponse> {
+export async function loginUser(data: UserSelect): Promise<AuthResponse> {
   // Obtener el usuario desde la base de datos
   const usuario = await getUserByName(data.name);
   if (!usuario) {
@@ -36,7 +36,7 @@ export async function loginUser(data: UserModel): Promise<AuthResponse> {
   };
 }
 
-export async function registerUser(data: NewUserModel): Promise<AuthResponse> {
+export async function registerUser(data: UserInsert): Promise<AuthResponse> {
   // Hashear la contraseña
   const password = await bcrypt.hash(data.password, 10);
 
