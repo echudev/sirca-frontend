@@ -1,22 +1,26 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { PageHeader } from "@/components/page-header";
-import TablaPartes from "./components/data-table-ssr";
+import { DataTable } from "./components/data-table";
+import { columns } from "./components/table-columns"
 import Loader from "@/app/loading";
+import { getPartes } from "@/lib/inventario/repository";
 
 export const metadata: Metadata = {
   title: "SIRCA - Inventario",
   description: "App de inventario de la red",
 };
 
-const title = "Listado de repuestos y consumibles";
+const title = "Listado de Partes";
 
-export default function Repuestos() {
+export default async function Partes() {
+  const data = await getPartes();
+
   return (
     <div className="flex flex-col h-full px-4 overflow-auto">
       <PageHeader title={title} />
       <Suspense fallback={<Loader />}>
-        <TablaPartes />
+        <DataTable columns={columns} data={data} />
       </Suspense>
     </div>
   );
