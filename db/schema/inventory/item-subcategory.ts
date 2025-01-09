@@ -2,7 +2,6 @@ import { relations } from "drizzle-orm";
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
 import { itemCategory } from "./item-category";
-import { commonColumns } from "../common-columns";
 
 export const itemSubcategory = table(
   "item_subcategory",
@@ -15,7 +14,6 @@ export const itemSubcategory = table(
       .references(() => itemCategory.id, {
         onDelete: "cascade",
       }),
-    updatedAt: commonColumns.updatedAt,
   },
   (table) => [t.unique().on(table.categoryId, table.name)]
 );
