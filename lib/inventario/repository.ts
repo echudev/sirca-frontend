@@ -20,3 +20,20 @@ export async function getPartes() {
 
   return result;
 }
+
+export async function getEquipos() {
+  // Unimos items -> subcategory -> category
+  const result = await db
+    .select({
+      id: itemTable.id,
+      code: itemTable.itemCode,
+      name: itemTable.name,
+      category: itemSubcategory.name,
+    })
+    .from(itemTable)
+    .innerJoin(itemSubcategory, eq(itemTable.subcategoryID, itemSubcategory.id))
+    .innerJoin(itemCategory, eq(itemSubcategory.categoryId, itemCategory.id))
+    .where(eq(itemCategory.name, "EQUIPOS")); // filtramos por categoría
+
+  return result;
+}

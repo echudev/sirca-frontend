@@ -1,13 +1,32 @@
-import { PageUnderConstruction } from "@/components/page-under-construction";
 import { Metadata } from "next";
+import { Suspense } from "react";
+import { PageHeader } from "@/components/page-header";
+import { DataTable } from "./components/data-table";
+import { columns } from "./components/table-columns"
+import Loader from "@/app/loading";
+import { handleGetEquipos } from "@/lib/inventario/service";
 
 export const metadata: Metadata = {
-  title: "SIRCA - Mantenimiento",
-  description: "App de mantenimiento de la red",
+  title: "SIRCA - Inventario",
+  description: "App de inventario de la red",
 };
 
-export default function Equipos() {
+const title = "Listado de Partes";
+export const revalidate = 60
+
+export default async function Equipos() {
+  const data = await handleGetEquipos();
+
   return (
-    <PageUnderConstruction />
+    <div className="flex flex-col h-full px-4 overflow-auto">
+      <PageHeader title={title} />
+      <Suspense fallback={<Loader />}>
+        {data ?
+          <DataTable columns={columns} data={data} />
+          :
+          <p>Error al Conectar con la base de datos</p>
+        }
+      </Suspense>
+    </div>
   );
 }
