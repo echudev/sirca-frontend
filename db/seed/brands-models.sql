@@ -15,7 +15,8 @@ VALUES
     ('Environnement'),
     ('ENVEA'),
     ('MetOne'),
-    ('DAVIS')
+    ('DAVIS'),
+    ('Eaton')
 ON CONFLICT (name) DO NOTHING; -- Evita insertar duplicados si ya existen
 
 
@@ -35,10 +36,11 @@ FROM (VALUES
     ('42c'),
     ('146c'),
     ('146i'),
-    ('111')
+    ('111'),
+    ('F64C14')
 ) AS sub(name)
 CROSS JOIN thermo
-ON CONFLICT (name, brand_id) DO NOTHING; -- Evita duplicados de subcategorías
+ON CONFLICT (name, brand_id) DO NOTHING; 
 
 -- 3. Insertar Modelos para 'Ecotech'
 WITH ecotech AS (
@@ -47,15 +49,35 @@ WITH ecotech AS (
 INSERT INTO model (name, brand_id)
 SELECT sub.name, ecotech.id
 FROM (VALUES 
+    ('EC9830'),
+    ('EC9841'),
     ('Serinus 10'),
     ('Serinus 30'),
     ('Serinus 40'),
+    ('Serinus 50'),
+    ('Serinus CAL3000'),
     ('SpirantBam 1020')
 ) AS sub(name)
 CROSS JOIN ecotech
-ON CONFLICT (name, brand_id) DO NOTHING; -- Evita duplicados de subcategorías
+ON CONFLICT (name, brand_id) DO NOTHING; 
 
--- 3. Insertar Modelos para 'MetOne'
+-- 4. Insertar Modelos para 'Acoem'
+WITH acoem AS (
+    SELECT id FROM brand WHERE name = 'Acoem'
+)
+INSERT INTO model (name, brand_id)
+SELECT sub.name, acoem.id
+FROM (VALUES 
+    ('Serinus 10'),
+    ('Serinus 30'),
+    ('Serinus 40'),
+    ('Serinus 50'),
+    ('SpirantBam 1020')
+) AS sub(name)
+CROSS JOIN acoem
+ON CONFLICT (name, brand_id) DO NOTHING; 
+
+-- 5. Insertar Modelos para 'MetOne'
 WITH metone AS (
     SELECT id FROM brand WHERE name = 'MetOne'
 )
@@ -65,7 +87,37 @@ FROM (VALUES
     ('SpirantBam 1020')
 ) AS sub(name)
 CROSS JOIN metone
-ON CONFLICT (name, brand_id) DO NOTHING; -- Evita duplicados de subcategorías
+ON CONFLICT (name, brand_id) DO NOTHING; 
+
+-- 6. Insertar Modelos para 'Teledyne'
+WITH teledyne AS (
+    SELECT id FROM brand WHERE name = 'Teledyne'
+)
+INSERT INTO model (name, brand_id)
+SELECT sub.name, teledyne.id
+FROM (VALUES 
+    ('T100'),
+    ('T100U'),
+    ('T200'),
+    ('T300'),
+    ('T400'),
+    ('T700')
+) AS sub(name)
+CROSS JOIN teledyne
+ON CONFLICT (name, brand_id) DO NOTHING; 
+
+-- 7. Insertar Modelos para 'Teledyne'
+WITH eaton AS (
+    SELECT id FROM brand WHERE name = 'Eaton'
+)
+INSERT INTO model (name, brand_id)
+SELECT sub.name, eaton.id
+FROM (VALUES 
+    ('9PX'),
+    ('9SX')
+) AS sub(name)
+CROSS JOIN eaton
+ON CONFLICT (name, brand_id) DO NOTHING; 
 
 
 COMMIT;
