@@ -15,6 +15,13 @@
       "when": 1736384523669,
       "tag": "0001_slim_vision",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1737081243078,
+      "tag": "0002_magenta_network",
+      "breakpoints": true
     }
   ]
 }
