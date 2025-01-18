@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "App de inventario de la red",
 };
 
-const title = "Listado de Partes";
+const title = "Listado de Equipos";
 export const revalidate = 60
 
 export default async function Equipos() {

@@ -47,6 +47,51 @@ export const columns: ColumnDef<PartesData>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "marca",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Marca" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex space-x-2">
+          <span className="max-w-[500px] truncate font-medium">
+            {row.getValue("marca")}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "modelo",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Modelo" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex space-x-2">
+          <span className="max-w-[500px] truncate font-medium">
+            {row.getValue("modelo")}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "estado",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Estado" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex space-x-2">
+          <span className="max-w-[500px] truncate font-medium">
+            {row.getValue("estado")}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
