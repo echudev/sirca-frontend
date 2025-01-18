@@ -31,8 +31,8 @@ export async function handleGetEquipos() {
 
   try {
     // Si el usuario está autenticado, traigo la data
-    const partes = await getEquipos();
-    return partes;
+    const equipos = await getEquipos();
+    return equipos;
   } catch (error) {
     console.error(error);
   }
