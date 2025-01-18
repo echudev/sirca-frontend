@@ -3,6 +3,7 @@ import { pgTable as table } from "drizzle-orm/pg-core";
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { itemSubcategory } from "./item-subcategory";
 import { commonColumns } from "../common-columns";
+import { model } from "./model";
 
 export const itemTable = table("item", {
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -12,6 +13,9 @@ export const itemTable = table("item", {
     .integer("subcategory_id")
     .notNull()
     .references(() => itemSubcategory.id, { onDelete: "cascade" }),
+  itemModel: t
+    .integer("model_id")
+    .references(() => model.id, { onDelete: "cascade" }),
   acquisitionDate: t.date("acquisition_date").notNull(),
   updatedAt: commonColumns.updatedAt,
 });
