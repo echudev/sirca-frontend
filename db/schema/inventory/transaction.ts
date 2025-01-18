@@ -2,7 +2,7 @@ import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { itemTable } from "./item";
-import { station } from "./station";
+import { location } from "./location";
 import { commonColumns } from "../common-columns";
 
 export const transaction = table(
@@ -16,11 +16,11 @@ export const transaction = table(
     fromStationId: t
       .integer("station_id_origen")
       .notNull()
-      .references(() => station.id, { onDelete: "cascade" }),
+      .references(() => location.id, { onDelete: "cascade" }),
     toStationId: t
       .integer("station_id_destino")
       .notNull()
-      .references(() => station.id, { onDelete: "cascade" }),
+      .references(() => location.id, { onDelete: "cascade" }),
     quantity: t.integer("cantidad").notNull(),
     updatedAt: commonColumns.updatedAt,
   },

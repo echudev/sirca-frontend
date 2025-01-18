@@ -29,6 +29,20 @@
       "when": 1737209845413,
       "tag": "0003_silky_moira_mactaggert",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1737232740510,
+      "tag": "0004_shiny_namora",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1737233021529,
+      "tag": "0005_special_harry_osborn",
+      "breakpoints": true
     }
   ]
 }
