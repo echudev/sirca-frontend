@@ -23,23 +23,23 @@ export async function getCoDiario() {
 
   try {
     const result = [];
-    for await (const row of influx.query(query, 'minutales')) {
+    for await (const row of influx.query(query, "minutales")) {
       result.push({
         time: new Date(row.hour).getTime().toString(),
-        co_centenario: row.co_centenario || '0',
-        minuteCount_centenario: row.minuteCount_centenario?.toString() || '0',
-        status_centenario: row.status_centenario || 'i',
-        co_catalinas: row.co_catalinas || '0',
-        minuteCount_catalinas: row.minuteCount_catalinas?.toString() || '0',
-        status_catalinas: row.status_catalinas || 'i',
-        co_cordoba: row.co_cordoba || '0',
-        minuteCount_cordoba: row.minuteCount_cordoba?.toString() || '0',
-        status_cordoba: row.status_cordoba || 'i',
+        co_centenario: row.co_centenario || "0",
+        minuteCount_centenario: row.minuteCount_centenario?.toString() || "0",
+        status_centenario: row.status_centenario || "i",
+        co_catalinas: row.co_catalinas || "0",
+        minuteCount_catalinas: row.minuteCount_catalinas?.toString() || "0",
+        status_catalinas: row.status_catalinas || "i",
+        co_cordoba: row.co_cordoba || "0",
+        minuteCount_cordoba: row.minuteCount_cordoba?.toString() || "0",
+        status_cordoba: row.status_cordoba || "i",
       });
     }
     return result;
   } catch (error) {
-    console.error('Error in getCoDiario:', error);
+    console.error("Error in getCoDiario:", error);
     throw error;
   }
 }

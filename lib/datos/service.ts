@@ -1,8 +1,9 @@
 import { getCoDiario } from "./repository";
 import { verifySession } from "../auth-session";
 import { redirect } from "next/navigation";
+import { DateTime } from "luxon";
 
-type Status = 'ok' | 'i';
+type Status = "ok" | "i";
 
 interface InfluxDBRow {
   time: string;
@@ -18,8 +19,8 @@ interface InfluxDBRow {
 }
 
 export interface CoDiarioData {
-  date: string;                    // Formato: YYYY-MM-DD
-  time: string;                    // Formato: HH:MM
+  date: string; // Formato: YYYY-MM-DD
+  time: string; // Formato: HH:MM
   co_centenario: number;
   minuteCount_centenario: number;
   status_centenario: Status;
@@ -41,17 +42,17 @@ export async function handleGetCoDiario(): Promise<CoDiarioData[]> {
   }
 
   try {
-    console.warn('Fetching CO Diario data...');
+    console.warn("Fetching CO Diario data...");
     const influxRows = await getCoDiario();
-    
+
     // Si no hay datos, retornar array vacío
     if (!influxRows || influxRows.length === 0) {
-      console.warn('No se encontraron datos de CO Diario');
+      console.warn("No se encontraron datos de CO Diario");
       return [];
     }
-    
+
     // Convertir los datos a InfluxDBRow[]
-    const rows: InfluxDBRow[] = influxRows.map(row => ({
+    const rows: InfluxDBRow[] = influxRows.map((row) => ({
       time: row.time,
       co_centenario: row.co_centenario,
       minuteCount_centenario: row.minuteCount_centenario,
@@ -65,11 +66,11 @@ export async function handleGetCoDiario(): Promise<CoDiarioData[]> {
     }));
 
     // Filtrar filas sin hora o con timestamp inválido
-    const validRows = rows.filter(row => {
+    const validRows = rows.filter((row) => {
       if (!row.time) return false;
       const timestampMs = parseInt(row.time);
       if (isNaN(timestampMs)) {
-        console.warn('Timestamp inválido recibido:', row.time);
+        console.warn("Timestamp inválido recibido:", row.time);
         return false;
       }
       return true;
@@ -78,45 +79,47 @@ export async function handleGetCoDiario(): Promise<CoDiarioData[]> {
     // Mapear los resultados a un formato estructurado
     const formattedData: CoDiarioData[] = validRows.map((row) => {
       // Convertir timestamp en milisegundos a fecha (ya validado)
-      const timestampMs = parseInt(row.time);
-        
-        // Crear fecha en UTC
-        const rowDate = new Date(timestampMs);
-        // Formatear fecha y hora
-        const dateStr = rowDate.toISOString().split('T')[0]; // YYYY-MM-DD
-        const timeStr = rowDate.toTimeString().split(':').slice(0, 2).join(':'); // HH:MM
+      const timestampMs = parseInt(row.time); // En milisegundos UTC
 
-        // Formatear COs a 2 decimales
-        const formatCO = (value: string | number): number => {
-          const num = typeof value === 'string' ? parseFloat(value) : value;
-          return parseFloat(num.toFixed(2));
-        };
-        
-        // Función auxiliar para parsear los contadores de minutos
-        const parseMinuteCount = (value: string | number): number => {
-          if (value === null || value === undefined) return 0;
-          const num = typeof value === 'string' ? parseInt(value, 10) : value;
-          return isNaN(num) ? 0 : num;
-        };
+      const dt = DateTime
+        .fromMillis(timestampMs, { zone: "UTC" })   // confirmar que es UTC
+        .setZone("America/Argentina/Buenos_Aires"); // convertir a UTC-3
+      
+      // separo datetime en date y time
+      const dateStr = dt.toFormat("yyyy-MM-dd");
+      const timeStr = dt.toFormat("HH:mm");
 
-        return {
-          date: dateStr,
-          time: timeStr,
-          co_centenario: formatCO(row.co_centenario),
-          minuteCount_centenario: parseMinuteCount(row.minuteCount_centenario),
-          status_centenario: row.status_centenario,
-          co_catalinas: formatCO(row.co_catalinas),
-          minuteCount_catalinas: parseMinuteCount(row.minuteCount_catalinas),
-          status_catalinas: row.status_catalinas,
-          co_cordoba: formatCO(row.co_cordoba),
-          minuteCount_cordoba: parseMinuteCount(row.minuteCount_cordoba),
-          status_cordoba: row.status_cordoba,
-        };
-      })
+      // Formatear COs a 2 decimales
+      const formatCO = (value: string | number): number => {
+        const num = typeof value === "string" ? parseFloat(value) : value;
+        return parseFloat(num.toFixed(2));
+      };
+
+      // Función auxiliar para parsear los contadores de minutos
+      const parseMinuteCount = (value: string | number): number => {
+        if (value === null || value === undefined) return 0;
+        const num = typeof value === "string" ? parseInt(value, 10) : value;
+        return isNaN(num) ? 0 : num;
+      };
+
+      return {
+        date: dateStr,
+        time: timeStr,
+        co_centenario: formatCO(row.co_centenario),
+        minuteCount_centenario: parseMinuteCount(row.minuteCount_centenario),
+        status_centenario: row.status_centenario,
+        co_catalinas: formatCO(row.co_catalinas),
+        minuteCount_catalinas: parseMinuteCount(row.minuteCount_catalinas),
+        status_catalinas: row.status_catalinas,
+        co_cordoba: formatCO(row.co_cordoba),
+        minuteCount_cordoba: parseMinuteCount(row.minuteCount_cordoba),
+        status_cordoba: row.status_cordoba,
+      };
+    });
 
     return formattedData;
   } catch (error) {
-    console.error('Error al obtener datos de CO Diario:', error);
-    throw new Error('No se pudieron obtener los datos de CO Diario');
+    console.error("Error al obtener datos de CO Diario:", error);
+    throw new Error("No se pudieron obtener los datos de CO Diario");
   }
 }
