@@ -1,4 +1,4 @@
-import { WrenchIcon, Package2Icon, HomeIcon, Calendar } from "lucide-react";
+import { WrenchIcon, Package2Icon, HomeIcon, Calendar, BarChart2Icon } from "lucide-react";
 
 export const inicio = [
   {
@@ -52,6 +52,25 @@ export const inventario = {
     {
       title: "Gases",
       url: "/inicio/inventario/gases",
+    },
+  ],
+};
+
+export const datos = {
+  title: "Datos",
+  icon: BarChart2Icon,
+  items: [
+    {
+      title: "Mapa",
+      url: "/inicio/datos/mapa",
+    },
+    {
+      title: "Diario",
+      url: "/inicio/datos/diario",
+    },
+    {
+      title: "Históricos",
+      url: "/inicio/datos/historicos",
     },
   ],
 };
