@@ -11,6 +11,11 @@ export const inicio = [
     url: "/inicio/calendario",
     icon: Calendar,
   },
+  {
+    title: "Datos",
+    url: "/inicio/datos",
+    icon: BarChart2Icon,
+  },
 ];
 
 // Mantainance , WrenchIconMenu items.
@@ -52,25 +57,6 @@ export const inventario = {
     {
       title: "Gases",
       url: "/inicio/inventario/gases",
-    },
-  ],
-};
-
-export const datos = {
-  title: "Datos",
-  icon: BarChart2Icon,
-  items: [
-    {
-      title: "Mapa",
-      url: "/inicio/datos/mapa",
-    },
-    {
-      title: "Diario",
-      url: "/inicio/datos/diario",
-    },
-    {
-      title: "Históricos",
-      url: "/inicio/datos/historicos",
     },
   ],
 };
