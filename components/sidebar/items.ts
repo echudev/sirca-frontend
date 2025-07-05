@@ -1,4 +1,10 @@
-import { WrenchIcon, Package2Icon, HomeIcon, Calendar, BarChart2Icon } from "lucide-react";
+import {
+  WrenchIcon,
+  Package2Icon,
+  HomeIcon,
+  Calendar,
+  BarChart2Icon,
+} from "lucide-react";
 
 export const inicio = [
   {
@@ -8,13 +14,8 @@ export const inicio = [
   },
   {
     title: "Calendario",
-    url: "/inicio/calendario",
+    url: "/calendario",
     icon: Calendar,
-  },
-  {
-    title: "Datos",
-    url: "/inicio/datos",
-    icon: BarChart2Icon,
   },
 ];
 
@@ -25,15 +26,15 @@ export const mantenimiento = {
   items: [
     {
       title: "Órdenes",
-      url: "/inicio/mantenimiento/ordenes",
+      url: "/mantenimiento/ordenes",
     },
     {
       title: "Calibraciones",
-      url: "/inicio/mantenimiento/calibraciones",
+      url: "/mantenimiento/calibraciones",
     },
     {
       title: "Programado",
-      url: "/inicio/mantenimiento/programado",
+      url: "/mantenimiento/programado",
     },
   ],
 };
@@ -44,19 +45,41 @@ export const inventario = {
   items: [
     {
       title: "Estaciones",
-      url: "/inicio/inventario/estaciones",
+      url: "/inventario/estaciones",
     },
     {
       title: "Equipos",
-      url: "/inicio/inventario/equipos",
+      url: "/inventario/equipos",
     },
     {
       title: "Partes",
-      url: "/inicio/inventario/partes",
+      url: "/inventario/partes",
     },
     {
       title: "Gases",
-      url: "/inicio/inventario/gases",
+      url: "/inventario/gases",
+    },
+  ],
+};
+
+export const datos = {
+  title: "Datos",
+  icon: BarChart2Icon,
+  items: [
+    {
+      title: "co",
+      url: "/datos/co",
+      icon: HomeIcon,
+    },
+    {
+      title: "nox",
+      url: "/datos/nox",
+      icon: Calendar,
+    },
+    {
+      title: "particulado",
+      url: "/datos/particulado",
+      icon: Calendar,
     },
   ],
 };

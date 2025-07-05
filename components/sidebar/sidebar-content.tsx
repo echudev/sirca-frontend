@@ -2,7 +2,12 @@
 
 import { MenuSub } from "./sidebar-menu-sub";
 import { Menu } from "./sidebar-menu";
-import { inventario, mantenimiento, inicio } from "@/components/sidebar/items";
+import {
+  inventario,
+  mantenimiento,
+  inicio,
+  datos,
+} from "@/components/sidebar/items";
 import {
   SidebarContent,
   SidebarGroup,
@@ -17,6 +22,7 @@ export function Content() {
         <Menu items={inicio} />
         <SidebarGroupLabel>Módulos</SidebarGroupLabel>
         <SidebarGroupContent>
+          <MenuSub title={datos.title} items={datos.items} icon={datos.icon} />
           <MenuSub
             title={inventario.title}
             items={inventario.items}
