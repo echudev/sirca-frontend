@@ -65,21 +65,19 @@ export const inventario = {
 export const datos = {
   title: "Datos",
   icon: BarChart2Icon,
+  defaultUrl: "/datos/historicos",
   items: [
     {
-      title: "co",
-      url: "/datos/co",
-      icon: HomeIcon,
+      title: "Históricos",
+      url: "/datos/historicos",
     },
     {
-      title: "nox",
-      url: "/datos/nox",
-      icon: Calendar,
+      title: "Tiempo Real",
+      url: "/datos/tiempo-real",
     },
     {
-      title: "particulado",
-      url: "/datos/particulado",
-      icon: Calendar,
+      title: "AQI",
+      url: "/datos/aqi",
     },
   ],
 };

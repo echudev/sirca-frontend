@@ -27,12 +27,24 @@ interface ModuleMenuProps {
   title: string;
   icon: LucideIcon;
   items: Array<Item>;
+  defaultUrl?: string;
 }
 
-export function MenuSub({ title, items, icon: Icon }: ModuleMenuProps) {
+export function MenuSub({
+  title,
+  items,
+  icon: Icon,
+  defaultUrl,
+}: ModuleMenuProps) {
   const [isOpen, setIsOpen] = useState(true);
   const pathName = usePathname();
   const router = useRouter();
+
+  const handleTitleClick = () => {
+    if (defaultUrl) {
+      router.push(defaultUrl);
+    }
+  };
 
   return (
     <SidebarMenu>
@@ -43,7 +55,11 @@ export function MenuSub({ title, items, icon: Icon }: ModuleMenuProps) {
           className="group/collapsible"
         >
           <CollapsibleTrigger asChild>
-            <SidebarMenuButton tooltip={title}>
+            <SidebarMenuButton
+              tooltip={title}
+              onClick={defaultUrl ? handleTitleClick : undefined}
+              className={defaultUrl ? "cursor-pointer" : ""}
+            >
               <Icon />
               <span>{title}</span>
               <ChevronRight

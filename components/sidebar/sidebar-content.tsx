@@ -22,7 +22,12 @@ export function Content() {
         <Menu items={inicio} />
         <SidebarGroupLabel>Módulos</SidebarGroupLabel>
         <SidebarGroupContent>
-          <MenuSub title={datos.title} items={datos.items} icon={datos.icon} />
+          <MenuSub
+            title={datos.title}
+            items={datos.items}
+            icon={datos.icon}
+            defaultUrl={datos.defaultUrl}
+          />
           <MenuSub
             title={inventario.title}
             items={inventario.items}
