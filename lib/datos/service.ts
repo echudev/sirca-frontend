@@ -2,37 +2,9 @@ import { getCoDiario } from "./repository";
 import { verifySession } from "../auth-session";
 import { redirect } from "next/navigation";
 import { DateTime } from "luxon";
+import { CoHorarioData, InfluxDBRow, Status } from "./models";
 
-type Status = "ok" | "i";
-
-interface InfluxDBRow {
-  time: string;
-  co_centenario: string;
-  minuteCount_centenario: string;
-  status_centenario: Status;
-  co_catalinas: string;
-  minuteCount_catalinas: string;
-  status_catalinas: Status;
-  co_cordoba: string;
-  minuteCount_cordoba: string;
-  status_cordoba: Status;
-}
-
-export interface CoDiarioData {
-  date: string; // Formato: YYYY-MM-DD
-  time: string; // Formato: HH:MM
-  co_centenario: number;
-  minuteCount_centenario: number;
-  status_centenario: Status;
-  co_catalinas: number;
-  minuteCount_catalinas: number;
-  status_catalinas: Status;
-  co_cordoba: number;
-  minuteCount_cordoba: number;
-  status_cordoba: Status;
-}
-
-export async function handleGetCoDiario(): Promise<CoDiarioData[]> {
+export async function handleGetCoHorario(): Promise<CoHorarioData[]> {
   // Verificar sesión
   const session = await verifySession();
 
@@ -77,14 +49,13 @@ export async function handleGetCoDiario(): Promise<CoDiarioData[]> {
     });
 
     // Mapear los resultados a un formato estructurado
-    const formattedData: CoDiarioData[] = validRows.map((row) => {
+    const formattedData: CoHorarioData[] = validRows.map((row) => {
       // Convertir timestamp en milisegundos a fecha (ya validado)
       const timestampMs = parseInt(row.time); // En milisegundos UTC
 
-      const dt = DateTime
-        .fromMillis(timestampMs, { zone: "UTC" })   // confirmar que es UTC
+      const dt = DateTime.fromMillis(timestampMs, { zone: "UTC" }) // confirmar que es UTC
         .setZone("America/Argentina/Buenos_Aires"); // convertir a UTC-3
-      
+
       // separo datetime en date y time
       const dateStr = dt.toFormat("yyyy-MM-dd");
       const timeStr = dt.toFormat("HH:mm");

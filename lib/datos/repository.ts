@@ -16,7 +16,8 @@ export async function getCoDiario() {
   CASE WHEN COUNT(CASE WHEN "location" = 'cordoba' THEN "co_mean" END) >= 45 THEN 'ok' ELSE 'i' END AS status_cordoba
   
   FROM "co_table"
-  WHERE time >= now() - interval '24h'
+  WHERE time >= date_trunc('hour', now() - interval '25h')
+  AND time < date_trunc('hour', now())
   GROUP BY date_bin(interval '1 hour', time)
   ORDER BY hour;
   `;
