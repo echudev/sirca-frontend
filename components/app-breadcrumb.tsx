@@ -27,7 +27,14 @@ export function AppBreadCrumb() {
                   "font-medium text-primary hover:text-secondary cursor-pointer select-none"
                 )}
               >
-                {parte.charAt(0).toUpperCase() + parte.slice(1)}
+                {parte.includes("-")
+                  ? parte
+                      .split("-")
+                      .map(
+                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                      )
+                      .join(" ")
+                  : parte.charAt(0).toUpperCase() + parte.slice(1)}
               </BreadcrumbLink>
             </BreadcrumbItem>
             {partesRuta.length > index + 1 && <BreadcrumbSeparator />}
