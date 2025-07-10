@@ -23,7 +23,7 @@ export default async function InicioLayout({
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
       <main className="w-full h-screen p-3">
-        <div className="flex flex-col h-full rounded bg-gray-50 shadow-md shadow-black/25">
+        <div className="flex flex-col h-full rounded bg-gray-50 shadow-md shadow-black/25 overflow-auto">
           <div className="flex">
             <SidebarTrigger />
             <AppBreadCrumb />
