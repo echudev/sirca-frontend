@@ -11,6 +11,7 @@ export async function register(state: RegisterFormState, formData: FormData) {
   // 1. Valido campos del formulario
   const validatedFields = RegisterFormSchema.safeParse({
     name: formData.get("name"),
+    lastName: formData.get("lastName"),
     email: formData.get("email"),
     password: formData.get("password"),
     role: formData.get("role"),

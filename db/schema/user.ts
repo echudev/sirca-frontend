@@ -4,7 +4,8 @@ import { commonColumns } from "./common-columns";
 
 export const userTable = pgTable("user", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  name: varchar({ length: 40 }).notNull().unique(),
+  name: varchar({ length: 40 }).notNull(),
+  lastName: varchar({ length: 40 }).notNull(),
   email: varchar({ length: 40 }).notNull().unique(),
   password: text("password_hash").notNull(),
   role: varchar({ length: 10 }).default("VIEWER").notNull(),

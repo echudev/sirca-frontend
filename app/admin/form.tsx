@@ -46,6 +46,7 @@ export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
+    lastName: "",
     email: "",
     password: "",
     role: "",
@@ -53,6 +54,7 @@ export function RegisterForm() {
   const [localErrors, setLocalErrors] = useState<RegisterFormState>({
     errors: {
       name: [],
+      lastName: [],
       email: [],
       password: [],
       role: [],
@@ -65,6 +67,9 @@ export function RegisterForm() {
       switch (name) {
         case "name":
           RegisterFormSchema.pick({ name: true }).parse({ name: value });
+          break;
+        case "lastName":
+          RegisterFormSchema.pick({ lastName: true }).parse({ lastName: value });
           break;
         case "email":
           RegisterFormSchema.pick({ email: true }).parse({ email: value });
@@ -123,6 +128,7 @@ export function RegisterForm() {
   const resetForm = () => {
     setFormData({
       name: "",
+      lastName: "",
       email: "",
       password: "",
       role: "",
@@ -131,6 +137,7 @@ export function RegisterForm() {
     setLocalErrors({
       errors: {
         name: [],
+        lastName: [],
         email: [],
         password: [],
         role: [],
@@ -155,11 +162,11 @@ export function RegisterForm() {
       <CardContent>
         <form action={action}>
           <div className="flex flex-col space-y-1.5 my-4">
-            <Label htmlFor="name">Nombre de Usuario</Label>
+            <Label htmlFor="name">Nombre</Label>
             <Input
               id="name"
               name="name"
-              placeholder="username1234"
+              placeholder="Jhon"
               onChange={handleInputChange}
               className={`w-full ${(localErrors?.errors?.name?.length ?? 0 > 0)
                   ? "border-red-500 focus-visible:ring-red-500"
@@ -167,6 +174,25 @@ export function RegisterForm() {
                 }`}
             />
             {localErrors?.errors?.name?.map((error) => (
+              <p key={error} className="text-sm text-red-500">
+                {error}
+              </p>
+            ))}
+          </div>
+
+          <div className="flex flex-col space-y-1.5 my-4">
+            <Label htmlFor="lastName">Apellido</Label>
+            <Input
+              id="lastName"
+              name="lastName"
+              placeholder="Doe"
+              onChange={handleInputChange}
+              className={`w-full ${(localErrors?.errors?.lastName?.length ?? 0 > 0)
+                  ? "border-red-500 focus-visible:ring-red-500"
+                  : ""
+                }`}
+            />
+            {localErrors?.errors?.lastName?.map((error) => (
               <p key={error} className="text-sm text-red-500">
                 {error}
               </p>

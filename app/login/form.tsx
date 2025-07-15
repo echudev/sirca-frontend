@@ -45,8 +45,8 @@ export function LoginForm() {
       <CardContent>
         <form action={action}>
           <div className="flex flex-col space-y-1.5 my-4">
-            <Label htmlFor="name">Nombre de Usuario</Label>
-            <Input id="name" name="name" placeholder="Username" />
+            <Label htmlFor="email">Correo</Label>
+            <Input id="email" name="email" placeholder="Correo" />
           </div>
 
           <div className="relative flex flex-col space-y-1.5 my-4">
@@ -80,9 +80,9 @@ export function LoginForm() {
           </p>
         )}
         {/* Si hay error en reglas del name (cantidad de carácteres minimo), evita conectar a base de datos y da error */}
-        {state?.errors?.name && (
+        {state?.errors?.email && (
           <p className="text-sm text-red-500 font-bold">
-            {state.errors.name || " "}
+            {state.errors.email || " "}
           </p>
         )}
         {/* Si hay error en reglas del password (longitud, carácteres especiales, que contenga minuscula etc), evita conectar a base de datos y da error */}

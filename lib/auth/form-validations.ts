@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const LoginFormSchema = z.object({
-  name: z
+  email: z
     .string()
-    .min(2, { message: "El nombre debe tener al menos 2 caracteres." })
+    .email({ message: "Por favor, introduce un correo válido." })
     .trim(),
   password: z
     .string()
@@ -20,6 +20,10 @@ export const RegisterFormSchema = z.object({
   name: z
     .string()
     .min(2, { message: "El nombre debe tener al menos 2 caracteres." })
+    .trim(),
+  lastName: z
+    .string()
+    .min(2, { message: "El apellido debe tener al menos 2 caracteres." })
     .trim(),
   email: z
     .string()
@@ -42,7 +46,7 @@ export const RegisterFormSchema = z.object({
 export type LoginFormState =
   | {
       errors?: {
-        name?: string[];
+        email?: string[];
         password?: string[];
       };
       message?: string;
@@ -53,6 +57,7 @@ export type RegisterFormState =
   | {
       errors?: {
         name?: string[];
+        lastName?: string[];
         email?: string[];
         password?: string[];
         role?: string[];

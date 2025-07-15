@@ -1,7 +1,7 @@
 import { RegisterForm } from "./form";
 import { verifySession } from "@/lib/auth-session";
 
-export default async function WelcomePage() {
+export default async function RegisterPage() {
   const cookie = await verifySession();
   const role = cookie.data.role;
 

@@ -8,7 +8,7 @@ import { UserSelect } from "@/db/schema/user";
 export async function login(state: LoginFormState, formData: FormData) {
   // 1. Valido campos del formulario
   const validatedFields = LoginFormSchema.safeParse({
-    name: formData.get("name"),
+    email: formData.get("email"),
     password: formData.get("password"),
   });
 

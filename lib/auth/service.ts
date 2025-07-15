@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { createSession } from "@/lib/auth-session";
-import { getUserByName, insertUser } from "./repository";
+import { getUserByEmail, insertUser } from "./repository";
 import { UserInsert, UserSelect } from "@/db/schema/user";
 
 export interface AuthResponse {
@@ -15,7 +15,7 @@ export interface AuthResponse {
 
 export async function loginUser(data: UserSelect): Promise<AuthResponse> {
   // Obtener el usuario desde la base de datos
-  const usuario = await getUserByName(data.name);
+  const usuario = await getUserByEmail(data.email);
   if (!usuario) {
     return { success: false, message: "Usuario no encontrado" };
   }
@@ -44,6 +44,7 @@ export async function registerUser(data: UserInsert): Promise<AuthResponse> {
     // Insertar al usuario en la base de datos
     const result = await insertUser({
       name: data.name,
+      lastName: data.lastName,
       email: data.email,
       password,
       role: data.role,
