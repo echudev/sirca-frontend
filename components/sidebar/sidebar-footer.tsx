@@ -53,7 +53,7 @@ export async function Footer() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton size={"lg"}>
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src="https://cdn3d.iconscout.com/3d/premium/thumb/hombre-avatar-6299539-5187871.png?f=webp" />
+                    <AvatarImage src="/avatar-img.png" className="border border-secondary/90 rounded-full"/>
                     <AvatarFallback>user</AvatarFallback>
                   </Avatar>
                   <p className="font-bold text-base">{userName}</p>
