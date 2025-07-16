@@ -27,7 +27,7 @@ export async function loginUser(data: UserSelect): Promise<AuthResponse> {
   }
 
   // Crear la sesión del usuario
-  await createSession(usuario.id.toString(), usuario.name, usuario.role);
+  await createSession(usuario.id.toString(), usuario.name, usuario.role, usuario.email);
 
   // Retornar el nombre del usuario para posibles personalizaciones
   return {

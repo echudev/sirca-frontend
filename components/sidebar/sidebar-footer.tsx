@@ -34,6 +34,7 @@ interface CookieResponse {
   data: {
     userId: string;
     userName: string;
+    email: string;
     role: string;
   };
 }
@@ -42,6 +43,7 @@ export async function Footer() {
   // user cookie sesion data
   const cookie: CookieResponse = await verifySession();
   const userName = cookie.data.userName;
+  const userEmail = cookie.data.email;
   const userRole = cookie.data.role;
 
   return (
@@ -52,8 +54,8 @@ export async function Footer() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton size={"lg"}>
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src="/avatar-img.png" className="border border-secondary/90 rounded-full"/>
+                  <Avatar className="h-7 w-7 rounded-lg">
+                    <AvatarImage src={`https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(userEmail)}&fontSize=45&weight=bold&radius=15`}/>
                     <AvatarFallback>user</AvatarFallback>
                   </Avatar>
                   <p className="font-bold text-base">{userName}</p>

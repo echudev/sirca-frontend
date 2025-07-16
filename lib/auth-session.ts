@@ -12,6 +12,7 @@ export type SessionPayload = {
   userId: string;
   userName: string;
   role: string;
+  email: string;
   expiresAt: Date;
 };
 
@@ -40,10 +41,11 @@ export async function decrypt(session: string | undefined = "") {
 export async function createSession(
   userId: string,
   userName: string,
-  role: string
+  role: string,
+  email: string
 ) {
   const expiresAt = new Date(Date.now() + 7 * 60 * 60 * 1000);
-  const sessionPayload: SessionPayload = { userId, userName, role, expiresAt };
+  const sessionPayload: SessionPayload = { userId, userName, role, email, expiresAt };
   const session = await encrypt(sessionPayload);
 
   // Guardar la sesión en las cookies
@@ -95,6 +97,7 @@ export const verifySession = cache(async () => {
     data: {
       userId: session.userId as string,
       userName: session.userName as string,
+      email: session.email as string,
       role: session.role as string,
     },
   };
