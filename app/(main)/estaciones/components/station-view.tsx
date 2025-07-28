@@ -66,6 +66,14 @@ const formatearMetrica = (metrica: { key: string; value: string | number }) => {
   return metrica.value;
 };
 
+// separar validaciones por metrica
+const metricValidator = (metrica: string | number) => {
+  if (metrica === null || metrica === undefined || metrica === "s/d") {
+    return false;
+  }
+  return true;
+};
+
 export default function StationView({ data }: { data: StationData }) {
   // metricas de la cabina (temperatura interna, humedad interna, hora)
   const cabina = Object.fromEntries(
@@ -109,7 +117,7 @@ export default function StationView({ data }: { data: StationData }) {
             <CardContent
               className={cn(
                 "font-bold",
-                metricas[metrica.key] !== undefined
+                metricValidator(metricas[metrica.key])
                   ? "text-green-600"
                   : "text-red-600"
               )}
