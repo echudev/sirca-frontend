@@ -8,6 +8,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectLabel,
+  SelectGroup,
 } from "@/components/ui/select";
 
 const STATIONS = [
@@ -51,12 +53,6 @@ export default function StationPicker({
         </div>
       ) : (
         <div className="flex gap-2">
-          <Button
-            onClick={handleConnect}
-            className="bg-primary text-primary-foreground hover:bg-primary/90"
-          >
-            Conectar
-          </Button>
           <Select
             value={selected}
             onValueChange={setSelected}
@@ -66,13 +62,22 @@ export default function StationPicker({
               <SelectValue placeholder="Selecciona una estación" />
             </SelectTrigger>
             <SelectContent>
-              {STATIONS.map((station) => (
-                <SelectItem key={station.id} value={station.id}>
-                  {station.name}
-                </SelectItem>
-              ))}
+              <SelectGroup>
+                <SelectLabel>Selecciona una estación</SelectLabel>
+                {STATIONS.map((station) => (
+                  <SelectItem key={station.id} value={station.id}>
+                    {station.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
+          <Button
+            onClick={handleConnect}
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            Conectar
+          </Button>
         </div>
       )}
     </>
