@@ -28,22 +28,43 @@ export type ContaminanteData = {
   [key: string]: string | number | Status; // Permite propiedades dinámicas como 'co_centenario', 'o3_centenario', etc.
 };
 
-// Schema para filas de InfluxDB (datos raw de la base de datos)
-export const InfluxDBRowSchema = z.object({
+// Schema base para filas de InfluxDB (datos raw de la base de datos)
+const BaseInfluxDBRowSchema = {
   time: z.string(),
-  co_centenario: z.string(),
   minuteCount_centenario: z.string(),
   status_centenario: StatusEnum,
-  co_catalinas: z.string(),
   minuteCount_catalinas: z.string(),
   status_catalinas: StatusEnum,
-  co_cordoba: z.string(),
   minuteCount_cordoba: z.string(),
   status_cordoba: StatusEnum,
-  co_cifa: z.string(),
   minuteCount_cifa: z.string(),
   status_cifa: StatusEnum,
-});
+};
+
+// Tipos de contaminantes soportados
+type Contaminant = 'co' | 'no2' | 'o3' | 'pm10' | 'pm25';
+type Location = 'centenario' | 'catalinas' | 'cordoba' | 'cifa';
+
+// Función para crear un schema con propiedades dinámicas para cada contaminante
+function createContaminantSchema() {
+  const contaminants: Contaminant[] = ['co', 'no2', 'o3', 'pm10', 'pm25'];
+  const locations: Location[] = ['centenario', 'catalinas', 'cordoba', 'cifa'];
+  
+  const dynamicFields: Record<string, z.ZodOptional<z.ZodString>> = {};
+  
+  for (const contaminant of contaminants) {
+    for (const location of locations) {
+      dynamicFields[`${contaminant}_${location}`] = z.string().optional();
+    }
+  }
+  
+  return {
+    ...BaseInfluxDBRowSchema,
+    ...dynamicFields
+  };
+}
+
+export const InfluxDBRowSchema = z.object(createContaminantSchema());
 
 // ============================================================================
 // TIPOS DERIVADOS

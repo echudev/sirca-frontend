@@ -4,7 +4,11 @@ import { redirect } from "next/navigation";
 import { DateTime } from "luxon";
 import { CoHorarioData, InfluxDBRow, Status } from "./models";
 
-export async function handleGetData(contaminante: string, hours: number = 25, interval: string = '1 hour'): Promise<CoHorarioData[]> {
+export async function handleGetData(
+  contaminante: string,
+  hours: number = 25,
+  interval: string = "1 hour"
+): Promise<CoHorarioData[]> {
   // Verificar sesión
   const session = await verifySession();
 
@@ -76,20 +80,27 @@ export async function handleGetData(contaminante: string, hours: number = 25, in
         return isNaN(num) ? 0 : num;
       };
 
-      // Crear un objeto con los valores dinámicos según el contaminante seleccionado
+      // Helper function to safely get contaminant value
+      const getContaminantValue = (loc: 'centenario' | 'catalinas' | 'cordoba' | 'cifa'): string => {
+        const key = `${contaminante}_${loc}` as const;
+        const value = row[key as keyof InfluxDBRow];
+        return typeof value === 'string' ? value : '0';
+      };
+
+      // Create object with dynamic values based on selected contaminant
       return {
         date: dateStr,
         time: timeStr,
-        [`${contaminante}_centenario`]: formatCO(row[`${contaminante}_centenario`]),
+        [`${contaminante}_centenario`]: formatCO(getContaminantValue('centenario')),
         minuteCount_centenario: parseMinuteCount(row.minuteCount_centenario),
         status_centenario: row.status_centenario,
-        [`${contaminante}_catalinas`]: formatCO(row[`${contaminante}_catalinas`]),
+        [`${contaminante}_catalinas`]: formatCO(getContaminantValue('catalinas')),
         minuteCount_catalinas: parseMinuteCount(row.minuteCount_catalinas),
         status_catalinas: row.status_catalinas,
-        [`${contaminante}_cordoba`]: formatCO(row[`${contaminante}_cordoba`]),
+        [`${contaminante}_cordoba`]: formatCO(getContaminantValue('cordoba')),
         minuteCount_cordoba: parseMinuteCount(row.minuteCount_cordoba),
         status_cordoba: row.status_cordoba,
-        [`${contaminante}_cifa`]: formatCO(row[`${contaminante}_cifa`]),
+        [`${contaminante}_cifa`]: formatCO(getContaminantValue('cifa')),
         minuteCount_cifa: parseMinuteCount(row.minuteCount_cifa),
         status_cifa: row.status_cifa,
       };
