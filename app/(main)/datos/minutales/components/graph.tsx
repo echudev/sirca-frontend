@@ -1,5 +1,7 @@
+"use client"
+
+import React, { useRef, useCallback, useEffect } from "react";
 import { Line } from "react-chartjs-2";
-import { useRef, useCallback, useEffect } from "react";
 import { CoHorarioData } from "@/lib/datos/models";
 import {
   Chart as ChartJS,
@@ -28,16 +30,36 @@ interface GraficoProps {
   data: CoHorarioData[];
 }
 
-export default function Grafico({ data }: GraficoProps) {
+export default function Grafico({ data }: GraficoProps): React.ReactNode {
   const resizeTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
+  // Detectar el tipo de contaminante a partir de los datos
+  const detectContaminante = () => {
+    if (data.length === 0) return 'co';
+    
+    // Buscar la primera propiedad que comience con un contaminante conocido
+    const firstItem = data[0];
+    const keys = Object.keys(firstItem);
+    
+    for (const contaminante of ['co', 'o3', 'nox']) {
+      if (keys.some(key => key.startsWith(contaminante + '_'))) {
+        return contaminante;
+      }
+    }
+    
+    return 'co'; // Valor por defecto
+  };
+  
+  const contaminante = detectContaminante();
+  const contaminanteLabel = contaminante.toUpperCase();
+  
   // Process chart data with simplified structure
   const chartData = {
     labels: data.map((item) => `${item.date} ${item.time}`),
     datasets: [
       {
-        label: "CO Centenario",
-        data: data.map((item) => Number(item.co_centenario) || 0),
+        label: `${contaminanteLabel} Centenario`,
+        data: data.map((item) => Number(item[`${contaminante}_centenario`]) || 0),
         borderColor: "#22c55e",
         backgroundColor: "rgba(34, 197, 94, 0.1)",
         borderWidth: 2,
@@ -47,8 +69,8 @@ export default function Grafico({ data }: GraficoProps) {
         pointHoverRadius: 5,
       },
       {
-        label: "CO Catalinas",
-        data: data.map((item) => Number(item.co_catalinas) || 0),
+        label: `${contaminanteLabel} Catalinas`,
+        data: data.map((item) => Number(item[`${contaminante}_catalinas`]) || 0),
         borderColor: "#3b82f6",
         backgroundColor: "rgba(59, 130, 246, 0.1)",
         borderWidth: 2,
@@ -58,10 +80,21 @@ export default function Grafico({ data }: GraficoProps) {
         pointHoverRadius: 5,
       },
       {
-        label: "CO Córdoba",
-        data: data.map((item) => Number(item.co_cordoba) || 0),
+        label: `${contaminanteLabel} Córdoba`,
+        data: data.map((item) => Number(item[`${contaminante}_cordoba`]) || 0),
         borderColor: "#ef4444",
         backgroundColor: "rgba(239, 68, 68, 0.1)",
+        borderWidth: 2,
+        tension: 0.4,
+        fill: true,
+        pointRadius: 0,
+        pointHoverRadius: 5,
+      },
+      {
+        label: `${contaminanteLabel} CIFA`,
+        data: data.map((item) => Number(item[`${contaminante}_cifa`]) || 0),
+        borderColor: "#a855f7",
+        backgroundColor: "rgba(168, 85, 247, 0.1)",
         borderWidth: 2,
         tension: 0.4,
         fill: true,
@@ -96,7 +129,7 @@ export default function Grafico({ data }: GraficoProps) {
       },
       title: {
         display: true,
-        text: "Concentración de CO (ppm)",
+        text: `Concentración de ${contaminanteLabel} (ppm)`,
       },
       tooltip: {
         mode: "index" as const,
@@ -139,21 +172,22 @@ export default function Grafico({ data }: GraficoProps) {
               let status = "";
               let minutes = "";
 
-              if (station === "CO Centenario") {
-                status = item.status_centenario;
-                minutes = item.minuteCount_centenario.toString();
-              } else if (station === "CO Catalinas") {
-                status = item.status_catalinas;
-                minutes = item.minuteCount_catalinas.toString();
-              } else if (station === "CO Córdoba") {
-                status = item.status_cordoba;
-                minutes = item.minuteCount_cordoba.toString();
+              // Extraer la ubicación del nombre de la estación
+              let location = "";
+              if (station?.includes("Centenario")) location = "centenario";
+              else if (station?.includes("Catalinas")) location = "catalinas";
+              else if (station?.includes("Córdoba")) location = "cordoba";
+              else if (station?.includes("CIFA")) location = "cifa";
+              
+              if (location) {
+                status = item[`status_${location}`] as string;
+                minutes = item[`minuteCount_${location}`]?.toString() || "0";
               }
 
               return [`Estado: ${status}`, `Minutos: ${minutes}`];
             }
             return "";
-          },
+          }
         },
       },
     },
@@ -174,15 +208,15 @@ export default function Grafico({ data }: GraficoProps) {
         display: true,
         title: {
           display: true,
-          text: "CO (ppm)",
+          text: `${contaminanteLabel} (ppm)`,
         },
         beginAtZero: true,
       },
     },
     interaction: {
       mode: "index" as const,
-      intersect: false,
-    },
+      intersect: false
+    }
   };
 
   const chartRef = useRef<ChartJS<"line", number[], string> | null>(null);

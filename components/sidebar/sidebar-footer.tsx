@@ -28,7 +28,6 @@ import { Button } from "../ui/button";
 import { verifySession } from "@/lib/auth-session";
 import { logout } from "@/app/actions/auth/";
 
-
 interface CookieResponse {
   isAuth: boolean;
   data: {
@@ -55,7 +54,9 @@ export async function Footer() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton size={"lg"}>
                   <Avatar className="h-7 w-7 rounded-lg">
-                    <AvatarImage src={`https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(userEmail)}&fontSize=45&weight=bold&radius=15`}/>
+                    <AvatarImage
+                      src={`https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(userEmail)}&fontSize=45&weight=bold&radius=15`}
+                    />
                     <AvatarFallback>user</AvatarFallback>
                   </Avatar>
                   <p className="font-bold text-base">{userName}</p>

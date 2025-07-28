@@ -4,12 +4,14 @@ import { decrypt } from "@/lib/auth-session";
 
 // 1. Specify protected and public routes
 const protectedRoutes = [
-  "/inicio",
+  "/panel-general",
   "/admin",
   "/api",
   "/datos",
   "/mantenimiento",
   "/inventario",
+  "/estaciones",
+  "/reportes",
   "/",
 ];
 const publicRoutes = ["/login"];
@@ -24,10 +26,10 @@ export default async function middleware(req: NextRequest) {
   const cookie = (await cookies()).get("session")?.value;
   const session = await decrypt(cookie);
 
-  // Redirigir a /login o /inicio si el usuario ingresa a "/"
+  // Redirigir a /login o /panel-general si el usuario ingresa a "/"
   if (path === "/") {
     if (session?.userId) {
-      return NextResponse.redirect(new URL("/inicio", req.nextUrl));
+      return NextResponse.redirect(new URL("/panel-general", req.nextUrl));
     } else {
       return NextResponse.redirect(new URL("/login", req.nextUrl));
     }
@@ -38,13 +40,13 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
-  // 5. Redirect to /inicio if the user is authenticated
+  // 5. Redirect to /panel-general if the user is authenticated
   if (
     isPublicRoute &&
     session?.userId &&
-    !req.nextUrl.pathname.startsWith("/inicio")
+    !req.nextUrl.pathname.startsWith("/panel-general")
   ) {
-    return NextResponse.redirect(new URL("/inicio", req.nextUrl));
+    return NextResponse.redirect(new URL("/panel-general", req.nextUrl));
   }
 
   return NextResponse.next();

@@ -1,10 +1,10 @@
-import { getCoDiario } from "./repository";
+import { getInfluxData } from "./repository";
 import { verifySession } from "../auth-session";
 import { redirect } from "next/navigation";
 import { DateTime } from "luxon";
 import { CoHorarioData, InfluxDBRow, Status } from "./models";
 
-export async function handleGetCoHorario(): Promise<CoHorarioData[]> {
+export async function handleGetData(contaminante: string, hours: number = 25, interval: string = '1 hour'): Promise<CoHorarioData[]> {
   // Verificar sesión
   const session = await verifySession();
 
@@ -14,12 +14,12 @@ export async function handleGetCoHorario(): Promise<CoHorarioData[]> {
   }
 
   try {
-    console.warn("Fetching CO Diario data...");
-    const influxRows = await getCoDiario();
+    console.warn("Fetching data...");
+    const influxRows = await getInfluxData(hours, interval, contaminante);
 
     // Si no hay datos, retornar array vacío
     if (!influxRows || influxRows.length === 0) {
-      console.warn("No se encontraron datos de CO Diario");
+      console.warn("No se encontraron datos");
       return [];
     }
 
@@ -35,6 +35,9 @@ export async function handleGetCoHorario(): Promise<CoHorarioData[]> {
       co_cordoba: row.co_cordoba,
       minuteCount_cordoba: row.minuteCount_cordoba,
       status_cordoba: row.status_cordoba as Status,
+      co_cifa: row.co_cifa,
+      minuteCount_cifa: row.minuteCount_cifa,
+      status_cifa: row.status_cifa as Status,
     }));
 
     // Filtrar filas sin hora o con timestamp inválido
@@ -73,18 +76,22 @@ export async function handleGetCoHorario(): Promise<CoHorarioData[]> {
         return isNaN(num) ? 0 : num;
       };
 
+      // Crear un objeto con los valores dinámicos según el contaminante seleccionado
       return {
         date: dateStr,
         time: timeStr,
-        co_centenario: formatCO(row.co_centenario),
+        [`${contaminante}_centenario`]: formatCO(row[`${contaminante}_centenario`]),
         minuteCount_centenario: parseMinuteCount(row.minuteCount_centenario),
         status_centenario: row.status_centenario,
-        co_catalinas: formatCO(row.co_catalinas),
+        [`${contaminante}_catalinas`]: formatCO(row[`${contaminante}_catalinas`]),
         minuteCount_catalinas: parseMinuteCount(row.minuteCount_catalinas),
         status_catalinas: row.status_catalinas,
-        co_cordoba: formatCO(row.co_cordoba),
+        [`${contaminante}_cordoba`]: formatCO(row[`${contaminante}_cordoba`]),
         minuteCount_cordoba: parseMinuteCount(row.minuteCount_cordoba),
         status_cordoba: row.status_cordoba,
+        [`${contaminante}_cifa`]: formatCO(row[`${contaminante}_cifa`]),
+        minuteCount_cifa: parseMinuteCount(row.minuteCount_cifa),
+        status_cifa: row.status_cifa,
       };
     });
 

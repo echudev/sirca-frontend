@@ -1,7 +1,5 @@
 import { PageUnderConstruction } from "@/components/page-under-construction";
 
-export default function Inicio() {
-  return (
-    <PageUnderConstruction />
-  );
+export default function PanelGeneral() {
+  return <PageUnderConstruction />;
 }

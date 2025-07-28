@@ -1,34 +1,35 @@
 "use client";
 
-import { MenuSub } from "./sidebar-menu-sub";
 import { Menu } from "./sidebar-menu";
+import { MenuSub } from "./sidebar-menu-sub";
 import {
-  inventario,
-  mantenimiento,
   inicio,
-  datos,
+  datosCrudos,
+  reportes,
+  tiempoReal,
 } from "@/components/sidebar/items";
 import {
   SidebarContent,
   SidebarGroup,
-  SidebarGroupContent,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar";
 
 export function Content() {
   return (
-    <SidebarContent className="my-5">
+    <SidebarContent>
       <SidebarGroup>
+        <SidebarGroupLabel>Inicio</SidebarGroupLabel>
         <Menu items={inicio} />
-        <SidebarGroupLabel>Módulos</SidebarGroupLabel>
-        <SidebarGroupContent>
-          <MenuSub
-            title={datos.title}
-            items={datos.items}
-            icon={datos.icon}
-            defaultUrl={datos.defaultUrl}
-          />
-          <MenuSub
+        <SidebarGroupLabel>Datos en Tiempo Real</SidebarGroupLabel>
+        <Menu items={tiempoReal} />
+        <SidebarGroupLabel>Hiostóricos</SidebarGroupLabel>
+        <MenuSub
+          title={datosCrudos.title}
+          items={datosCrudos.items}
+          icon={datosCrudos.icon}
+        />
+        <Menu items={reportes} />
+        {/* <MenuSub
             title={inventario.title}
             items={inventario.items}
             icon={inventario.icon}
@@ -37,8 +38,7 @@ export function Content() {
             title={mantenimiento.title}
             items={mantenimiento.items}
             icon={mantenimiento.icon}
-          />
-        </SidebarGroupContent>
+          /> */}
       </SidebarGroup>
     </SidebarContent>
   );
