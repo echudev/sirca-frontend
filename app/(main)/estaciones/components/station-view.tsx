@@ -240,7 +240,7 @@ export default function StationView({ data }: { data: StationData }) {
                   <Card
                     key={metrica.key}
                     className={cn(
-                      "relative overflow-hidden transition-all duration-300 hover:shadow-lg border-2 shadow-md hover:shadow-accent/20 cursor-pointer min-w-0",
+                      "relative overflow-hidden transition-all duration-300 hover:shadow-lg border-2 shadow-md hover:shadow-primary/10 cursor-pointer min-w-0",
                       categoria.bgColor,
                       categoria.borderColor
                     )}
