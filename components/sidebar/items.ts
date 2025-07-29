@@ -3,7 +3,7 @@ import {
   ChartLine,
   MapPin,
   ChartNoAxesColumn,
-  ChartNoAxesColumnIncreasing,
+  // ChartNoAxesColumnIncreasing,
   LayoutDashboardIcon,
 } from "lucide-react";
 
@@ -50,11 +50,11 @@ export const datos = [
     url: "/datos/crudos",
     icon: ChartNoAxesColumn,
   },
-  {
-    title: "Datos Validados",
-    url: "/datos/validados",
-    icon: ChartNoAxesColumnIncreasing,
-  },
+  // {
+  //   title: "Datos Validados",
+  //   url: "/datos/validados",
+  //   icon: ChartNoAxesColumnIncreasing,
+  // },
 ];
 
 export const reportes = [

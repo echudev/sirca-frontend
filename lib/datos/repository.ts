@@ -42,63 +42,28 @@ export async function fetchLastMinuteCentenario() {
 }
 
 // CONSULTA DATOS DE INFLUXDB
-export async function getInfluxData(
-  hours: number = 25,
-  interval: string = "hour",
-  contaminante: string = "co"
-) {
-  const dateTruncUnit = interval === "day" ? "day" : "hour";
-  const dateBinInterval = interval === "day" ? "'1 day'" : "'1 hour'";
-
+export async function fetchDatosPorContaminante() {
+  const database = "minutales";
   const query = `
-  SELECT date_bin(interval ${dateBinInterval}, time) AS hour,
-  AVG(CASE WHEN "location" = 'centenario' THEN "${contaminante}_mean" END) AS centenario,
-  COUNT(CASE WHEN "location" = 'centenario' THEN "${contaminante}_mean" END) AS "minuteCount_centenario",
-  CASE WHEN COUNT(CASE WHEN "location" = 'centenario' THEN "${contaminante}_mean" END) >= 45 THEN 'ok' ELSE 'i' END AS status_centenario,
-  
-  AVG(CASE WHEN "location" = 'catalinas' THEN "${contaminante}_mean" END) AS catalinas,
-  COUNT(CASE WHEN "location" = 'catalinas' THEN "${contaminante}_mean" END) AS "minuteCount_catalinas",
-  CASE WHEN COUNT(CASE WHEN "location" = 'catalinas' THEN "${contaminante}_mean" END) >= 45 THEN 'ok' ELSE 'i' END AS status_catalinas,
-
-  AVG(CASE WHEN "location" = 'cordoba' THEN "${contaminante}_mean" END) AS cordoba,
-  COUNT(CASE WHEN "location" = 'cordoba' THEN "${contaminante}_mean" END) AS "minuteCount_cordoba",
-  CASE WHEN COUNT(CASE WHEN "location" = 'cordoba' THEN "${contaminante}_mean" END) >= 45 THEN 'ok' ELSE 'i' END AS status_cordoba,
-
-  AVG(CASE WHEN "location" = 'cifa' THEN "${contaminante}_mean" END) AS cifa,
-  COUNT(CASE WHEN "location" = 'cifa' THEN "${contaminante}_mean" END) AS "minuteCount_cifa",
-  CASE WHEN COUNT(CASE WHEN "location" = 'cifa' THEN "${contaminante}_mean" END) >= 45 THEN 'ok' ELSE 'i' END AS status_cifa
-  
-  FROM "measurements"
-  WHERE time >= date_trunc('${dateTruncUnit}', now() - interval '${hours} hours')
-  AND time < date_trunc('${dateTruncUnit}', now())
-  GROUP BY 1
-  ORDER BY hour;
+  SELECT
+  DATE_TRUNC('minute', time) AS time,
+  AVG(CASE WHEN location = 'centenario' THEN co_mean END) AS centenario,
+  AVG(CASE WHEN location = 'cordoba' THEN co_mean END) AS cordoba,
+  AVG(CASE WHEN location = 'catalinas' THEN co_mean END) AS catalinas
+  FROM co_minutales
+  WHERE time >= '2025-07-29T00:00:00Z'
+  AND time < '2025-07-30T00:00:00Z'
+  GROUP BY DATE_TRUNC('minute', time)
+  ORDER BY time;
   `;
-
   try {
-    const result = [];
-    for await (const row of influx.query(query, "minutales")) {
-      // Crear un objeto con los valores dinámicos según el contaminante seleccionado
-      const resultObj = {
-        time: new Date(row.hour).getTime().toString(),
-        [`${contaminante}_centenario`]: row.centenario || "0",
-        minuteCount_centenario: row.minuteCount_centenario?.toString() || "0",
-        status_centenario: row.status_centenario || "i",
-        [`${contaminante}_catalinas`]: row.catalinas || "0",
-        minuteCount_catalinas: row.minuteCount_catalinas?.toString() || "0",
-        status_catalinas: row.status_catalinas || "i",
-        [`${contaminante}_cordoba`]: row.cordoba || "0",
-        minuteCount_cordoba: row.minuteCount_cordoba?.toString() || "0",
-        status_cordoba: row.status_cordoba || "i",
-        [`${contaminante}_cifa`]: row.cifa || "0",
-        minuteCount_cifa: row.minuteCount_cifa?.toString() || "0",
-        status_cifa: row.status_cifa || "i",
-      };
-      result.push(resultObj);
+    const rows = [];
+    for await (const row of influx.query(query, database)) {
+      rows.push(row);
     }
-    return result;
+    return rows;
   } catch (error) {
-    console.error("Error in getCoDiario:", error);
+    console.error("Error in fetchDatosPorContaminante:", error);
     throw error;
   }
 }
