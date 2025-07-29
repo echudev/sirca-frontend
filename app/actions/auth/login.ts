@@ -25,5 +25,5 @@ export async function login(state: LoginFormState, formData: FormData) {
   }
 
   // 3. Redirigir al usuario o retornar datos necesarios
-  redirect("/inicio");
+  redirect("/panel-general");
 }
