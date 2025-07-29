@@ -3,6 +3,7 @@ import {
   ChartLine,
   MapPin,
   ChartNoAxesColumn,
+  ChartNoAxesColumnIncreasing,
   LayoutDashboardIcon,
 } from "lucide-react";
 
@@ -12,36 +13,49 @@ export const inicio = [
     url: "/panel-general",
     icon: LayoutDashboardIcon,
   },
-];
-
-export const tiempoReal = [
   {
     title: "AQI",
     url: "/aqi",
     icon: Wind,
   },
-  {
-    title: "Estaciones",
-    url: "/estaciones",
-    icon: MapPin,
-  },
 ];
 
-export const datosCrudos = {
-  title: "Datos Crudos",
-  icon: ChartNoAxesColumn,
-  url: "/datos/minutales",
+export const estaciones = {
+  title: "Estaciones",
+  icon: MapPin,
+  url: "/estaciones",
   items: [
     {
-      title: "Minutales",
-      url: "/datos/minutales",
+      title: "Centenario",
+      url: "/estaciones/centenario",
     },
     {
-      title: "Horarios",
-      url: "/datos/horarios",
+      title: "Catalinas",
+      url: "/estaciones/catalinas",
+    },
+    {
+      title: "Córdoba",
+      url: "/estaciones/cordoba",
+    },
+    {
+      title: "CIFA",
+      url: "/estaciones/cifa",
     },
   ],
 };
+
+export const datos = [
+  {
+    title: "Datos Crudos",
+    url: "/datos/crudos",
+    icon: ChartNoAxesColumn,
+  },
+  {
+    title: "Datos Validados",
+    url: "/datos/validados",
+    icon: ChartNoAxesColumnIncreasing,
+  },
+];
 
 export const reportes = [
   {

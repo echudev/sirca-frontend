@@ -4,9 +4,9 @@ import { Menu } from "./sidebar-menu";
 import { MenuSub } from "./sidebar-menu-sub";
 import {
   inicio,
-  datosCrudos,
+  datos,
   reportes,
-  tiempoReal,
+  estaciones,
 } from "@/components/sidebar/items";
 import {
   SidebarContent,
@@ -18,16 +18,15 @@ export function Content() {
   return (
     <SidebarContent>
       <SidebarGroup>
-        <SidebarGroupLabel>Inicio</SidebarGroupLabel>
+        <SidebarGroupLabel className="mt-2">Inicio</SidebarGroupLabel>
         <Menu items={inicio} />
-        <SidebarGroupLabel>Datos en Tiempo Real</SidebarGroupLabel>
-        <Menu items={tiempoReal} />
-        <SidebarGroupLabel>Hiostóricos</SidebarGroupLabel>
         <MenuSub
-          title={datosCrudos.title}
-          items={datosCrudos.items}
-          icon={datosCrudos.icon}
+          title={estaciones.title}
+          items={estaciones.items}
+          icon={estaciones.icon}
         />
+        <SidebarGroupLabel className="mt-2">Datos de la Red</SidebarGroupLabel>
+        <Menu items={datos} />
         <Menu items={reportes} />
         {/* <MenuSub
             title={inventario.title}
