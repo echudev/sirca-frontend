@@ -124,7 +124,8 @@ const formatearMetrica = (metrica: { key: string; value: string | number }) => {
     metrica.key === "hr_mean" ||
     metrica.key === "hr_in_mean" ||
     metrica.key === "dv_mean" ||
-    metrica.key === "pm10_mean"
+    metrica.key === "pm10_mean" ||
+    metrica.key === "lluvia_mean"
   ) {
     return metrica.value !== null && metrica.value !== undefined
       ? Number(metrica.value).toFixed(0)
@@ -145,46 +146,7 @@ const formatearMetrica = (metrica: { key: string; value: string | number }) => {
       ? Number(metrica.value).toFixed(3)
       : "s/d";
   }
-  if (metrica.key === "lluvia_mean") {
-    return metrica.value !== null && metrica.value !== undefined
-      ? metrica.value
-      : "s/d";
-  }
   return metrica.value;
-};
-
-const metricValidator = (metrica: string | number) => {
-  if (metrica === null || metrica === undefined || metrica === "s/d") {
-    return false;
-  }
-  return true;
-};
-
-const getStatusColor = (metrica: string | number, key: string) => {
-  if (!metricValidator(metrica)) return "text-muted-foreground";
-
-  // Lógica de colores basada en valores críticos
-  const value = Number(metrica);
-
-  if (key === "co_mean") {
-    if (value > 9) return "text-destructive";
-    if (value > 4.5) return "text-orange-500";
-    return "text-green-600";
-  }
-
-  if (key === "no2_mean") {
-    if (value > 200) return "text-destructive";
-    if (value > 100) return "text-orange-500";
-    return "text-green-600";
-  }
-
-  if (key === "pm10_mean") {
-    if (value > 150) return "text-destructive";
-    if (value > 75) return "text-orange-500";
-    return "text-green-600";
-  }
-
-  return "text-primary";
 };
 
 export default function StationView({ data }: { data: StationData }) {
@@ -208,7 +170,57 @@ export default function StationView({ data }: { data: StationData }) {
   );
 
   return (
-    <div className="flex flex-col rounded-xl p-6 border-2 border-border/50 shadow-lg">
+    <div className="flex flex-col">
+      <header className=" flex justify-center">
+        <div className="flex flex-col sm:gap-5 md:gap-2 lg:gap-28 md:flex-row items-center p-4 my-6 border-b-2 border-border/50 text-sm text-muted-foreground">
+          {/* Condiciones de cabina */}
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col items-center gap-1 px-3 py-2 bg-accent/20 border border-accent/40 rounded-lg">
+              <div className="flex items-center gap-2">
+                <Thermometer className="w-4 h-4 text-primary" />
+                <span className="text-primary font-semibold text-sm">
+                  {cabina.temp_in_mean ?? "N/A"} °C
+                </span>
+              </div>
+              <span className="text-xs font-medium">Temperatura Cabina</span>
+            </div>
+            <div className="flex flex-col items-center gap-1 px-3 py-2 bg-accent/20 border border-accent/40 rounded-lg">
+              <div className="flex items-center gap-2">
+                <Droplets className="w-4 h-4 text-primary " />
+                <span className="text-primary font-semibold text-sm">
+                  {cabina.hr_in_mean ?? "N/A"} %
+                </span>
+              </div>
+              <span className="text-xs font-medium">Humedad Cabina</span>
+            </div>
+          </div>
+          {/* Fecha y hora actualizacion*/}
+          <div className="flex flex-col items-center gap-2">
+            <span className="font-medium flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              {cabina.time
+                ? new Date(cabina.time).toLocaleDateString("es-AR", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                : "Fecha no disponible"}
+            </span>
+            <span className="font-medium flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              Última actualización:{" "}
+              {cabina.time
+                ? new Intl.DateTimeFormat("es-AR", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  }).format(new Date(cabina.time))
+                : "N/A"}
+            </span>
+          </div>
+        </div>
+      </header>
       {/* Métricas organizadas por categorías */}
       <div className="space-y-6">
         {metricasCategorizadas.map((categoria) => (
@@ -225,7 +237,7 @@ export default function StationView({ data }: { data: StationData }) {
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
               {categoria.metrics.map((metrica) => {
                 const IconComponent = metrica.icon;
                 const value = metricas[metrica.key];
@@ -233,14 +245,12 @@ export default function StationView({ data }: { data: StationData }) {
                   key: metrica.key,
                   value,
                 });
-                const isValid = metricValidator(value);
-                const statusColor = getStatusColor(value, metrica.key);
 
                 return (
                   <Card
                     key={metrica.key}
                     className={cn(
-                      "relative overflow-hidden transition-all duration-300 hover:shadow-lg border-2 shadow-md hover:shadow-primary/10 cursor-pointer min-w-0",
+                      "relative overflow-hidden transition-all duration-300 hover:shadow-lg border-2 shadow-md hover:shadow-primary/10 cursor-pointer",
                       categoria.bgColor,
                       categoria.borderColor
                     )}
@@ -293,16 +303,13 @@ export default function StationView({ data }: { data: StationData }) {
                       <div
                         className={cn(
                           "text-2xl font-bold transition-colors text-center",
-                          isValid ? statusColor : "text-muted-foreground"
+                          formattedValue !== "s/d"
+                            ? "text-green-700"
+                            : "text-red-500"
                         )}
                       >
                         {formattedValue}
                       </div>
-                      {!isValid && (
-                        <div className="text-xs text-muted-foreground mt-2 text-center">
-                          Sin datos
-                        </div>
-                      )}
                     </CardContent>
 
                     {/* Footer con nombre completo para contaminantes */}
@@ -319,56 +326,6 @@ export default function StationView({ data }: { data: StationData }) {
             </div>
           </div>
         ))}
-      </div>
-
-      {/* Footer compacto con información temporal unificada */}
-      <div className="flex justify-end items-center pt-4 mt-6 border-t-2 border-border/50 text-sm text-muted-foreground">
-        {/* Condiciones de cabina */}
-        <div className="flex items-center gap-4 mr-auto">
-          <div className="flex flex-col items-center gap-1 px-3 py-2 bg-accent/20 border border-accent/40 rounded-lg">
-            <div className="flex items-center gap-2">
-              <Thermometer className="w-4 h-4 text-primary" />
-              <span className="text-primary font-semibold text-sm">
-                {cabina.temp_in_mean ?? "N/A"} °C
-              </span>
-            </div>
-            <span className="text-xs font-medium">Temperatura Cabina</span>
-          </div>
-          <div className="flex flex-col items-center gap-1 px-3 py-2 bg-accent/20 border border-accent/40 rounded-lg">
-            <div className="flex items-center gap-2">
-              <Droplets className="w-4 h-4 text-primary " />
-              <span className="text-primary font-semibold text-sm">
-                {cabina.hr_in_mean ?? "N/A"} %
-              </span>
-            </div>
-            <span className="text-xs font-medium">Humedad Cabina</span>
-          </div>
-        </div>
-        {/* Fecha y hora */}
-        <div className="flex flex-col items-center gap-2">
-          <span className="font-medium flex items-center gap-2">
-            <Calendar className="w-4 h-4" />
-            {cabina.time
-              ? new Date(cabina.time).toLocaleDateString("es-AR", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
-              : "Fecha no disponible"}
-          </span>
-          <span className="font-medium flex items-center gap-2">
-            <Clock className="w-4 h-4" />
-            Última actualización:{" "}
-            {cabina.time
-              ? new Intl.DateTimeFormat("es-AR", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: false,
-                }).format(new Date(cabina.time))
-              : "N/A"}
-          </span>
-        </div>
       </div>
     </div>
   );
