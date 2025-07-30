@@ -1,4 +1,4 @@
-import { db } from "@/db/connection";
+import { db } from "@/db/drizzle";
 import { eq } from "drizzle-orm";
 import { itemTable } from "@/db/schema/inventory/item";
 import { itemSubcategory } from "@/db/schema/inventory/item-subcategory";

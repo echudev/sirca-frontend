@@ -1,4 +1,4 @@
-import { influx } from "@/db/connection";
+import { influx } from "@/db/influx";
 
 // CONSULTA ULTIMO MINUTO DE ESTACION CENENARIO
 export async function fetchLastMinuteCentenario() {

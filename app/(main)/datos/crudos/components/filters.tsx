@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { FiltrosType } from "../page";
 import { ChevronDownIcon } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -34,18 +35,15 @@ const promedioOptions = [
 ];
 
 interface FiltrosProps {
-  currentFilters: {
-    metrica: string;
-    avg: string;
-    from: Date | undefined;
-    to: Date | undefined;
-  };
+  currentFilters: FiltrosType;
   isLoading?: boolean;
+  onFetch?: (filters: FiltrosType) => void;
 }
 
 export default function Filtros({
   currentFilters,
   isLoading = false,
+  onFetch,
 }: FiltrosProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -74,7 +72,23 @@ export default function Filtros({
   };
 
   const handleApply = () => {
-    // Siempre enviar en formato UTC z para la DB
+    // Convierte los valores a tipo Date para cumplir con FiltrosType
+    const toDate = (date: string | Date | undefined): Date | undefined => {
+      if (!date) return undefined;
+      if (typeof date === "string") {
+        const d = new Date(date);
+        return isNaN(d.getTime()) ? undefined : d;
+      }
+      return date;
+    };
+    const filtersToSend = {
+      metrica: localFilters.metrica,
+      avg: localFilters.avg,
+      from: toDate(localFilters.from),
+      to: toDate(localFilters.to),
+    };
+    if (onFetch) onFetch(filtersToSend);
+    // Para la URL, sigue enviando en formato UTC z
     const toUTCZ = (date: string | Date | undefined) => {
       if (!date) return "";
       const d = typeof date === "string" ? new Date(date) : date;
@@ -93,10 +107,10 @@ export default function Filtros({
   return (
     <div className="p-2">
       <header className="mb-10">
-        <h1 className="text-2xl text-primary font-bold text-center">
+        <h1 className="text-2xl text-primary/90 font-bold text-center">
           Datos de Calidad del Aire
         </h1>
-        <h2 className="text-secondary-foreground text-center">
+        <h2 className="text-secondary-foreground/60 text-center">
           Seleccioná el contaminante, el tipo de integración y el rango de
           fechas para consultar los datos.
         </h2>
@@ -220,7 +234,7 @@ export default function Filtros({
           </Popover>
         </div>
         <Button
-          className="btn btn-primary ml-4 mt-auto"
+          className="btn btn-primary text-primary bg-secondary hover:bg-secondary/60 ml-4 mt-auto"
           onClick={handleApply}
           disabled={isLoading}
         >

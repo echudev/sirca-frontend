@@ -1,8 +1,10 @@
-import { db } from "@/db/connection";
+import { db } from "@/db/drizzle";
 import { userTable, UserSelect, UserInsert } from "@/db/schema/user";
 import { eq } from "drizzle-orm";
 
-export async function getUserByEmail(email: string): Promise<UserSelect | null> {
+export async function getUserByEmail(
+  email: string
+): Promise<UserSelect | null> {
   const db_user = await db
     .select()
     .from(userTable)
