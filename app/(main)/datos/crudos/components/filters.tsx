@@ -51,8 +51,8 @@ export default function Filtros({
   // Estado local para los selects
   const [localFilters, setLocalFilters] = useState(currentFilters);
   // Estado para popup de date pickers
-  const [openFrom, setOpenFrom] = useState(false);
-  const [openTo, setOpenTo] = useState(false);
+  const [openStartDate, setOpenStartDate] = useState(false);
+  const [openEndDate, setOpenEndDate] = useState(false);
 
   // Helper que formatea la fecha para la UI: 'lun, dd/mm/yyyy'
   const formatDateUI = (date: string | Date | undefined) => {
@@ -83,9 +83,9 @@ export default function Filtros({
     };
     const filtersToSend = {
       metrica: localFilters.metrica,
-      avg: localFilters.avg,
-      from: toDate(localFilters.from),
-      to: toDate(localFilters.to),
+      interval: localFilters.interval,
+      startDate: toDate(localFilters.startDate),
+      endDate: toDate(localFilters.endDate),
     };
     if (onFetch) onFetch(filtersToSend);
     // Para la URL, sigue enviando en formato UTC z
@@ -97,9 +97,9 @@ export default function Filtros({
     };
     const params = new URLSearchParams({
       metrica: localFilters.metrica,
-      avg: localFilters.avg,
-      from: toUTCZ(localFilters.from),
-      to: toUTCZ(localFilters.to),
+      interval: localFilters.interval,
+      startDate: toUTCZ(localFilters.startDate),
+      endDate: toUTCZ(localFilters.endDate),
     });
     router.replace(`${pathname}?${params.toString()}`);
   };
@@ -142,13 +142,13 @@ export default function Filtros({
 
         {/* Select promedio (minutal, horario, diario) */}
         <div className="flex flex-col gap-3">
-          <Label htmlFor="avg" className="px-1">
+          <Label htmlFor="interval" className="px-1">
             Integración
           </Label>
           <Select
-            name="avg"
-            value={localFilters.avg ?? ""}
-            onValueChange={(value) => handleChange("avg", value)}
+            name="interval"
+            value={localFilters.interval ?? ""}
+            onValueChange={(value) => handleChange("interval", value)}
             disabled={isLoading}
           >
             <SelectTrigger className="w-[180px]">
@@ -164,19 +164,19 @@ export default function Filtros({
           </Select>
         </div>
 
-        {/* from date picker */}
+        {/* start date date picker */}
         <div className="flex flex-col gap-3">
           <Label htmlFor="date" className="px-1">
             Desde
           </Label>
-          <Popover open={openFrom} onOpenChange={setOpenFrom}>
+          <Popover open={openStartDate} onOpenChange={setOpenStartDate}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
                 id="date"
                 className="w-48 justify-between font-normal"
               >
-                {formatDateUI(localFilters.from)}
+                {formatDateUI(localFilters.startDate)}
                 <ChevronDownIcon />
               </Button>
             </PopoverTrigger>
@@ -187,31 +187,33 @@ export default function Filtros({
               <Calendar
                 mode="single"
                 selected={
-                  localFilters.from ? new Date(localFilters.from) : undefined
+                  localFilters.startDate
+                    ? new Date(localFilters.startDate)
+                    : undefined
                 }
                 captionLayout="dropdown"
                 onSelect={(date) => {
-                  handleChange("from", date ? date.toUTCString() : "");
-                  setOpenFrom(false);
+                  handleChange("startDate", date ? date.toUTCString() : "");
+                  setOpenStartDate(false);
                 }}
               />
             </PopoverContent>
           </Popover>
         </div>
 
-        {/* to date picker */}
+        {/* endDate date picker */}
         <div className="flex flex-col gap-3">
           <Label htmlFor="date" className="px-1">
             Hasta
           </Label>
-          <Popover open={openTo} onOpenChange={setOpenTo}>
+          <Popover open={openEndDate} onOpenChange={setOpenEndDate}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
                 id="date"
                 className="w-48 justify-between font-normal"
               >
-                {formatDateUI(localFilters.to)}
+                {formatDateUI(localFilters.endDate)}
                 <ChevronDownIcon />
               </Button>
             </PopoverTrigger>
@@ -222,12 +224,14 @@ export default function Filtros({
               <Calendar
                 mode="single"
                 selected={
-                  localFilters.to ? new Date(localFilters.to) : undefined
+                  localFilters.endDate
+                    ? new Date(localFilters.endDate)
+                    : undefined
                 }
                 captionLayout="dropdown"
                 onSelect={(date) => {
-                  handleChange("to", date ? date.toUTCString() : "");
-                  setOpenTo(false);
+                  handleChange("endDate", date ? date.toUTCString() : "");
+                  setOpenEndDate(false);
                 }}
               />
             </PopoverContent>

@@ -179,7 +179,8 @@ export default function StationView({ data }: { data: StationData }) {
               <div className="flex items-center gap-2">
                 <Thermometer className="w-4 h-4 text-primary" />
                 <span className="text-primary font-semibold text-sm">
-                  {cabina.temp_in_mean ?? "N/A"} °C
+                  {cabina.temp_in_mean ? cabina.temp_in_mean.toFixed(1) : "N/A"}{" "}
+                  °C
                 </span>
               </div>
               <span className="text-xs font-medium">Temperatura Cabina</span>
@@ -188,7 +189,7 @@ export default function StationView({ data }: { data: StationData }) {
               <div className="flex items-center gap-2">
                 <Droplets className="w-4 h-4 text-primary " />
                 <span className="text-primary font-semibold text-sm">
-                  {cabina.hr_in_mean ?? "N/A"} %
+                  {cabina.hr_in_mean ? cabina.hr_in_mean.toFixed(0) : "N/A"} %
                 </span>
               </div>
               <span className="text-xs font-medium">Humedad Cabina</span>

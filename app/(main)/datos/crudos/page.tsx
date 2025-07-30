@@ -7,9 +7,9 @@ import useFetchDatos from "@/hooks/useFetchDatos";
 
 export interface FiltrosType {
   metrica: string;
-  avg: string;
-  from: Date | undefined;
-  to: Date | undefined;
+  interval: string;
+  startDate: Date | undefined;
+  endDate: Date | undefined;
 }
 
 export interface DataRow {
@@ -22,9 +22,9 @@ export interface DataRow {
 export default function CrudosPage() {
   const [filters, setFilters] = useState<FiltrosType>({
     metrica: "co",
-    avg: "hour",
-    from: undefined,
-    to: undefined,
+    interval: "hour",
+    startDate: undefined,
+    endDate: undefined,
   });
   const { data, error, isLoading, fetchDatos } = useFetchDatos();
 

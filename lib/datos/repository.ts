@@ -41,27 +41,84 @@ export async function fetchLastMinuteCentenario() {
   }
 }
 
-// CONSULTA DATOS DE INFLUXDB
-export async function fetchDatosPorContaminante() {
+// CONSULTA DATOS DE INFLUXDB CON PARÁMETROS DINÁMICOS
+export async function fetchDatosPorContaminante(params: {
+  contaminant: string;
+  locations?: string[];
+  startDate?: string;
+  endDate?: string;
+  interval?: string;
+} = { contaminant: 'co' }) {
   const database = "minutales";
+  const {
+    contaminant = 'co',
+    locations = ['centenario', 'cordoba', 'catalinas'],
+    startDate = '2025-07-29T00:00:00Z',
+    endDate = '2025-07-30T00:00:00Z',
+    interval = 'minute'
+  } = params || { contaminant: 'co' };
+
+  // Validar el contaminante para evitar inyección SQL
+  const validContaminants = ['co', 'no2', 'no', 'nox', 'pm10', 'pm25', 'o3'];
+  const validatedContaminant = validContaminants.includes(contaminant) ? contaminant : 'co';
+  
+  // Mapear contaminantes a sus tablas correspondientes
+  const tableMap: Record<string, string> = {
+    'co': 'co_minutales',
+    'no2': 'nox_minutales',
+    'no': 'nox_minutales',
+    'nox': 'nox_minutales',
+    'pm10': 'pm10_minutales',
+    'pm25': 'pm25_minutales',
+    'o3': 'o3_minutales'
+  };
+  
+  const table = tableMap[validatedContaminant] || 'co_minutales';
+  
+  // Mapear contaminantes a sus columnas correspondientes
+  const columnMap: Record<string, string> = {
+    'co': 'co_mean',
+    'no2': 'no2_mean',
+    'no': 'no_mean',
+    'nox': 'nox_mean',
+    'pm10': 'pm10_mean',
+    'pm25': 'pm25_mean',
+    'o3': 'o3_mean'
+  };
+  
+  const column = columnMap[validatedContaminant] || 'co_mean';
+
+  // Construir SELECT dinámico para las ubicaciones
+  const locationSelects = locations.map(location => 
+    `AVG(CASE WHEN location = '${location}' THEN ${column} END) AS ${location}`
+  ).join(',\n  ');
+
   const query = `
   SELECT
-  DATE_TRUNC('minute', time) AS time,
-  AVG(CASE WHEN location = 'centenario' THEN co_mean END) AS centenario,
-  AVG(CASE WHEN location = 'cordoba' THEN co_mean END) AS cordoba,
-  AVG(CASE WHEN location = 'catalinas' THEN co_mean END) AS catalinas
-  FROM co_minutales
-  WHERE time >= '2025-07-29T00:00:00Z'
-  AND time < '2025-07-30T00:00:00Z'
-  GROUP BY DATE_TRUNC('minute', time)
+  DATE_TRUNC('${interval}', time) AS time,
+  ${locationSelects}
+  FROM ${table}
+  WHERE time >= '${startDate}'
+  AND time < '${endDate}'
+  GROUP BY DATE_TRUNC('${interval}', time)
   ORDER BY time;
   `;
+  
   try {
     const rows = [];
     for await (const row of influx.query(query, database)) {
       rows.push(row);
     }
-    return rows;
+    return {
+      data: rows,
+      meta: {
+        contaminant: validatedContaminant,
+        locations,
+        startDate,
+        endDate,
+        interval
+      }
+    };
   } catch (error) {
     console.error("Error in fetchDatosPorContaminante:", error);
     throw error;
