@@ -12,11 +12,8 @@ export interface FiltrosType {
   endDate: Date | undefined;
 }
 
-export interface DataRow {
+export interface DataRow extends Record<string, string | number> {
   time: string;
-  centenario: number;
-  cordoba: number;
-  catalinas: number;
 }
 
 export default function CrudosPage() {

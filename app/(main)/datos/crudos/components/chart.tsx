@@ -11,39 +11,56 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-type CrudosChartRow = {
-  timestamp: string;
-  centenario: string;
-  cordoba: string;
-  catalinas: string;
-};
-
 interface ChartProps {
-  data: {
-    time: string;
-    centenario: number;
-    cordoba: number;
-    catalinas: number;
-  }[];
+  data: Record<string, string | number>[];
 }
 
 export default function Chart({ data }: ChartProps) {
-  // Mapear los datos para que tengan las claves esperadas por el gráfico
-  const chartData: CrudosChartRow[] = Array.isArray(data)
-    ? data.map((row) => ({
-        timestamp: new Intl.DateTimeFormat("es-AR", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          timeZone: "America/Argentina/Buenos_Aires",
-        }).format(new Date(row.time)),
-        centenario: Number(row.centenario).toFixed(3),
-        cordoba: Number(row.cordoba).toFixed(3),
-        catalinas: Number(row.catalinas).toFixed(3),
-      }))
-    : [];
+  if (!Array.isArray(data) || data.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <span className="text-gray-500">No hay datos para mostrar</span>
+      </div>
+    );
+  }
+
+  // Obtener las ubicaciones (columnas) dinámicamente excluyendo 'time'
+  const locations = Object.keys(data[0] || {}).filter((key) => key !== "time");
+
+  // Colores predefinidos para las líneas
+  const colors = [
+    "#8884d8",
+    "#82ca9d",
+    "#ff7300",
+    "#ffc658",
+    "#8dd1e1",
+    "#d084d0",
+    "#ffb347",
+    "#87ceeb",
+  ];
+
+  // Mapear los datos para el gráfico
+  const chartData = data.map((row) => {
+    const mappedRow: Record<string, string | number> = {
+      timestamp: new Intl.DateTimeFormat("es-AR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "America/Argentina/Buenos_Aires",
+      }).format(new Date(row.time)),
+    };
+
+    locations.forEach((location) => {
+      mappedRow[location] =
+        row[location] !== null && row[location] !== undefined
+          ? Number(row[location]).toFixed(3)
+          : "0.000";
+    });
+
+    return mappedRow;
+  });
 
   return (
     <ResponsiveContainer width="100%" height={400}>
@@ -56,27 +73,16 @@ export default function Chart({ data }: ChartProps) {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Line
-          type="monotone"
-          dataKey="centenario"
-          stroke="#8884d8"
-          name="Centenario"
-          dot={false}
-        />
-        <Line
-          type="monotone"
-          dataKey="cordoba"
-          stroke="#82ca9d"
-          name="Cordoba"
-          dot={false}
-        />
-        <Line
-          type="monotone"
-          dataKey="catalinas"
-          stroke="#ff7300"
-          name="Catalinas"
-          dot={false}
-        />
+        {locations.map((location, index) => (
+          <Line
+            key={location}
+            type="monotone"
+            dataKey={location}
+            stroke={colors[index % colors.length]}
+            name={location.charAt(0).toUpperCase() + location.slice(1)}
+            dot={false}
+          />
+        ))}
       </LineChart>
     </ResponsiveContainer>
   );
