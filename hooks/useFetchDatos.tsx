@@ -11,10 +11,10 @@ export default function useFetchDatos() {
     setError("");
     try {
       const params = new URLSearchParams({
-        metrica: filters.metrica,
-        avg: filters.avg,
-        from: filters.from ? filters.from.toISOString() : "",
-        to: filters.to ? filters.to.toISOString() : "",
+        contaminant: filters.metrica,
+        interval: filters.interval,
+        startDate: filters.startDate ? filters.startDate.toISOString() : "",
+        endDate: filters.endDate ? filters.endDate.toISOString() : "",
       });
       const response = await fetch(`/api/datos?${params.toString()}`);
       if (!response.ok) {
