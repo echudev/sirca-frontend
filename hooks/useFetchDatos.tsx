@@ -1,5 +1,8 @@
 import { useState } from "react";
-import type { FiltrosType, DataRow } from "../app/(main)/datos/crudos/page";
+import type {
+  FiltrosType,
+  DataRow,
+} from "../app/(main)/datos/contaminante/page";
 
 export default function useFetchDatos() {
   const [data, setData] = useState<DataRow[]>([]);
