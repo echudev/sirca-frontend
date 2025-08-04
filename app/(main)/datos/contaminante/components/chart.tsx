@@ -76,11 +76,12 @@ export default function Chart({ data }: ChartProps) {
         {locations.map((location, index) => (
           <Line
             key={location}
-            type="monotone"
+            type="linear"
             dataKey={location}
             stroke={colors[index % colors.length]}
             name={location.charAt(0).toUpperCase() + location.slice(1)}
             dot={false}
+            strokeWidth={2}
           />
         ))}
       </LineChart>

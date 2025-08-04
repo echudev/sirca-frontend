@@ -28,8 +28,11 @@ export default function Station() {
 
   return (
     <div className="w-full h-full p-6 flex flex-col max-w-7xl mx-auto">
-      <div className="flex justify-center items-center">
-        <h1 className="text-3xl font-bold text-center text-primary">
+      <div className="flex justify-center items-center relative">
+        <h1 className="text-4xl font-bold text-center text-primary relative z-10">
+          Estación Centenario
+        </h1>
+        <h1 className="absolute text-4xl font-bold text-center text-secondary -translate-x-[1px] translate-y-[1px] z-0">
           Estación Centenario
         </h1>
       </div>

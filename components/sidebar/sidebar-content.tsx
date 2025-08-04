@@ -6,6 +6,7 @@ import {
   inicio,
   datos,
   reportes,
+  aqi,
   estaciones,
 } from "@/components/sidebar/items";
 import {
@@ -20,12 +21,16 @@ export function Content() {
       <SidebarGroup>
         <SidebarGroupLabel className="mt-2">Inicio</SidebarGroupLabel>
         <Menu items={inicio} />
+        <SidebarGroupLabel className="mt-2">
+          Datos Instantáneos
+        </SidebarGroupLabel>
+        <Menu items={aqi} />
         <MenuSub
           title={estaciones.title}
           items={estaciones.items}
           icon={estaciones.icon}
         />
-        <SidebarGroupLabel className="mt-2">Datos de la Red</SidebarGroupLabel>
+        <SidebarGroupLabel className="mt-2">Datos Históricos</SidebarGroupLabel>
         <Menu items={datos} />
         <Menu items={reportes} />
         {/* <MenuSub

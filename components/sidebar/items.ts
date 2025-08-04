@@ -13,6 +13,8 @@ export const inicio = [
     url: "/panel-general",
     icon: LayoutDashboardIcon,
   },
+];
+export const aqi = [
   {
     title: "AQI",
     url: "/aqi",
@@ -46,8 +48,8 @@ export const estaciones = {
 
 export const datos = [
   {
-    title: "Datos Crudos",
-    url: "/datos/crudos",
+    title: "Por Contaminante",
+    url: "/datos/contaminante",
     icon: ChartNoAxesColumn,
   },
   // {
