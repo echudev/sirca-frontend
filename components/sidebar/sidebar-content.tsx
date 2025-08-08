@@ -21,9 +21,7 @@ export function Content() {
       <SidebarGroup>
         <SidebarGroupLabel className="mt-2">Inicio</SidebarGroupLabel>
         <Menu items={inicio} />
-        <SidebarGroupLabel className="mt-2">
-          Datos Instantáneos
-        </SidebarGroupLabel>
+        <SidebarGroupLabel className="mt-2">Tiempo Real</SidebarGroupLabel>
         <Menu items={aqi} />
         <MenuSub
           title={estaciones.title}
