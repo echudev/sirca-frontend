@@ -2,7 +2,10 @@
 
 import { z } from "zod";
 import { Loader2, EyeIcon, EyeOffIcon } from "lucide-react";
-import { RegisterFormSchema, RegisterFormState } from "@/lib/auth/form-validations";
+import {
+  RegisterFormSchema,
+  RegisterFormState,
+} from "@/lib/auth/form-validations";
 import { useActionState, useState, useEffect, ChangeEvent } from "react";
 import { register } from "@/app/actions/auth/";
 import { Button } from "@/components/ui/button";
@@ -38,6 +41,8 @@ function SubmitButton({
   );
 }
 
+type FieldName = "name" | "lastName" | "email" | "password" | "role";
+
 export function RegisterForm() {
   // Uso useActionState para manejar el estado del formulario
   const [state, action, isPending] = useActionState(register, undefined);
@@ -61,7 +66,7 @@ export function RegisterForm() {
     },
   });
 
-  const validateField = (name: string, value: string) => {
+  const validateField = (name: FieldName, value: string) => {
     try {
       // Corregimos la validación según el campo específico
       switch (name) {
@@ -69,7 +74,9 @@ export function RegisterForm() {
           RegisterFormSchema.pick({ name: true }).parse({ name: value });
           break;
         case "lastName":
-          RegisterFormSchema.pick({ lastName: true }).parse({ lastName: value });
+          RegisterFormSchema.pick({ lastName: true }).parse({
+            lastName: value,
+          });
           break;
         case "email":
           RegisterFormSchema.pick({ email: true }).parse({ email: value });
@@ -93,10 +100,14 @@ export function RegisterForm() {
       }));
     } catch (error) {
       if (error instanceof z.ZodError) {
+        const { fieldErrors } = error.flatten((issue) => issue.message) as {
+          fieldErrors: Partial<Record<FieldName, string[]>>;
+          formErrors: string[];
+        };
         setLocalErrors((prev) => ({
           errors: {
             ...prev?.errors,
-            [name]: error.flatten().fieldErrors[name] || [],
+            [name]: fieldErrors[name] || [],
           },
         }));
       }
@@ -106,7 +117,7 @@ export function RegisterForm() {
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    validateField(name, value);
+    validateField(name as FieldName, value);
     setIsValid(
       RegisterFormSchema.safeParse({
         ...formData,
@@ -168,10 +179,11 @@ export function RegisterForm() {
               name="name"
               placeholder="Jhon"
               onChange={handleInputChange}
-              className={`w-full ${(localErrors?.errors?.name?.length ?? 0 > 0)
+              className={`w-full ${
+                (localErrors?.errors?.name?.length ?? 0 > 0)
                   ? "border-red-500 focus-visible:ring-red-500"
                   : ""
-                }`}
+              }`}
             />
             {localErrors?.errors?.name?.map((error) => (
               <p key={error} className="text-sm text-red-500">
@@ -187,10 +199,11 @@ export function RegisterForm() {
               name="lastName"
               placeholder="Doe"
               onChange={handleInputChange}
-              className={`w-full ${(localErrors?.errors?.lastName?.length ?? 0 > 0)
+              className={`w-full ${
+                (localErrors?.errors?.lastName?.length ?? 0 > 0)
                   ? "border-red-500 focus-visible:ring-red-500"
                   : ""
-                }`}
+              }`}
             />
             {localErrors?.errors?.lastName?.map((error) => (
               <p key={error} className="text-sm text-red-500">
@@ -206,10 +219,11 @@ export function RegisterForm() {
               name="email"
               placeholder="correo@ejemplo.com"
               onChange={handleInputChange}
-              className={`w-full ${(localErrors?.errors?.email?.length ?? 0 > 0)
+              className={`w-full ${
+                (localErrors?.errors?.email?.length ?? 0 > 0)
                   ? "border-red-500 focus-visible:ring-red-500"
                   : ""
-                }`}
+              }`}
             />
             {localErrors?.errors?.email?.map((error) => (
               <p key={error} className="text-sm text-red-500">
@@ -226,10 +240,11 @@ export function RegisterForm() {
               type={showPassword ? "text" : "password"}
               placeholder="********"
               onChange={handleInputChange}
-              className={`w-full ${(localErrors?.errors?.password?.length ?? 0 > 0)
+              className={`w-full ${
+                (localErrors?.errors?.password?.length ?? 0 > 0)
                   ? "border-red-500 focus-visible:ring-red-500"
                   : ""
-                }`}
+              }`}
             />
             <button
               type="button"
