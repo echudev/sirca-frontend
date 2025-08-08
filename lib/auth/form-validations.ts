@@ -39,7 +39,7 @@ export const RegisterFormSchema = z.object({
     })
     .trim(),
   role: z.enum(["ADMIN", "EDITOR", "VIEWER"], {
-    required_error: "Por favor, selecciona un rol.",
+    message: "Por favor, selecciona un rol.",
   }),
 });
 
