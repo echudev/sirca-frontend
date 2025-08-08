@@ -40,9 +40,19 @@ export const QueryParamsSchema = z.object({
     .string()
     .transform((val) => val.split(",").map((loc) => loc.trim()))
     .pipe(z.array(z.string()))
-    .default("centenario,cordoba,catalinas,cifa"),
-  startDate: z.string().datetime().default("2025-07-29T00:00:00Z"),
-  endDate: z.string().datetime().default("2025-07-30T00:00:00Z"),
+    .default(["centenario", "cordoba", "catalinas", "cifa"]),
+  startDate: z
+    .string()
+    .refine((s) => !Number.isNaN(Date.parse(s)), {
+      message: "Invalid datetime",
+    })
+    .default("2025-07-29T00:00:00Z"),
+  endDate: z
+    .string()
+    .refine((s) => !Number.isNaN(Date.parse(s)), {
+      message: "Invalid datetime",
+    })
+    .default("2025-07-30T00:00:00Z"),
   interval: IntervalEnum.default("hour"),
 });
 export type QueryParams = z.infer<typeof QueryParamsSchema>;
