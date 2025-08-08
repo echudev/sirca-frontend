@@ -1,174 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FullLocationData } from "@/lib/location/models";
 import { cn } from "@/lib/utils";
-import {
-  Thermometer,
-  Droplets,
-  Wind,
-  CloudRain,
-  Clock,
-  Calendar,
-  Zap,
-  Cloud,
-} from "lucide-react";
+import { Thermometer, Droplets, Clock, Calendar } from "lucide-react";
+import { metricasCategorizadas } from "./data-items";
 
-interface StationData {
-  time: string;
-  co_mean: number;
-  location: string;
-  no2_mean: number;
-  no_mean: number;
-  nox_mean: number;
-  pm10: number;
-  pm10_mean: number;
-  dv_mean: number;
-  hr_in_mean: number;
-  hr_mean: number;
-  lluvia_mean: number;
-  temp_in_mean: number;
-  temp_mean: number;
-  vv_mean: number;
-}
-
-// Categorías de métricas con iconos y colores
-const metricasCategorizadas = [
-  {
-    categoria: "Contaminantes",
-    color: "from-primary to-primary/80",
-    bgColor: "bg-gradient-to-br from-primary/5 to-primary/10",
-    borderColor: "border-primary/20",
-    metrics: [
-      {
-        key: "co_mean",
-        nombre: "CO",
-        nombreCompleto: "Monóxido de Carbono",
-        unidad: "ppm",
-        icon: Cloud,
-      },
-      {
-        key: "no_mean",
-        nombre: "NO",
-        nombreCompleto: "Óxido de Nitrógeno",
-        unidad: "ppb",
-        icon: Zap,
-      },
-      {
-        key: "no2_mean",
-        nombre: "NO₂",
-        nombreCompleto: "Dióxido de Nitrógeno",
-        unidad: "ppb",
-        icon: Zap,
-      },
-      {
-        key: "nox_mean",
-        nombre: "NOₓ",
-        nombreCompleto: "Óxidos Totales",
-        unidad: "ppb",
-        icon: Zap,
-      },
-      {
-        key: "pm10_mean",
-        nombre: "PM₁₀",
-        nombreCompleto: "Material Particulado < 10 μm",
-        unidad: "μg/m³",
-        icon: CloudRain,
-      },
-    ],
-  },
-  {
-    categoria: "Meteorología",
-    color: "from-secondary to-secondary/80",
-    bgColor: "bg-gradient-to-br from-secondary/5 to-secondary/10",
-    borderColor: "border-secondary/20",
-    metrics: [
-      {
-        key: "temp_mean",
-        nombre: "Temperatura",
-        nombreCompleto: "Temperatura",
-        unidad: "°C",
-        icon: Thermometer,
-      },
-      {
-        key: "hr_mean",
-        nombre: "Humedad",
-        nombreCompleto: "Humedad Relativa",
-        unidad: "%",
-        icon: Droplets,
-      },
-      {
-        key: "dv_mean",
-        nombre: "Dirección Viento",
-        nombreCompleto: "Dirección del Viento",
-        unidad: "°",
-        icon: Wind,
-      },
-      {
-        key: "vv_mean",
-        nombre: "Velocidad Viento",
-        nombreCompleto: "Velocidad del Viento",
-        unidad: "m/s",
-        icon: Wind,
-      },
-      {
-        key: "lluvia_mean",
-        nombre: "Lluvia",
-        nombreCompleto: "Precipitaciones",
-        unidad: "mm",
-        icon: CloudRain,
-      },
-    ],
-  },
-];
-
-const formatearMetrica = (metrica: { key: string; value: string | number }) => {
-  if (
-    metrica.key === "hr_mean" ||
-    metrica.key === "hr_in_mean" ||
-    metrica.key === "dv_mean" ||
-    metrica.key === "pm10_mean" ||
-    metrica.key === "lluvia_mean"
-  ) {
-    return metrica.value !== null && metrica.value !== undefined
-      ? Number(metrica.value).toFixed(0)
-      : "s/d";
-  }
-  if (
-    metrica.key === "no_mean" ||
-    metrica.key === "no2_mean" ||
-    metrica.key === "nox_mean" ||
-    metrica.key === "temp_mean"
-  ) {
-    return metrica.value !== null && metrica.value !== undefined
-      ? Number(metrica.value).toFixed(1)
-      : "s/d";
-  }
-  if (metrica.key === "co_mean") {
-    return metrica.value !== null && metrica.value !== undefined
-      ? Number(metrica.value).toFixed(3)
-      : "s/d";
-  }
-  return metrica.value;
-};
-
-export default function StationView({ data }: { data: StationData }) {
-  const cabina = Object.fromEntries(
-    Object.entries(data).filter(
-      ([key]) =>
-        key === "time" ||
-        key === "hr_in_mean" ||
-        key === "temp_in_mean" ||
-        key === "location"
-    )
-  );
-  const metricas = Object.fromEntries(
-    Object.entries(data).filter(
-      ([key]) =>
-        key !== "location" &&
-        key !== "time" &&
-        key !== "temp_in_mean" &&
-        key !== "hr_in_mean"
-    )
-  );
-
+export default function StationView({ data }: { data: FullLocationData }) {
   return (
     <div className="flex flex-col">
       <header className=" flex justify-center">
@@ -179,8 +15,7 @@ export default function StationView({ data }: { data: StationData }) {
               <div className="flex items-center gap-2">
                 <Thermometer className="w-4 h-4 text-primary" />
                 <span className="text-primary font-semibold text-sm">
-                  {cabina.temp_in_mean ? cabina.temp_in_mean.toFixed(1) : "N/A"}{" "}
-                  °C
+                  {data.temp_in_mean !== null ? data.temp_in_mean : "s/d"} °C
                 </span>
               </div>
               <span className="text-xs font-medium">Temperatura Cabina</span>
@@ -189,7 +24,7 @@ export default function StationView({ data }: { data: StationData }) {
               <div className="flex items-center gap-2">
                 <Droplets className="w-4 h-4 text-primary " />
                 <span className="text-primary font-semibold text-sm">
-                  {cabina.hr_in_mean ? cabina.hr_in_mean.toFixed(0) : "N/A"} %
+                  {data.hr_in_mean !== null ? data.hr_in_mean : "s/d"} %
                 </span>
               </div>
               <span className="text-xs font-medium">Humedad Cabina</span>
@@ -199,8 +34,8 @@ export default function StationView({ data }: { data: StationData }) {
           <div className="flex flex-col items-center gap-2">
             <span className="font-medium flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              {cabina.time
-                ? new Date(cabina.time).toLocaleDateString("es-AR", {
+              {data.latest_time
+                ? new Date(data.latest_time).toLocaleDateString("es-AR", {
                     weekday: "long",
                     year: "numeric",
                     month: "long",
@@ -211,12 +46,12 @@ export default function StationView({ data }: { data: StationData }) {
             <span className="font-medium flex items-center gap-2">
               <Clock className="w-4 h-4" />
               Última actualización:{" "}
-              {cabina.time
+              {data.latest_time
                 ? new Intl.DateTimeFormat("es-AR", {
                     hour: "2-digit",
                     minute: "2-digit",
                     hour12: false,
-                  }).format(new Date(cabina.time))
+                  }).format(new Date(data.latest_time))
                 : "N/A"}
             </span>
           </div>
@@ -241,12 +76,7 @@ export default function StationView({ data }: { data: StationData }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
               {categoria.metrics.map((metrica) => {
                 const IconComponent = metrica.icon;
-                const value = metricas[metrica.key];
-                const formattedValue = formatearMetrica({
-                  key: metrica.key,
-                  value,
-                });
-
+                const value = data[metrica.key];
                 return (
                   <Card
                     key={metrica.key}
@@ -304,12 +134,10 @@ export default function StationView({ data }: { data: StationData }) {
                       <div
                         className={cn(
                           "text-2xl font-bold transition-colors text-center",
-                          formattedValue !== "s/d"
-                            ? "text-green-700"
-                            : "text-red-500"
+                          value == null ? "text-red-500" : "text-green-700"
                         )}
                       >
-                        {formattedValue}
+                        {value ?? "s/d"}
                       </div>
                     </CardContent>
 

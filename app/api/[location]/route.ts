@@ -1,22 +1,21 @@
 import { NextResponse, NextRequest } from "next/server";
-import { fetchLastMinuteCentenario } from "@/lib/datos/repository";
+import { fetchLastMinuteByLocation } from "@/lib/location/repository";
 
-export const dynamic = "force-dynamic"; // Necesario para streaming
+export const dynamic = "force-dynamic";
 
-export async function GET(request: NextRequest) {
-  // 1. Crear un transformador de stream
+export async function GET(
+  request: NextRequest,
+  context: { params: Promise<{ location: string }> }
+) {
+  const { location } = await context.params;
+
   const encoder = new TextEncoder();
 
-  // 2. Inicializar el stream de respuesta
-  const stream = new ReadableStream({
+  const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
-      // Función para enviar datos al cliente
       const sendData = async () => {
         try {
-          // Consulta a la DB
-          const data = await fetchLastMinuteCentenario();
-
-          // Formatear como evento SSE
+          const data = await fetchLastMinuteByLocation(location);
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify(data)}\n\n`)
           );
@@ -28,13 +27,11 @@ export async function GET(request: NextRequest) {
         }
       };
 
-      // Enviar primer set de datos
       await sendData();
 
-      // Configurar intervalo para actualizaciones (60s)
       const interval = setInterval(sendData, 60000);
 
-      // Manejar cierre de conexión
+      // Close on client abort
       request.signal.onabort = () => {
         clearInterval(interval);
         controller.close();
@@ -42,7 +39,6 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  // 3. Devolver la respuesta como stream SSE
   return new NextResponse(stream, {
     headers: {
       "Content-Type": "text/event-stream",

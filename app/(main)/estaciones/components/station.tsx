@@ -4,36 +4,31 @@ import StationView from "./data-view";
 import useSSE from "@/hooks/useSSE";
 import { Card, CardContent } from "@/components/ui/card";
 import { WifiOff, AlertCircle, Loader2 } from "lucide-react";
+import { FullLocationData } from "@/lib/location/models";
 
-interface StationData {
-  time: string;
-  location: string;
-  co_mean: number;
-  no2_mean: number;
-  no_mean: number;
-  nox_mean: number;
-  pm10: number;
-  pm10_mean: number;
-  dv_mean: number;
-  hr_in_mean: number;
-  hr_mean: number;
-  lluvia_mean: number;
-  temp_in_mean: number;
-  temp_mean: number;
-  vv_mean: number;
+function toTitle(location: string) {
+  if (!location) return "Estación";
+  const pretty = location.charAt(0).toUpperCase() + location.slice(1);
+  return `Estación ${pretty}`;
 }
 
-export default function Station() {
-  const { data, error, status } = useSSE<StationData>("/api/centenario");
+export default function Station({
+  location,
+  title,
+}: {
+  location: string;
+  title?: string;
+}) {
+  const { data, error, status } = useSSE<FullLocationData>(`/api/${location}`);
 
   return (
     <div className="w-full h-full p-6 flex flex-col max-w-7xl mx-auto">
       <div className="flex justify-center items-center relative">
         <h1 className="text-4xl font-bold text-center text-primary relative z-10">
-          Estación Centenario
+          {title ?? toTitle(location)}
         </h1>
         <h1 className="absolute text-4xl font-bold text-center text-secondary -translate-x-[1px] translate-y-[1px] z-0">
-          Estación Centenario
+          {title ?? toTitle(location)}
         </h1>
       </div>
 
