@@ -66,7 +66,7 @@ export default function StationView({ data }: { data: FullLocationData }) {
             return (
               <Card
                 key={contaminante.key}
-                className="relative p-5 overflow-hidden border border-border/40 bg-gradient-to-br from-primary to-primary/80 backdrop-blur-sm transition-all duration-300 hover:shadow-lg shadow-md shadow-black/60 cursor-pointer"
+                className="relative p-5 overflow-hidden border border-border/40 bg-gradient-to-br from-primary to-primary/80 backdrop-blur-sm transition-all duration-300 hover:shadow-md shadow-sm shadow-black/30 cursor-pointer"
               >
                 <CardHeader className="p-0">
                   <div className="flex flex-col gap-2">
@@ -85,8 +85,8 @@ export default function StationView({ data }: { data: FullLocationData }) {
                     className={cn(
                       "text-3xl font-bold transition-all",
                       value == null
-                        ? "text-red-400 drop-shadow-[5px_2px_10px_rgba(255,0,0,0.3)]"
-                        : "text-green-400 drop-shadow-[5px_2px_10px_rgba(0,255,0,0.3)]"
+                        ? "text-primary-foreground/60"
+                        : "text-green-300"
                     )}
                   >
                     {value ?? "s/d"}
@@ -118,14 +118,19 @@ export default function StationView({ data }: { data: FullLocationData }) {
             return (
               <Card
                 key={meteo.key}
-                className="relative py-3 px-5 overflow-hidden border border-primary/60 bg-gradient-to-br from-secondary to-secondary/80 backdrop-blur-sm transition-all duration-300 hover:shadow-lg shadow-md shadow-black/40 cursor-pointer"
+                className="relative py-3 px-5 overflow-hidden border border-primary/60 bg-gradient-to-br from-secondary/20 to-secondary/50 backdrop-blur-sm transition-all duration-300 hover:shadow-md shadow-sm shadow-black/30 cursor-pointer"
               >
                 <CardTitle className="text-sm font-semibold text-primary">
                   {meteo.nombre}
                 </CardTitle>
                 <CardContent className="p-0 my-1 flex justify-between items-center text-primary/80">
                   <IconComponent className="w-5 h-5" />
-                  <div className="text-xl font-bold transition-colors">
+                  <div
+                    className={cn(
+                      "text-xl font-bold transition-colors",
+                      value == null ? "text-primary/70" : "text-primary"
+                    )}
+                  >
                     {value ?? "s/d"}{" "}
                     <span className="text-xs">{meteo.unidad}</span>
                   </div>

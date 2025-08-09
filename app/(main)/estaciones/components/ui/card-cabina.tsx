@@ -8,7 +8,7 @@ interface CardCabinaProps {
 
 const CardCabina = ({ label, icon, value }: CardCabinaProps) => {
   return (
-    <Card className="flex flex-col gap-1 px-3 py-2 bg-gradient-to-br from-accent/30 to-accent/25 border border-primary/30 shadow-sm shadow-black/20 cursor-pointer hover:shadow-md transition-all">
+    <Card className="flex flex-col gap-1 px-3 py-2 bg-gradient-to-br from-accent/10 to-accent/20 border border-primary/30 shadow-sm shadow-black/20 cursor-pointer hover:shadow-md transition-all">
       <CardTitle className="text-xs font-medium text-primary/80">
         {label}
       </CardTitle>
