@@ -2,159 +2,138 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FullLocationData } from "@/lib/location/models";
 import { cn } from "@/lib/utils";
 import { Thermometer, Droplets, Clock, Calendar } from "lucide-react";
-import { metricasCategorizadas } from "./data-items";
+import { contaminantes, meteorologica } from "./data-items";
+import CardCabina from "./ui/card-cabina";
 
 export default function StationView({ data }: { data: FullLocationData }) {
   return (
     <div className="flex flex-col">
-      <header className=" flex justify-center">
-        <div className="flex flex-col sm:gap-5 md:gap-2 lg:gap-28 md:flex-row items-center p-4 my-6 border-b-2 border-border/50 text-sm text-muted-foreground">
-          {/* Condiciones de cabina */}
-          <div className="flex items-center gap-4">
-            <div className="flex flex-col items-center gap-1 px-3 py-2 bg-accent/20 border border-accent/40 rounded-lg">
-              <div className="flex items-center gap-2">
-                <Thermometer className="w-4 h-4 text-primary" />
-                <span className="text-primary font-semibold text-sm">
-                  {data.temp_in_mean !== null ? data.temp_in_mean : "s/d"} °C
-                </span>
-              </div>
-              <span className="text-xs font-medium">Temperatura Cabina</span>
-            </div>
-            <div className="flex flex-col items-center gap-1 px-3 py-2 bg-accent/20 border border-accent/40 rounded-lg">
-              <div className="flex items-center gap-2">
-                <Droplets className="w-4 h-4 text-primary " />
-                <span className="text-primary font-semibold text-sm">
-                  {data.hr_in_mean !== null ? data.hr_in_mean : "s/d"} %
-                </span>
-              </div>
-              <span className="text-xs font-medium">Humedad Cabina</span>
-            </div>
-          </div>
-          {/* Fecha y hora actualizacion*/}
-          <div className="flex flex-col items-center gap-2">
-            <span className="font-medium flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              {data.latest_time
-                ? new Date(data.latest_time).toLocaleDateString("es-AR", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })
-                : "Fecha no disponible"}
-            </span>
-            <span className="font-medium flex items-center gap-2">
-              <Clock className="w-4 h-4" />
-              Última actualización:{" "}
-              {data.latest_time
-                ? new Intl.DateTimeFormat("es-AR", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false,
-                  }).format(new Date(data.latest_time))
-                : "N/A"}
-            </span>
-          </div>
+      <header className="flex flex-col w-full gap-5 lg:gap-28 md:flex-row pb-6 items-center my-6 border-b border-primary/30 text-sm text-muted-foreground">
+        {/* Condiciones de cabina */}
+        <div className="flex gap-4">
+          <CardCabina
+            label="Temperatura Cabina"
+            icon={<Thermometer className="w-4 h-4 text-primary" />}
+            value={
+              data.temp_in_mean !== null ? data.temp_in_mean + " °C" : "s/d"
+            }
+          />
+          <CardCabina
+            label="Humedad Cabina"
+            icon={<Droplets className="w-4 h-4 text-primary " />}
+            value={data.hr_in_mean !== null ? data.hr_in_mean + " %" : "s/d"}
+          />
+        </div>
+        {/* Fecha y hora actualizacion*/}
+        <div className="flex flex-col gap-2">
+          <span className="font-medium flex items-center gap-2">
+            <Calendar className="w-4 h-4" />
+            {data.latest_time
+              ? new Date(data.latest_time).toLocaleDateString("es-AR", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+              : "Fecha no disponible"}
+          </span>
+          <span className="font-medium flex items-center gap-2">
+            <Clock className="w-4 h-4" />
+            Última actualización:{" "}
+            {data.latest_time
+              ? new Intl.DateTimeFormat("es-AR", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: false,
+                }).format(new Date(data.latest_time))
+              : "N/A"}
+          </span>
         </div>
       </header>
-      {/* Métricas organizadas por categorías */}
-      <div className="space-y-6">
-        {metricasCategorizadas.map((categoria) => (
-          <div key={categoria.categoria} className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div
-                className={cn(
-                  "w-1 h-6 rounded-full bg-gradient-to-b",
-                  categoria.color
-                )}
-              />
-              <h2 className="text-xl font-semibold text-foreground">
-                {categoria.categoria}
-              </h2>
-            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-              {categoria.metrics.map((metrica) => {
-                const IconComponent = metrica.icon;
-                const value = data[metrica.key];
-                return (
-                  <Card
-                    key={metrica.key}
+      {/* Contaminantes Title */}
+      <div className="my-6 space-y-4" aria-label="Contaminantes">
+        <div className="flex items-center gap-3">
+          <div className="w-1 h-6 rounded-full bg-primary" />
+          <h2 className="text-xl font-bold text-foreground uppercase tracking-wider">
+            Contaminantes
+          </h2>
+        </div>
+        {/* Metricas Contaminantes */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          {contaminantes.map((contaminante) => {
+            const value = data[contaminante.key];
+            return (
+              <Card
+                key={contaminante.key}
+                className="relative p-5 overflow-hidden border border-border/40 bg-gradient-to-br from-primary to-primary/80 backdrop-blur-sm transition-all duration-300 hover:shadow-lg shadow-md shadow-black/60 cursor-pointer"
+              >
+                <CardHeader className="p-0">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-primary-foreground/80 font-bold text-base">
+                        {contaminante.nombre}
+                      </span>
+                      <span className="text-primary-foreground/80 font-medium text-xs">
+                        ({contaminante.unidad})
+                      </span>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="py-3 px-0">
+                  <div
                     className={cn(
-                      "relative overflow-hidden transition-all duration-300 hover:shadow-lg border-2 shadow-md hover:shadow-primary/10 cursor-pointer",
-                      categoria.bgColor,
-                      categoria.borderColor
+                      "text-3xl font-bold transition-all",
+                      value == null
+                        ? "text-red-400 drop-shadow-[5px_2px_10px_rgba(255,0,0,0.3)]"
+                        : "text-green-400 drop-shadow-[5px_2px_10px_rgba(0,255,0,0.3)]"
                     )}
                   >
-                    <CardHeader className="pb-3">
-                      <div className="flex flex-col gap-2">
-                        {categoria.categoria === "Contaminantes" ? (
-                          // Diseño especial para contaminantes: recuadro con nombre y unidad
-                          <div className="flex flex-col gap-2">
-                            <div
-                              className={cn(
-                                "px-3 py-2 rounded-lg bg-gradient-to-r shadow-md",
-                                categoria.color
-                              )}
-                            >
-                              <div className="flex items-center justify-between">
-                                <span className="text-primary-foreground font-bold text-base">
-                                  {metrica.nombre}
-                                </span>
-                                <span className="text-primary-foreground/80 font-medium text-xs">
-                                  {metrica.unidad}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        ) : (
-                          // Diseño normal para meteorología: icono + nombre + unidad
-                          <div className="flex items-center gap-2">
-                            <div
-                              className={cn(
-                                "p-2 rounded-lg bg-gradient-to-r shadow-md flex-shrink-0",
-                                categoria.color
-                              )}
-                            >
-                              <IconComponent className="w-4 h-4 text-secondary-foreground" />
-                            </div>
-                            <div className="flex items-center justify-between min-w-0 flex-1">
-                              <CardTitle className="text-sm font-semibold text-foreground truncate">
-                                {metrica.nombre}
-                              </CardTitle>
-                              <span className="text-xs text-muted-foreground flex-shrink-0 ml-2">
-                                {metrica.unidad}
-                              </span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-0 pb-3">
-                      <div
-                        className={cn(
-                          "text-2xl font-bold transition-colors text-center",
-                          value == null ? "text-red-500" : "text-green-700"
-                        )}
-                      >
-                        {value ?? "s/d"}
-                      </div>
-                    </CardContent>
+                    {value ?? "s/d"}
+                  </div>
+                </CardContent>
 
-                    {/* Footer con nombre completo para contaminantes */}
-                    {categoria.categoria === "Contaminantes" && (
-                      <div className="px-4 pb-3">
-                        <div className="text-xs text-muted-foreground text-center leading-tight">
-                          {metrica.nombreCompleto}
-                        </div>
-                      </div>
-                    )}
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
-        ))}
+                <div className="text-xs text-primary-foreground/70 leading-tight">
+                  {contaminante.nombreCompleto}
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Meteorologica Title */}
+      <div className="my-6 space-y-4" aria-label="Meteorologica">
+        <div className="flex items-center gap-3">
+          <div className="w-1 h-6 rounded-full bg-primary" />
+          <h2 className="text-xl font-semibold text-foreground uppercase tracking-wider">
+            Meteorológica
+          </h2>
+        </div>
+        {/* Metricas Meteorológicas */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          {meteorologica.map((meteo) => {
+            const IconComponent = meteo.icon;
+            const value = data[meteo.key];
+            return (
+              <Card
+                key={meteo.key}
+                className="relative py-3 px-5 overflow-hidden border border-primary/60 bg-gradient-to-br from-secondary to-secondary/80 backdrop-blur-sm transition-all duration-300 hover:shadow-lg shadow-md shadow-black/40 cursor-pointer"
+              >
+                <CardTitle className="text-sm font-semibold text-primary">
+                  {meteo.nombre}
+                </CardTitle>
+                <CardContent className="p-0 my-1 flex justify-between items-center text-primary/80">
+                  <IconComponent className="w-5 h-5" />
+                  <div className="text-xl font-bold transition-colors">
+                    {value ?? "s/d"}{" "}
+                    <span className="text-xs">{meteo.unidad}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

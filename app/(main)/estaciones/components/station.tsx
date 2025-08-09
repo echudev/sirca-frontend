@@ -8,33 +8,24 @@ import { FullLocationData } from "@/lib/location/models";
 
 function toTitle(location: string) {
   if (!location) return "Estación";
-  const pretty = location.charAt(0).toUpperCase() + location.slice(1);
-  return `Estación ${pretty}`;
+  return `Estación ${location}`;
 }
 
-export default function Station({
-  location,
-  title,
-}: {
-  location: string;
-  title?: string;
-}) {
+export default function Station({ location }: { location: string }) {
   const { data, error, status } = useSSE<FullLocationData>(`/api/${location}`);
 
   return (
     <div className="w-full h-full p-6 flex flex-col max-w-7xl mx-auto">
-      <div className="flex justify-center items-center relative">
-        <h1 className="text-4xl font-bold text-center text-primary relative z-10">
-          {title ?? toTitle(location)}
-        </h1>
-        <h1 className="absolute text-4xl font-bold text-center text-secondary -translate-x-[1px] translate-y-[1px] z-0">
-          {title ?? toTitle(location)}
+      <div className="flex items-center relative gap-3">
+        <div className="w-1 h-6 rounded-full bg-primary" />
+        <h1 className="text-2xl font-bold text-primary relative z-10 uppercase tracking-wider">
+          {toTitle(location)}
         </h1>
       </div>
 
       {/* Estado desconectado */}
       {status === "closed" && !data && (
-        <Card className="bg-white/95 backdrop-blur-sm border-border/60">
+        <Card className="bg-white/95 backdrop-blur-xs border-border/60">
           <CardContent className="flex flex-col items-center justify-center text-center">
             <div className="p-6 bg-muted/50 rounded-full">
               <WifiOff className="w-16 h-16 text-muted-foreground" />
@@ -68,9 +59,6 @@ export default function Station({
             Error de conexión
           </h3>
           <p className="text-destructive/80 mb-6 max-w-lg text-lg">{error}</p>
-          <div className="flex flex-col text-muted-foreground text-base">
-            <span> Contacta al soporte técnico </span>
-          </div>
         </div>
       )}
 

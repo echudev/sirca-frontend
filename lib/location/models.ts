@@ -35,9 +35,9 @@ export const CoRowSchema = z.object({
 export const NoxRowSchema = z.object({
   time: timeField,
   location: locationField,
-  no2_mean: formatNumber(2),
-  no_mean: formatNumber(2),
-  nox_mean: formatNumber(2),
+  no2_mean: formatNumber(1),
+  no_mean: formatNumber(1),
+  nox_mean: formatNumber(1),
 });
 
 export const O3RowSchema = z.object({
@@ -61,14 +61,14 @@ export const Pm10RowSchema = z.object({
 export const MeteoRowSchema = z.object({
   time: timeField,
   location: locationField,
-  dv_mean: formatNumber(1),
-  hr_in_mean: formatNumber(1),
-  hr_mean: formatNumber(1),
+  dv_mean: formatNumber(0),
+  hr_in_mean: formatNumber(0),
+  hr_mean: formatNumber(0),
   lluvia_mean: formatNumber(2),
   temp_mean: formatNumber(1),
   temp_in_mean: formatNumber(1),
   vv_mean: formatNumber(2),
-  pa_mean: formatNumber(1),
+  pa_mean: formatNumber(0),
 });
 
 // Esquema para la respuesta combinada
@@ -86,9 +86,9 @@ export const FullLocationDataSchema = z.object({
   // CO data
   co_mean: formatNumber(2),
   // NOx data
-  no2_mean: formatNumber(2),
-  no_mean: formatNumber(2),
-  nox_mean: formatNumber(2),
+  no2_mean: formatNumber(1),
+  no_mean: formatNumber(1),
+  nox_mean: formatNumber(1),
   // O3 data
   o3_mean: formatNumber(2),
   // SO2 data
@@ -96,14 +96,14 @@ export const FullLocationDataSchema = z.object({
   // PM10 data
   pm10_mean: formatNumber(2),
   // Meteo data
-  dv_mean: formatNumber(1),
-  hr_in_mean: formatNumber(1),
-  hr_mean: formatNumber(1),
-  lluvia_mean: formatNumber(2),
+  dv_mean: formatNumber(0),
+  hr_in_mean: formatNumber(0),
+  hr_mean: formatNumber(0),
+  lluvia_mean: formatNumber(1),
   temp_mean: formatNumber(1),
   temp_in_mean: formatNumber(1),
-  vv_mean: formatNumber(2),
-  pa_mean: formatNumber(1),
+  vv_mean: formatNumber(1),
+  pa_mean: formatNumber(0),
 });
 
 // Tipos inferidos

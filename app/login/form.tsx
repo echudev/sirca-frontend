@@ -21,7 +21,7 @@ function SubmitButton({ isPending }: { isPending: boolean }) {
       disabled={isPending}
       type="submit"
       className={cn(
-        "font-bold w-full bg-[var(--button-bkg)] hover:bg-[var(--button-hover)] hover:border-[var(--button-hover-border)] border border-secondary text-primary"
+        "font-bold w-full bg-(--button-bkg) hover:bg-(--button-hover) hover:border-(--button-hover-border) border border-secondary text-primary"
       )}
     >
       {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Ingresar"}
@@ -36,7 +36,7 @@ export function LoginForm() {
   return (
     <Card
       className={cn(
-        "w-[350px] border-[var(--card-border)] bg-[var(--card)] shadow-md"
+        "w-[350px] border-(--card-border) bg-(--card) shadow-md"
       )}
     >
       <CardHeader>

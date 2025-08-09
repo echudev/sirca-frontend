@@ -3,8 +3,6 @@ import {
   Droplets,
   Wind,
   CloudRain,
-  Zap,
-  Cloud,
   WindArrowDownIcon,
   Compass,
   type LucideIcon,
@@ -27,127 +25,107 @@ export enum MetricKey {
   PA_MEAN = "pa_mean",
 }
 
-export type CategoryDef = {
-  categoria: string;
-  color: string;
-  bgColor: string;
-  borderColor: string;
-  metrics: Array<{
-    key: MetricKey;
-    nombre: string;
-    nombreCompleto?: string;
-    unidad: string;
-    icon: LucideIcon;
-  }>;
+type Contaminantes = {
+  key: MetricKey;
+  nombre: string;
+  nombreCompleto?: string;
+  unidad: string;
 };
 
-// Categorías de métricas con iconos y colores
-export const metricasCategorizadas: CategoryDef[] = [
+type Meteorologica = {
+  key: MetricKey;
+  nombre: string;
+  nombreCompleto?: string;
+  unidad: string;
+  icon: LucideIcon;
+};
+
+export const contaminantes: Contaminantes[] = [
   {
-    categoria: "Contaminantes",
-    color: "from-primary to-primary/80",
-    bgColor: "bg-gradient-to-br from-primary/5 to-primary/10",
-    borderColor: "border-primary/20",
-    metrics: [
-      {
-        key: MetricKey.CO_MEAN,
-        nombre: "CO",
-        nombreCompleto: "Monóxido de Carbono",
-        unidad: "ppm",
-        icon: Cloud,
-      },
-      {
-        key: MetricKey.NO_MEAN,
-        nombre: "NO",
-        nombreCompleto: "Óxido de Nitrógeno",
-        unidad: "ppb",
-        icon: Zap,
-      },
-      {
-        key: MetricKey.NO2_MEAN,
-        nombre: "NO₂",
-        nombreCompleto: "Dióxido de Nitrógeno",
-        unidad: "ppb",
-        icon: Zap,
-      },
-      {
-        key: MetricKey.NOX_MEAN,
-        nombre: "NOₓ",
-        nombreCompleto: "Óxidos Totales",
-        unidad: "ppb",
-        icon: Zap,
-      },
-      {
-        key: MetricKey.PM10_MEAN,
-        nombre: "PM₁₀",
-        nombreCompleto: "Material Particulado < 10 μm",
-        unidad: "μg/m³",
-        icon: CloudRain,
-      },
-      {
-        key: MetricKey.O3_MEAN,
-        nombre: "O3",
-        nombreCompleto: "Ozóno",
-        unidad: "ppb",
-        icon: CloudRain,
-      },
-      {
-        key: MetricKey.SO2_MEAN,
-        nombre: "SO₂",
-        nombreCompleto: "Dióxido de Azufre",
-        unidad: "ppb",
-        icon: CloudRain,
-      },
-    ],
+    key: MetricKey.CO_MEAN,
+    nombre: "CO",
+    nombreCompleto: "Monóxido de Carbono",
+    unidad: "ppm",
   },
   {
-    categoria: "Meteorología",
-    color: "from-secondary to-secondary/80",
-    bgColor: "bg-gradient-to-br from-secondary/5 to-secondary/10",
-    borderColor: "border-secondary/20",
-    metrics: [
-      {
-        key: MetricKey.TEMP_MEAN,
-        nombre: "Temperatura",
-        nombreCompleto: "Temperatura",
-        unidad: "°C",
-        icon: Thermometer,
-      },
-      {
-        key: MetricKey.HR_MEAN,
-        nombre: "Humedad",
-        nombreCompleto: "Humedad Relativa",
-        unidad: "%",
-        icon: Droplets,
-      },
-      {
-        key: MetricKey.DV_MEAN,
-        nombre: "Dirección Viento",
-        nombreCompleto: "Dirección del Viento",
-        unidad: "°",
-        icon: Compass,
-      },
-      {
-        key: MetricKey.VV_MEAN,
-        nombre: "Velocidad Viento",
-        nombreCompleto: "Velocidad del Viento",
-        unidad: "m/s",
-        icon: Wind,
-      },
-      {
-        key: MetricKey.LLUVIA_MEAN,
-        nombre: "Lluvia",
-        nombreCompleto: "Precipitaciones",
-        unidad: "mm",
-        icon: CloudRain,
-      },
-      {
-        key: MetricKey.PA_MEAN,
-        nombre: "Presión Atm",
-        nombreCompleto: "Presión Atmosférica",
-        unidad: "hPa",
-        icon: WindArrowDownIcon,
-      },
-    ],
+    key: MetricKey.NO_MEAN,
+    nombre: "NO",
+    nombreCompleto: "Óxido de Nitrógeno",
+    unidad: "ppb",
+  },
+  {
+    key: MetricKey.NO2_MEAN,
+    nombre: "NO₂",
+    nombreCompleto: "Dióxido de Nitrógeno",
+    unidad: "ppb",
+  },
+  {
+    key: MetricKey.NOX_MEAN,
+    nombre: "NOₓ",
+    nombreCompleto: "Óxidos Totales",
+    unidad: "ppb",
+  },
+  {
+    key: MetricKey.PM10_MEAN,
+    nombre: "PM₁₀",
+    nombreCompleto: "Material Particulado < 10 μm",
+    unidad: "μg/m³",
+  },
+  {
+    key: MetricKey.O3_MEAN,
+    nombre: "O3",
+    nombreCompleto: "Ozóno",
+    unidad: "ppb",
+  },
+  {
+    key: MetricKey.SO2_MEAN,
+    nombre: "SO₂",
+    nombreCompleto: "Dióxido de Azufre",
+    unidad: "ppb",
+  },
+];
+
+export const meteorologica: Meteorologica[] = [
+  {
+    key: MetricKey.TEMP_MEAN,
+    nombre: "Temperatura",
+    nombreCompleto: "Temperatura",
+    unidad: "°C",
+    icon: Thermometer,
+  },
+  {
+    key: MetricKey.HR_MEAN,
+    nombre: "Humedad",
+    nombreCompleto: "Humedad Relativa",
+    unidad: "%",
+    icon: Droplets,
+  },
+  {
+    key: MetricKey.DV_MEAN,
+    nombre: "Dirección Viento",
+    nombreCompleto: "Dirección del Viento",
+    unidad: "°",
+    icon: Compass,
+  },
+  {
+    key: MetricKey.VV_MEAN,
+    nombre: "Velocidad Viento",
+    nombreCompleto: "Velocidad del Viento",
+    unidad: "m/s",
+    icon: Wind,
+  },
+  {
+    key: MetricKey.LLUVIA_MEAN,
+    nombre: "Lluvia",
+    nombreCompleto: "Precipitaciones",
+    unidad: "mm",
+    icon: CloudRain,
+  },
+  {
+    key: MetricKey.PA_MEAN,
+    nombre: "Presión Atm",
+    nombreCompleto: "Presión Atmosférica",
+    unidad: "hPa",
+    icon: WindArrowDownIcon,
   },
 ];

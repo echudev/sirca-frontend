@@ -19,16 +19,16 @@ export function Content() {
   return (
     <SidebarContent>
       <SidebarGroup>
-        <SidebarGroupLabel className="mt-2">Inicio</SidebarGroupLabel>
+        <SidebarGroupLabel>Inicio</SidebarGroupLabel>
         <Menu items={inicio} />
-        <SidebarGroupLabel className="mt-2">Tiempo Real</SidebarGroupLabel>
+        <SidebarGroupLabel>Tiempo Real</SidebarGroupLabel>
         <Menu items={aqi} />
         <MenuSub
           title={estaciones.title}
           items={estaciones.items}
           icon={estaciones.icon}
         />
-        <SidebarGroupLabel className="mt-2">Datos Históricos</SidebarGroupLabel>
+        <SidebarGroupLabel>Datos Históricos</SidebarGroupLabel>
         <Menu items={datos} />
         <Menu items={reportes} />
         {/* <MenuSub

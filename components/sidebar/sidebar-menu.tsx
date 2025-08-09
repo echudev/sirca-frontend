@@ -31,7 +31,6 @@ export function Menu({ items }: ModuleMenuProps) {
             tooltip={item.title}
             isActive={pathName === item.url}
             onClick={() => router.push(item.url)}
-            // className="my-1"
           >
             <item.icon className="z-50" />
             <span>{item.title}</span>
