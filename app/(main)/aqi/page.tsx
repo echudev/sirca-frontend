@@ -1,5 +1,5 @@
-import { PageUnderConstruction } from "@/components/page-under-construction";
 import { Metadata } from "next";
+import AQIMap from "./components/map";
 
 export const metadata: Metadata = {
   title: "SIRCA - Datos AQI",
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default async function AQIPage() {
-  return <PageUnderConstruction />;
+  return <AQIMap />;
 }
