@@ -3,7 +3,7 @@
 import { Menu } from "./sidebar-menu";
 import { MenuSub } from "./sidebar-menu-sub";
 import {
-  inicio,
+  // inicio,
   datos,
   reportes,
   aqi,
@@ -19,8 +19,8 @@ export function Content() {
   return (
     <SidebarContent>
       <SidebarGroup>
-        <SidebarGroupLabel>Inicio</SidebarGroupLabel>
-        <Menu items={inicio} />
+        {/* <SidebarGroupLabel>Inicio</SidebarGroupLabel>
+        <Menu items={inicio} /> */}
         <SidebarGroupLabel>Tiempo Real</SidebarGroupLabel>
         <Menu items={aqi} />
         <MenuSub
