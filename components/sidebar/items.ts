@@ -1,19 +1,5 @@
-import {
-  Wind,
-  ChartLine,
-  MapPin,
-  ChartNoAxesColumn,
-  // ChartNoAxesColumnIncreasing,
-  LayoutDashboardIcon,
-} from "lucide-react";
+import { Wind, ChartLine, MapPin, ChartNoAxesColumn } from "lucide-react";
 
-export const inicio = [
-  {
-    title: "Panel General",
-    url: "/panel-general",
-    icon: LayoutDashboardIcon,
-  },
-];
 export const aqi = [
   {
     title: "AQI",
@@ -52,11 +38,6 @@ export const datos = [
     url: "/datos/contaminante",
     icon: ChartNoAxesColumn,
   },
-  // {
-  //   title: "Datos Validados",
-  //   url: "/datos/validados",
-  //   icon: ChartNoAxesColumnIncreasing,
-  // },
 ];
 
 export const reportes = [

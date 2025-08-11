@@ -2,13 +2,7 @@
 
 import { Menu } from "./sidebar-menu";
 import { MenuSub } from "./sidebar-menu-sub";
-import {
-  // inicio,
-  datos,
-  reportes,
-  aqi,
-  estaciones,
-} from "@/components/sidebar/items";
+import { datos, reportes, aqi, estaciones } from "@/components/sidebar/items";
 import {
   SidebarContent,
   SidebarGroup,
@@ -19,8 +13,6 @@ export function Content() {
   return (
     <SidebarContent>
       <SidebarGroup>
-        {/* <SidebarGroupLabel>Inicio</SidebarGroupLabel>
-        <Menu items={inicio} /> */}
         <SidebarGroupLabel>Tiempo Real</SidebarGroupLabel>
         <Menu items={aqi} />
         <MenuSub
