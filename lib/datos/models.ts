@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+  contaminantesOptions,
+  promedioOptions,
+} from "@/app/(main)/datos/contaminante/components/filters";
 
 // ============================================================================
 // ENUMS Y TIPOS BASE
@@ -80,3 +84,56 @@ export const QueryResultSchema = z.object({
   }),
 });
 export type QueryResult = z.infer<typeof QueryResultSchema>;
+
+// Validación con Zod para los inputs de en filtros
+export const filtrosSchema = z
+  .object({
+    metrica: z
+      .string()
+      .refine((v) => contaminantesOptions.some((o) => o.value === v), {
+        message: "Seleccioná una métrica válida.",
+      }),
+    interval: z
+      .string()
+      .refine((v) => promedioOptions.some((o) => o.value === v), {
+        message: "Seleccioná un tipo de integración.",
+      }),
+    locations: z.string().refine(
+      (s) =>
+        (s || "")
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean).length > 0,
+      { message: "Seleccioná al menos una estación." }
+    ),
+    startDate: z.preprocess(
+      (arg) => {
+        if (arg instanceof Date) return arg;
+        if (typeof arg === "string") {
+          const d = new Date(arg);
+          return isNaN(d.getTime()) ? undefined : d;
+        }
+        return undefined;
+      },
+      z.instanceof(Date, {
+        message: 'Seleccioná una fecha de "desde" válida.',
+      })
+    ),
+    endDate: z.preprocess(
+      (arg) => {
+        if (arg instanceof Date) return arg;
+        if (typeof arg === "string") {
+          const d = new Date(arg);
+          return isNaN(d.getTime()) ? undefined : d;
+        }
+        return undefined;
+      },
+      z.instanceof(Date, {
+        message: 'Seleccioná una fecha de "hasta" válida.',
+      })
+    ),
+  })
+  .refine((d) => d.startDate.getTime() <= d.endDate.getTime(), {
+    message: "La fecha de inicio debe ser anterior o igual a la fecha de fin.",
+    path: ["startDate"],
+  });

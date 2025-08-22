@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { z } from "zod";
+import { filtrosSchema } from "@/lib/datos/models";
+import { toast } from "sonner";
 import type { FiltrosType } from "../page";
 import { ChevronDownIcon } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
@@ -21,7 +24,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-const contaminantesOptions = [
+export const contaminantesOptions = [
   { label: "CO", value: "co" },
   { label: "NO", value: "no" },
   { label: "NO2", value: "no2" },
@@ -31,13 +34,13 @@ const contaminantesOptions = [
   { label: "SO2", value: "so2" },
 ];
 
-const promedioOptions = [
+export const promedioOptions = [
   { label: "Minutos", value: "minute" },
   { label: "Horas", value: "hour" },
   { label: "Días", value: "day" },
 ];
 
-const locationsOptions = [
+export const locationsOptions = [
   { label: "Centenario", value: "centenario" },
   { label: "La Boca", value: "catalinas" },
   { label: "Cordoba", value: "cordoba" },
@@ -60,6 +63,7 @@ export default function Filtros({
 
   // Estado local para los selects
   const [localFilters, setLocalFilters] = useState(currentFilters);
+  // (no local inline errors; usamos toasts para notificar)
   // Estado para popup de date pickers
   const [openStartDate, setOpenStartDate] = useState(false);
   const [openEndDate, setOpenEndDate] = useState(false);
@@ -78,8 +82,8 @@ export default function Filtros({
     });
   };
 
-  // Setter genérico de cambios locales
-  const handleChange = (key: string, value: string) => {
+  // Setter genérico de cambios locales y limpieza de errores del campo
+  const handleChange = (key: string, value: unknown) => {
     setLocalFilters((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -100,8 +104,38 @@ export default function Filtros({
     handleChange("locations", joined);
   };
 
+  // Valida usando Zod y devuelve un objeto con errores por campo (no muta estado)
+  const validateFilters = (): Record<string, string> => {
+    try {
+      filtrosSchema.parse(localFilters as unknown);
+      return {};
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        const nextErrors: Record<string, string> = {};
+        for (const issue of err.issues) {
+          const key = issue.path[0] as string | undefined;
+          if (key && !nextErrors[key]) {
+            nextErrors[key] = issue.message;
+          }
+        }
+        return nextErrors;
+      }
+      throw err;
+    }
+  };
+
   const handleApply = () => {
-    // Enviar filtros tal cual (Date | undefined) y que la validación la haga el backend (Zod)
+    // Validación cliente
+    const nextErrors = validateFilters();
+    if (Object.keys(nextErrors).length > 0) {
+      // Mostrar toasts de error (máx. 3)
+      Object.values(nextErrors)
+        .slice(0, 3)
+        .forEach((m) => toast.error(m));
+      return;
+    }
+
+    // Enviar filtros ya validados
     const filtersToSend = {
       metrica: localFilters.metrica,
       interval: localFilters.interval,
@@ -114,7 +148,7 @@ export default function Filtros({
           ? new Date(localFilters.endDate)
           : localFilters.endDate,
       locations: localFilters.locations,
-    };
+    } as const;
     if (onFetch) onFetch(filtersToSend);
 
     // Actualizar URL solo con valores presentes
@@ -269,7 +303,7 @@ export default function Filtros({
                 }
                 captionLayout="dropdown"
                 onSelect={(date) => {
-                  setLocalFilters((prev) => ({ ...prev, startDate: date }));
+                  handleChange("startDate", date);
                   setOpenStartDate(false);
                 }}
               />
@@ -306,7 +340,7 @@ export default function Filtros({
                 }
                 captionLayout="dropdown"
                 onSelect={(date) => {
-                  setLocalFilters((prev) => ({ ...prev, endDate: date }));
+                  handleChange("endDate", date);
                   setOpenEndDate(false);
                 }}
               />

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Filtros from "./components/filters";
+import SonnerToaster from "@/components/sonner-toaster";
 import Chart from "./components/chart";
 import Table from "./components/table";
 import useFetchDatos from "@/hooks/useFetchDatos";
@@ -34,6 +35,7 @@ export default function CrudosPage() {
 
   return (
     <div className="space-y-8">
+      <SonnerToaster />
       <Filtros
         currentFilters={filters}
         isLoading={isLoading}

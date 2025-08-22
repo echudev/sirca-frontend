@@ -13,9 +13,7 @@ export default function RootLayout({
   return (
     <html lang="es" className="bg-(--secondary-bg-1) overflow-hidden">
       <head />
-      <body>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
