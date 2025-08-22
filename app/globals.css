@@ -77,6 +77,13 @@
 @layer base {
   /* a partir de acá empieza la configuración personalizada @echudev */
   :root {
+    /* Color Estaciones */
+    --centenario: #118ab2;
+    --cordoba: #ef476f;
+    --catalinas: #06d6a0;
+    --cifa: #073b4c;
+    --otra: #ffd166;
+
     /* General Colors */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;

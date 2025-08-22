@@ -27,17 +27,14 @@ export default function Chart({ data }: ChartProps) {
   // Obtener las ubicaciones (columnas) dinámicamente excluyendo 'time'
   const locations = Object.keys(data[0] || {}).filter((key) => key !== "time");
 
-  // Colores predefinidos para las líneas
-  const colors = [
-    "#8884d8",
-    "#82ca9d",
-    "#ff7300",
-    "#ffc658",
-    "#8dd1e1",
-    "#d084d0",
-    "#ffb347",
-    "#87ceeb",
-  ];
+  // Colores predefinidos para cada estación
+  const stationColor: Record<string, string> = {
+    centenario: "var(--centenario)",
+    cordoba: "var(--cordoba)",
+    catalinas: "var(--catalinas)",
+    cifa: "var(--cifa)",
+    otra: "var(--otra)",
+  };
 
   // Mapear los datos para el gráfico
   const chartData = data.map((row) => {
@@ -73,13 +70,17 @@ export default function Chart({ data }: ChartProps) {
         <YAxis />
         <Tooltip />
         <Legend />
-        {locations.map((location, index) => (
+        {locations.map((location) => (
           <Line
             key={location}
             type="linear"
             dataKey={location}
-            stroke={colors[index % colors.length]}
-            name={location.charAt(0).toUpperCase() + location.slice(1)}
+            stroke={stationColor[location] ?? "var(--centenario)"}
+            name={
+              location == "catalinas"
+                ? "La Boca"
+                : location.charAt(0).toUpperCase() + location.slice(1)
+            }
             dot={false}
             strokeWidth={2}
           />

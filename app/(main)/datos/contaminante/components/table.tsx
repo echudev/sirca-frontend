@@ -22,7 +22,9 @@ export default function Table({ data }: TableProps) {
             <th className="border px-2 py-1">Fecha y Hora</th>
             {locations.map((location) => (
               <th key={location} className="border px-2 py-1 capitalize">
-                {location.charAt(0).toUpperCase() + location.slice(1)}
+                {location == "catalinas"
+                  ? "La Boca"
+                  : location.charAt(0).toUpperCase() + location.slice(1)}
               </th>
             ))}
           </tr>
@@ -32,13 +34,13 @@ export default function Table({ data }: TableProps) {
             return (
               <tr key={idx}>
                 <td className="border px-2 py-1 text-center">
-                  {new Intl.DateTimeFormat("es-AR", { 
-                    year: "numeric", 
-                    month: "2-digit", 
-                    day: "2-digit", 
-                    hour: "2-digit", 
-                    minute: "2-digit", 
-                    timeZone: "America/Argentina/Buenos_Aires", 
+                  {new Intl.DateTimeFormat("es-AR", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    timeZone: "America/Argentina/Buenos_Aires",
                   }).format(new Date(row.time))}
                 </td>
                 {locations.map((location) => (
