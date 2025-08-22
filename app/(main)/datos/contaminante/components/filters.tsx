@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Popover,
   PopoverContent,
@@ -22,6 +23,8 @@ import {
 
 const contaminantesOptions = [
   { label: "CO", value: "co" },
+  { label: "NO", value: "no" },
+  { label: "NO2", value: "no2" },
   { label: "NOx", value: "nox" },
   { label: "PM10", value: "pm10" },
   { label: "O3", value: "o3" },
@@ -32,6 +35,13 @@ const promedioOptions = [
   { label: "Minutos", value: "minute" },
   { label: "Horas", value: "hour" },
   { label: "Días", value: "day" },
+];
+
+const locationsOptions = [
+  { label: "Centenario", value: "centenario" },
+  { label: "La Boca", value: "catalinas" },
+  { label: "Cordoba", value: "cordoba" },
+  { label: "Cifa", value: "cifa" },
 ];
 
 interface FiltrosProps {
@@ -53,6 +63,7 @@ export default function Filtros({
   // Estado para popup de date pickers
   const [openStartDate, setOpenStartDate] = useState(false);
   const [openEndDate, setOpenEndDate] = useState(false);
+  const [openLocations, setOpenLocations] = useState(false);
 
   // Helper que formatea la fecha para la UI: 'lun, dd/mm/yyyy'
   const formatDateUI = (date: string | Date | undefined) => {
@@ -67,40 +78,58 @@ export default function Filtros({
     });
   };
 
+  // Setter genérico de cambios locales
   const handleChange = (key: string, value: string) => {
     setLocalFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  // Helpers para manejar selección múltiple de estaciones
+  const selectedLocations = (localFilters.locations || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const toggleLocation = (loc: string, checked: boolean) => {
+    const set = new Set(selectedLocations);
+    if (checked) {
+      set.add(loc);
+    } else {
+      set.delete(loc);
+    }
+    const joined = Array.from(set).join(",");
+    handleChange("locations", joined);
+  };
+
   const handleApply = () => {
-    // Convierte los valores a tipo Date para cumplir con FiltrosType
-    const toDate = (date: string | Date | undefined): Date | undefined => {
-      if (!date) return undefined;
-      if (typeof date === "string") {
-        const d = new Date(date);
-        return isNaN(d.getTime()) ? undefined : d;
-      }
-      return date;
-    };
+    // Enviar filtros tal cual (Date | undefined) y que la validación la haga el backend (Zod)
     const filtersToSend = {
       metrica: localFilters.metrica,
       interval: localFilters.interval,
-      startDate: toDate(localFilters.startDate),
-      endDate: toDate(localFilters.endDate),
+      startDate:
+        typeof localFilters.startDate === "string"
+          ? new Date(localFilters.startDate)
+          : localFilters.startDate,
+      endDate:
+        typeof localFilters.endDate === "string"
+          ? new Date(localFilters.endDate)
+          : localFilters.endDate,
+      locations: localFilters.locations,
     };
     if (onFetch) onFetch(filtersToSend);
-    // Para la URL, sigue enviando en formato UTC z
-    const toUTCZ = (date: string | Date | undefined) => {
-      if (!date) return "";
-      const d = typeof date === "string" ? new Date(date) : date;
-      if (isNaN(d.getTime())) return "";
-      return d.toISOString();
-    };
-    const params = new URLSearchParams({
-      metrica: localFilters.metrica,
-      interval: localFilters.interval,
-      startDate: toUTCZ(localFilters.startDate),
-      endDate: toUTCZ(localFilters.endDate),
-    });
+
+    // Actualizar URL solo con valores presentes
+    const params = new URLSearchParams();
+    params.set("metrica", localFilters.metrica);
+    params.set("interval", localFilters.interval ?? "");
+    if (filtersToSend.startDate) {
+      params.set("startDate", filtersToSend.startDate.toISOString());
+    }
+    if (filtersToSend.endDate) {
+      params.set("endDate", filtersToSend.endDate.toISOString());
+    }
+    if ((localFilters.locations || "").trim()) {
+      params.set("locations", localFilters.locations);
+    }
     router.replace(`${pathname}?${params.toString()}`);
   };
 
@@ -164,6 +193,53 @@ export default function Filtros({
           </Select>
         </div>
 
+        {/* Select locations con selección múltiple (checkboxes) */}
+        <div className="flex flex-col gap-3">
+          <Label htmlFor="locations" className="px-1">
+            Estaciones
+          </Label>
+          <Popover open={openLocations} onOpenChange={setOpenLocations}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                id="locations"
+                className="w-[220px] justify-between font-normal"
+                disabled={isLoading}
+              >
+                {selectedLocations.length > 0
+                  ? `${selectedLocations.length} seleccionada$${""}`.replace(
+                      "$",
+                      selectedLocations.length === 1 ? "" : "s"
+                    )
+                  : "Elegir estaciones"}
+                <ChevronDownIcon />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-60 p-2" align="start">
+              <div className="flex flex-col gap-2 max-h-64 overflow-auto">
+                {locationsOptions.map((opt) => {
+                  const checked = selectedLocations.includes(opt.value);
+                  return (
+                    <label
+                      key={opt.value}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <Checkbox
+                        checked={checked}
+                        onCheckedChange={(val) =>
+                          toggleLocation(opt.value, Boolean(val))
+                        }
+                        id={`loc-${opt.value}`}
+                      />
+                      <span className="text-sm">{opt.label}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+
         {/* start date date picker */}
         <div className="flex flex-col gap-3">
           <Label htmlFor="date" className="px-1">
@@ -193,7 +269,7 @@ export default function Filtros({
                 }
                 captionLayout="dropdown"
                 onSelect={(date) => {
-                  handleChange("startDate", date ? date.toUTCString() : "");
+                  setLocalFilters((prev) => ({ ...prev, startDate: date }));
                   setOpenStartDate(false);
                 }}
               />
@@ -230,7 +306,7 @@ export default function Filtros({
                 }
                 captionLayout="dropdown"
                 onSelect={(date) => {
-                  handleChange("endDate", date ? date.toUTCString() : "");
+                  setLocalFilters((prev) => ({ ...prev, endDate: date }));
                   setOpenEndDate(false);
                 }}
               />

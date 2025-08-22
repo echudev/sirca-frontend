@@ -10,6 +10,7 @@ export interface FiltrosType {
   interval: string;
   startDate: Date | undefined;
   endDate: Date | undefined;
+  locations: string;
 }
 
 export interface DataRow extends Record<string, string | number> {
@@ -22,6 +23,7 @@ export default function CrudosPage() {
     interval: "hour",
     startDate: undefined,
     endDate: undefined,
+    locations: "",
   });
   const { data, error, isLoading, fetchDatos } = useFetchDatos();
 

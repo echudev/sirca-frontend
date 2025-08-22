@@ -5,10 +5,7 @@ import {
   Contaminant,
   Interval,
 } from "./models";
-import {
-  fetchLastMinuteCentenario,
-  fetchDatosPorContaminante,
-} from "./repository";
+import { fetchDatosPorContaminante } from "./repository";
 
 /**
  * Servicio para manejar la lógica de negocio de datos de contaminantes
@@ -56,38 +53,6 @@ export class DatosService {
       }
       throw new Error("Error desconocido al procesar la consulta");
     }
-  }
-
-  /**
-   * Obtiene el último minuto de datos de la estación centenario
-   */
-  async getLastMinuteData(): Promise<QueryResult> {
-    // Importar dinámicamente para evitar dependencias circulares
-    const data = await fetchLastMinuteCentenario();
-
-    // Ensure data conforms to DataPointSchema
-    const formattedData = data
-      ? [
-          {
-            time: String(
-              (data as Record<string, unknown>).time || new Date().toISOString()
-            ),
-            ...(data as Record<string, unknown>),
-          },
-        ]
-      : [];
-
-    return {
-      data: formattedData,
-      meta: {
-        contaminant: "co" as Contaminant,
-        locations: ["centenario"],
-        startDate: new Date().toISOString(),
-        endDate: new Date().toISOString(),
-        interval: "minute" as Interval,
-        count: formattedData.length,
-      },
-    };
   }
 
   /**

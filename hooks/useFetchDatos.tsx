@@ -16,6 +16,7 @@ export default function useFetchDatos() {
       const params = new URLSearchParams({
         contaminant: filters.metrica,
         interval: filters.interval,
+        locations: filters.locations,
         startDate: filters.startDate ? filters.startDate.toISOString() : "",
         endDate: filters.endDate ? filters.endDate.toISOString() : "",
       });
