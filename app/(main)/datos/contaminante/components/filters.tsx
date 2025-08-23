@@ -170,10 +170,10 @@ export default function Filtros({
   return (
     <div className="p-2">
       <header className="mb-10">
-        <h1 className="text-2xl text-primary/90 font-bold text-center">
+        <h1 className="text-2xl font-bold text-primary text-center relative z-10 uppercase tracking-wider mb-2">
           Datos de Calidad del Aire
         </h1>
-        <h2 className="text-secondary-foreground/60 text-center">
+        <h2 className="text-primary/70 text-center font-semibold">
           Seleccioná el contaminante, el tipo de integración y el rango de
           fechas para consultar los datos.
         </h2>
@@ -348,7 +348,7 @@ export default function Filtros({
           </Popover>
         </div>
         <Button
-          className="btn btn-primary text-primary bg-secondary hover:bg-secondary/60 ml-4 mt-auto"
+          className="btn btn-primary text-primary bg-secondary hover:bg-secondary/90 hover:shadow-primary active:shadow-none active:scale-99 mt-auto cursor-pointer select-none transition-all"
           onClick={handleApply}
           disabled={isLoading}
         >

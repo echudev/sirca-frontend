@@ -5,7 +5,7 @@ import type {
 } from "../app/(main)/datos/contaminante/page";
 
 export default function useFetchDatos() {
-  const [data, setData] = useState<DataRow[]>([]);
+  const [data, setData] = useState<DataRow[] | undefined>(undefined);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 

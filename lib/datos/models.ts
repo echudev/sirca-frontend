@@ -116,7 +116,7 @@ export const filtrosSchema = z
         return undefined;
       },
       z.instanceof(Date, {
-        message: 'Seleccioná una fecha de "desde" válida.',
+        message: 'Seleccioná una fecha "desde" válida.',
       })
     ),
     endDate: z.preprocess(
@@ -129,11 +129,11 @@ export const filtrosSchema = z
         return undefined;
       },
       z.instanceof(Date, {
-        message: 'Seleccioná una fecha de "hasta" válida.',
+        message: 'Seleccioná una fecha "hasta" válida.',
       })
     ),
   })
   .refine((d) => d.startDate.getTime() <= d.endDate.getTime(), {
-    message: "La fecha de inicio debe ser anterior o igual a la fecha de fin.",
+    message: 'La fecha "desde" debe ser anterior o igual a la fecha "hasta".',
     path: ["startDate"],
   });
