@@ -111,6 +111,18 @@ export const FullLocationDataSchema = z.object({
   temp_in_mean: formatNumber(1),
   vv_mean: formatNumber(1),
   pa_mean: formatNumber(0),
+
+  // 👉 Nuevo bloque freshness
+  freshness: z
+    .object({
+      co: z.enum(["fresh", "stale"]),
+      nox: z.enum(["fresh", "stale"]),
+      o3: z.enum(["fresh", "stale"]),
+      so2: z.enum(["fresh", "stale"]),
+      pm10: z.enum(["fresh", "stale"]),
+      meteo: z.enum(["fresh", "stale"]),
+    })
+    .optional(),
 });
 
 // Tipos inferidos
