@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { fetchLastMinuteByLocation } from "@/lib/location/repository";
+import { applyFreshnessCheck } from "@/lib/location/service";
 
 export const dynamic = "force-dynamic";
 
@@ -16,8 +17,9 @@ export async function GET(
       const sendData = async () => {
         try {
           const data = await fetchLastMinuteByLocation(location);
+          const sanitizedData = applyFreshnessCheck(data);
           controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify(data)}\n\n`)
+            encoder.encode(`data: ${JSON.stringify(sanitizedData)}\n\n`)
           );
         } catch (error) {
           console.error("Error fetching data:", error);

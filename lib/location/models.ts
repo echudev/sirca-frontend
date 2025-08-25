@@ -15,9 +15,16 @@ const formatNumber = (decimals: number = 2) =>
 // Timestamp flexible para el objeto final (preserva Unix epoch o convierte a Date)
 const timeField = z
   .union([
-    z.number().transform((val) => new Date(val * 1000)), // Unix epoch (segundos) a Date
+    // Influx may return numeric epoch values in seconds or milliseconds.
+    // Detect magnitude: values with >10 digits are treated as milliseconds.
+    z.number().transform((val) => {
+      const abs = Math.abs(val);
+      // If the number looks like milliseconds (length > 10) treat as ms, else as seconds
+      const isMilliseconds = abs > 1e11 || val.toString().length > 10;
+      return isMilliseconds ? new Date(val) : new Date(val * 1000);
+    }),
     z.string(), // String ISO
-    z.date(), // Ya es Date
+    z.date(), // Already a Date
     z.null(),
     z.undefined(),
   ])

@@ -10,17 +10,37 @@ import {
 } from "./models";
 
 // Función auxiliar para obtener el timestamp más reciente
-function getLatestTimestamp(
-  timestamps: Array<string | Date | null | undefined>
-) {
-  const validTimestamps = timestamps.filter(
-    (ts) => ts !== null && ts !== undefined
-  ) as Array<string | Date>;
-  if (validTimestamps.length === 0) return null;
+function parseFlexibleTimestamp(ts: string | number | Date | null | undefined) {
+  if (ts === null || ts === undefined) return null;
+  if (ts instanceof Date) return ts;
+  if (typeof ts === "number") {
+    const abs = Math.abs(ts);
+    const isMilliseconds = abs > 1e11 || ts.toString().length > 10;
+    return isMilliseconds ? new Date(ts) : new Date(ts * 1000);
+  }
+  // string: try to parse as ISO or numeric string
+  if (typeof ts === "string") {
+    // numeric string?
+    const num = Number(ts);
+    if (!Number.isNaN(num)) {
+      const abs = Math.abs(num);
+      const isMilliseconds = abs > 1e11 || ts.length > 10;
+      return isMilliseconds ? new Date(num) : new Date(num * 1000);
+    }
+    const d = new Date(ts);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  return null;
+}
 
-  return new Date(
-    Math.max(...validTimestamps.map((ts) => new Date(ts).getTime()))
-  );
+function getLatestTimestamp(
+  timestamps: Array<string | number | Date | null | undefined>
+) {
+  const parsed = timestamps
+    .map((t) => parseFlexibleTimestamp(t))
+    .filter((t): t is Date => t !== null);
+  if (parsed.length === 0) return null;
+  return new Date(Math.max(...parsed.map((d) => d.getTime())));
 }
 
 async function getFirstRow<T>(rows: AsyncIterable<T>): Promise<T | null> {

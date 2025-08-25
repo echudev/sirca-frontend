@@ -49,10 +49,10 @@
     "react-dom": "^19.1.0",
     "react-map-gl": "^8.0.4",
     "recharts": "^3.1.0",
+    "sonner": "^1.2.0",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^4.0.15",
-    "sonner": "^1.2.0"
+    "zod": "^4.0.15"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.11",
