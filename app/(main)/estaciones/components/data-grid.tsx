@@ -2,10 +2,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FullLocationData } from "@/lib/location/models";
 import { cn } from "@/lib/utils";
 import { Thermometer, Droplets, Clock, Calendar } from "lucide-react";
-import { contaminantes, meteorologica } from "./data-items";
+import { contaminantes, meteorologica } from "./items";
 import CardCabina from "./ui/card-cabina";
 
-export default function StationView({ data }: { data: FullLocationData }) {
+export default function DataGrid({ data }: { data: FullLocationData }) {
   return (
     <div className="flex flex-col">
       <header className="flex flex-col w-full gap-5 lg:gap-28 md:flex-row pb-6 items-center my-6 border-b border-primary/30 text-sm text-muted-foreground">

@@ -1,6 +1,6 @@
 "use client";
 
-import StationView from "./data-view";
+import DataGrid from "./data-grid";
 import useSSE from "@/hooks/useSSE";
 import { Card, CardContent } from "@/components/ui/card";
 import { WifiOff, AlertCircle, Loader2 } from "lucide-react";
@@ -63,7 +63,7 @@ export default function Station({ location }: { location: string }) {
       )}
 
       {/* Estado conectado y con datos */}
-      {status === "open" && data && <StationView data={data} />}
+      {status === "open" && data && <DataGrid data={data} />}
     </div>
   );
 }
