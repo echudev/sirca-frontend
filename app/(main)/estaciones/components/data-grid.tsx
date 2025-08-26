@@ -15,13 +15,13 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
             label="Temperatura Cabina"
             icon={<Thermometer className="w-4 h-4 text-primary" />}
             value={
-              data.temp_in_mean !== null ? data.temp_in_mean + " °C" : "s/d"
+              data.temp_in_mean !== null ? data.temp_in_mean + " °C" : "--"
             }
           />
           <CardCabina
             label="Humedad Cabina"
             icon={<Droplets className="w-4 h-4 text-primary " />}
-            value={data.hr_in_mean !== null ? data.hr_in_mean + " %" : "s/d"}
+            value={data.hr_in_mean !== null ? data.hr_in_mean + " %" : "--"}
           />
         </div>
         {/* Fecha y hora actualizacion*/}
@@ -59,22 +59,27 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
             Contaminantes
           </h2>
         </div>
-        {/* Metricas Contaminantes */}
+        {/* Grid Contaminantes */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           {contaminantes.map((contaminante) => {
             const value = data[contaminante.key];
             return (
               <Card
                 key={contaminante.key}
-                className="relative p-5 overflow-hidden border border-border/40 bg-gradient-to-br from-primary to-primary/80 backdrop-blur-sm transition-all duration-300 hover:shadow-md shadow-sm shadow-black/30 cursor-pointer"
+                className={cn(
+                  "relative p-5 overflow-hidden border border-border/40 backdrop-blur-3xl bg-gradient-to-br from-primary to-primary/90 transition-all duration-300 hover:shadow-md shadow-sm shadow-black/30 cursor-pointer",
+                  value == null
+                    ? "brightness-90 text-primary-foreground/60"
+                    : "border-border/60 text-primary-foreground/80"
+                )}
               >
                 <CardHeader className="p-0">
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-primary-foreground/80 font-bold text-base">
+                      <span className="font-bold text-base">
                         {contaminante.nombre}
                       </span>
-                      <span className="text-primary-foreground/80 font-medium text-xs">
+                      <span className="font-medium text-xs">
                         ({contaminante.unidad})
                       </span>
                     </div>
@@ -84,16 +89,14 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
                   <div
                     className={cn(
                       "text-3xl font-bold transition-all",
-                      value == null
-                        ? "text-primary-foreground/60"
-                        : "text-green-300"
+                      value == null ? "" : "text-green-300"
                     )}
                   >
-                    {value ?? "s/d"}
+                    {value ?? "--"}
                   </div>
                 </CardContent>
 
-                <div className="text-xs text-primary-foreground/70 leading-tight">
+                <div className="text-xs leading-tight">
                   {contaminante.nombreCompleto}
                 </div>
               </Card>
@@ -110,7 +113,7 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
             Meteorológica
           </h2>
         </div>
-        {/* Metricas Meteorológicas */}
+        {/* Grid Meteorológica */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           {meteorologica.map((meteo) => {
             const IconComponent = meteo.icon;
@@ -131,7 +134,7 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
                       value == null ? "text-primary/70" : "text-primary"
                     )}
                   >
-                    {value ?? "s/d"}{" "}
+                    {value ?? "--"}{" "}
                     <span className="text-xs">{meteo.unidad}</span>
                   </div>
                 </CardContent>
