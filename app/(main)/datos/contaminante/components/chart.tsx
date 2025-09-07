@@ -29,11 +29,11 @@ export default function Chart({ data }: ChartProps) {
 
   // Colores predefinidos para cada estación
   const stationColor: Record<string, string> = {
-    centenario: "var(--centenario)",
-    cordoba: "var(--cordoba)",
-    catalinas: "var(--catalinas)",
-    cifa: "var(--cifa)",
-    otra: "var(--otra)",
+    centenario: "var(--color-centenario)",
+    cordoba: "var(--color-cordoba)",
+    catalinas: "var(--color-catalinas)",
+    cifa: "var(--color-cifa)",
+    otra: "var(--color-otra)",
   };
 
   // Mapear los datos para el gráfico
@@ -75,7 +75,7 @@ export default function Chart({ data }: ChartProps) {
             key={location}
             type="linear"
             dataKey={location}
-            stroke={stationColor[location] ?? "var(--centenario)"}
+            stroke={stationColor[location] ?? "var(--color-otra)"}
             name={
               location == "catalinas"
                 ? "La Boca"
