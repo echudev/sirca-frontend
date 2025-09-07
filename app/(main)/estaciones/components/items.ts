@@ -25,7 +25,7 @@ export enum MetricKey {
   PA_MEAN = "pa_mean",
 }
 
-type Contaminantes = {
+type Contaminante = {
   key: MetricKey;
   nombre: string;
   nombreCompleto?: string;
@@ -40,7 +40,7 @@ type Meteorologica = {
   icon: LucideIcon;
 };
 
-export const contaminantes: Contaminantes[] = [
+export const contaminantes: Contaminante[] = [
   {
     key: MetricKey.CO_MEAN,
     nombre: "CO",

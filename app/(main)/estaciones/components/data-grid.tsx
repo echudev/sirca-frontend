@@ -1,11 +1,46 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FullLocationData } from "@/lib/location/models";
+import { FullLocationData, Status } from "@/lib/location/models";
 import { cn } from "@/lib/utils";
 import { Thermometer, Droplets, Clock, Calendar } from "lucide-react";
 import { contaminantes, meteorologica } from "./items";
 import CardCabina from "./ui/card-cabina";
 
 export default function DataGrid({ data }: { data: FullLocationData }) {
+  const getStatusColor = (status: Status) => {
+    switch (status) {
+      case "k":
+        return "status-k";
+      case "a":
+        return "status-a";
+      case "v":
+        return "status-v";
+      case "m":
+        return "status-m";
+      case "av":
+        return "status-av";
+      case "mv":
+        return "status-mv";
+      default:
+        return "gray-500";
+    }
+  };
+  const getStatusText = (status: Status) => {
+    switch (status) {
+      case "a":
+        return "alarm";
+      case "v":
+        return "value";
+      case "m":
+        return "mant/cal";
+      case "av":
+        return "alarm";
+      case "mv":
+        return "mant/cal";
+      default:
+        return "";
+    }
+  };
+
   return (
     <div className="flex flex-col">
       <header className="flex flex-col w-full gap-5 lg:gap-28 md:flex-row pb-6 items-center my-6 border-b border-primary/30 text-sm text-muted-foreground">
@@ -63,6 +98,13 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           {contaminantes.map((contaminante) => {
             const value = data[contaminante.key];
+            // Si el contaminante es NO o NO₂, se usa el status de NOX (son datos del mismo analizador)
+            const status =
+              contaminante.key === "no2_mean" || contaminante.key === "no_mean"
+                ? data[`nox_mean_status` as keyof FullLocationData]
+                : data[`${contaminante.key}_status` as keyof FullLocationData];
+            const statusColor = getStatusColor(status as Status);
+            const textColor = `text-${statusColor}`;
             return (
               <Card
                 key={contaminante.key}
@@ -89,15 +131,20 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
                   <div
                     className={cn(
                       "text-3xl font-bold transition-all",
-                      value == null ? "" : "text-green-300"
+                      value == null ? "" : `${textColor}`
                     )}
                   >
                     {value ?? "--"}
                   </div>
                 </CardContent>
 
-                <div className="text-xs leading-tight">
+                <div className="text-xs leading-tight flex items-center justify-between">
                   {contaminante.nombreCompleto}
+                  <span
+                    className={`text-xs font-bold rounded-full ${textColor}`}
+                  >
+                    {getStatusText(status as Status)}
+                  </span>
                 </div>
               </Card>
             );

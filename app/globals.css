@@ -5,6 +5,14 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+  /* Status Colors */
+  --color-status-k: #06d6a0;
+  --color-status-a: #ef476f;
+  --color-status-v: #f8bd34;
+  --color-status-m: #f8fb61;
+  --color-status-av: #ef476f;
+  --color-status-mv: #f8bd34;
+
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));

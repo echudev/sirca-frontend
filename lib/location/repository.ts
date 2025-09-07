@@ -55,7 +55,7 @@ export async function fetchLastMinuteByLocation(locationName: string) {
 
   // Query para CO
   const coQuery = `
-      SELECT time, location, co_mean
+      SELECT time, location, co_mean, status
       FROM co_minutales 
       WHERE location = '${locationName}'
       ORDER BY time DESC 
@@ -64,7 +64,7 @@ export async function fetchLastMinuteByLocation(locationName: string) {
 
   // Query para NOx
   const noxQuery = `
-      SELECT time, location, no2_mean, no_mean, nox_mean
+      SELECT time, location, no2_mean, no_mean, nox_mean, status
       FROM nox_minutales 
       WHERE location = '${locationName}'
       ORDER BY time DESC 
@@ -73,7 +73,7 @@ export async function fetchLastMinuteByLocation(locationName: string) {
 
   // Query para O3
   const o3Query = `
-      SELECT time, location, o3_mean
+      SELECT time, location, o3_mean, status
       FROM o3_minutales 
       WHERE location = '${locationName}'
       ORDER BY time DESC 
@@ -82,7 +82,7 @@ export async function fetchLastMinuteByLocation(locationName: string) {
 
   // Query para SO2
   const so2Query = `
-      SELECT time, location, so2_mean
+      SELECT time, location, so2_mean, status
       FROM so2_minutales 
       WHERE location = '${locationName}'
       ORDER BY time DESC 
@@ -91,7 +91,7 @@ export async function fetchLastMinuteByLocation(locationName: string) {
 
   // Query para PM10
   const pm10Query = `
-      SELECT time, location, pm10_mean
+      SELECT time, location, pm10_mean, status
       FROM pm10_minutales 
       WHERE location = '${locationName}'
       ORDER BY time DESC 
@@ -184,16 +184,21 @@ export async function fetchLastMinuteByLocation(locationName: string) {
       ]),
       // CO data
       co_mean: coRow?.co_mean ?? null,
+      co_mean_status: coRow?.status ?? null,
       // NOx data
       no_mean: noxRow?.no_mean ?? null,
       no2_mean: noxRow?.no2_mean ?? null,
       nox_mean: noxRow?.nox_mean ?? null,
+      nox_mean_status: noxRow?.status ?? null,
       // O3 data
       o3_mean: o3Row?.o3_mean ?? null,
+      o3_mean_status: o3Row?.status ?? null,
       // SO2 data
       so2_mean: so2Row?.so2_mean ?? null,
+      so2_mean_status: so2Row?.status ?? null,
       // PM10 data
       pm10_mean: pm10Row?.pm10_mean ?? null,
+      pm10_mean_status: pm10Row?.status ?? null,
       // Meteo data
       dv_mean: meteoRow?.dv_mean ?? null,
       hr_in_mean: meteoRow?.hr_in_mean ?? null,

@@ -31,12 +31,14 @@ const timeField = z
   .nullable()
   .optional();
 const locationField = z.string();
+const statusField = z.string().nullable().optional();
 
 // Esquemas individuales
 export const CoRowSchema = z.object({
   time: timeField,
   location: locationField,
   co_mean: formatNumber(2),
+  status: statusField,
 });
 
 export const NoxRowSchema = z.object({
@@ -45,24 +47,28 @@ export const NoxRowSchema = z.object({
   no2_mean: formatNumber(1),
   no_mean: formatNumber(1),
   nox_mean: formatNumber(1),
+  status: statusField,
 });
 
 export const O3RowSchema = z.object({
   time: timeField,
   location: locationField,
   o3_mean: formatNumber(2),
+  status: statusField,
 });
 
 export const So2RowSchema = z.object({
   time: timeField,
   location: locationField,
   so2_mean: formatNumber(2),
+  status: statusField,
 });
 
 export const Pm10RowSchema = z.object({
   time: timeField,
   location: locationField,
   pm10_mean: formatNumber(2),
+  status: statusField,
 });
 
 export const MeteoRowSchema = z.object({
@@ -92,16 +98,21 @@ export const FullLocationDataSchema = z.object({
   latest_time: timeField,
   // CO data
   co_mean: formatNumber(2),
+  co_mean_status: statusField,
   // NOx data
   no2_mean: formatNumber(1),
   no_mean: formatNumber(1),
   nox_mean: formatNumber(1),
+  nox_mean_status: statusField,
   // O3 data
   o3_mean: formatNumber(2),
+  o3_mean_status: statusField,
   // SO2 data
   so2_mean: formatNumber(2),
+  so2_mean_status: statusField,
   // PM10 data
   pm10_mean: formatNumber(0),
+  pm10_mean_status: statusField,
   // Meteo data
   dv_mean: formatNumber(0),
   hr_in_mean: formatNumber(0),
@@ -133,3 +144,4 @@ export type So2Row = z.infer<typeof So2RowSchema>;
 export type Pm10Row = z.infer<typeof Pm10RowSchema>;
 export type MeteoRow = z.infer<typeof MeteoRowSchema>;
 export type FullLocationData = z.infer<typeof FullLocationDataSchema>;
+export type Status = z.infer<typeof statusField>;

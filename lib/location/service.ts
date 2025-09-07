@@ -29,20 +29,25 @@ export function applyFreshnessCheck(data: FullLocationData) {
       switch (key) {
         case "co":
           sanitizedData.co_mean = null;
+          sanitizedData.co_mean_status = null;
           break;
         case "nox":
           sanitizedData.no_mean = null;
           sanitizedData.no2_mean = null;
           sanitizedData.nox_mean = null;
+          sanitizedData.nox_mean_status = null;
           break;
         case "o3":
           sanitizedData.o3_mean = null;
+          sanitizedData.o3_mean_status = null;
           break;
         case "so2":
           sanitizedData.so2_mean = null;
+          sanitizedData.so2_mean_status = null;
           break;
         case "pm10":
           sanitizedData.pm10_mean = null;
+          sanitizedData.pm10_mean_status = null;
           break;
         case "meteo":
           sanitizedData.dv_mean = null;
