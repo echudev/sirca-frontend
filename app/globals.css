@@ -5,7 +5,14 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /* Status Colors */
+  /* Color Estaciones */
+  --color-catalinas: #18a1cf;
+  --color-cordoba: #d43c5f;
+  --color-centenario: #06bb8a;
+  --color-cifa: #7b30b5;
+  --color-otra: #ffd166;
+
+  /* Color Status */
   --color-status-k: #06d6a0;
   --color-status-a: #ef476f;
   --color-status-v: #f8bd34;
@@ -82,8 +89,6 @@
   If we ever want to remove these styles, we need to add an explicit border
   color utility to any element that depends on these defaults.
 */
-@layer base {
-  /* a partir de acá empieza la configuración personalizada @echudev */
   :root {
     /* Color Estaciones */
     --centenario: #118ab2;
@@ -149,7 +154,7 @@
     --sidebar-border: var(--secondary-20);
     --sidebar-ring: var(--secondary);
   }
-}
+
 
 .dark {
   /* General Colors */

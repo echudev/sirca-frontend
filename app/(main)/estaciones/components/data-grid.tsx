@@ -9,19 +9,19 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
   const getStatusColor = (status: Status) => {
     switch (status) {
       case "k":
-        return "status-k";
+        return "text-status-k";
       case "a":
-        return "status-a";
+        return "text-status-a";
       case "v":
-        return "status-v";
+        return "text-status-v";
       case "m":
-        return "status-m";
+        return "text-status-m";
       case "av":
-        return "status-av";
+        return "text-status-av";
       case "mv":
-        return "status-mv";
+        return "text-status-mv";
       default:
-        return "gray-500";
+        return "";
     }
   };
   const getStatusText = (status: Status) => {
@@ -104,7 +104,7 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
                 ? data[`nox_mean_status` as keyof FullLocationData]
                 : data[`${contaminante.key}_status` as keyof FullLocationData];
             const statusColor = getStatusColor(status as Status);
-            const textColor = `text-${statusColor}`;
+
             return (
               <Card
                 key={contaminante.key}
@@ -131,7 +131,7 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
                   <div
                     className={cn(
                       "text-3xl font-bold transition-all",
-                      value == null ? "" : `${textColor}`
+                      statusColor
                     )}
                   >
                     {value ?? "--"}
@@ -141,7 +141,10 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
                 <div className="text-xs leading-tight flex items-center justify-between">
                   {contaminante.nombreCompleto}
                   <span
-                    className={`text-xs font-bold rounded-full ${textColor}`}
+                    className={cn(
+                      "text-xs font-bold rounded-full",
+                      statusColor
+                    )}
                   >
                     {getStatusText(status as Status)}
                   </span>

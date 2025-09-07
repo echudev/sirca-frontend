@@ -18,7 +18,7 @@ export const estaciones = {
       url: "/estaciones/centenario",
     },
     {
-      title: "Catalinas",
+      title: "La Boca",
       url: "/estaciones/catalinas",
     },
     {

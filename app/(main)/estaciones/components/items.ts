@@ -68,7 +68,7 @@ export const contaminantes: Contaminante[] = [
   {
     key: MetricKey.PM10_MEAN,
     nombre: "PM₁₀",
-    nombreCompleto: "Material Particulado < 10 μm",
+    nombreCompleto: "Material Particulado",
     unidad: "μg/m³",
   },
   {
