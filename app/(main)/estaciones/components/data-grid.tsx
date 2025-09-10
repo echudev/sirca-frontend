@@ -27,13 +27,13 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
   const getStatusText = (status: Status) => {
     switch (status) {
       case "a":
-        return "alarm";
+        return "alarma";
       case "v":
-        return "value";
+        return "valor";
       case "m":
         return "mant/cal";
       case "av":
-        return "alarm";
+        return "alarma";
       case "mv":
         return "mant/cal";
       default:
