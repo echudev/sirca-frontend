@@ -40,6 +40,8 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
         return "zero";
       case "s":
         return "span";
+      case "c":
+        return "cal";
       case "av":
         return "alarma";
       case "mv":
