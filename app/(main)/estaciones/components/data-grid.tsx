@@ -20,6 +20,8 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
         return "text-status-m";
       case "s":
         return "text-status-m";
+      case "c":
+        return "text-status-m";
       case "av":
         return "text-status-av";
       case "mv":
