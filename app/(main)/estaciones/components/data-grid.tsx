@@ -16,6 +16,10 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
         return "text-status-v";
       case "m":
         return "text-status-m";
+      case "z":
+        return "text-status-m";
+      case "s":
+        return "text-status-m";
       case "av":
         return "text-status-av";
       case "mv":
@@ -31,7 +35,11 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
       case "v":
         return "valor";
       case "m":
-        return "mant/cal";
+        return "mant";
+      case "z":
+        return "zero";
+      case "s":
+        return "span";
       case "av":
         return "alarma";
       case "mv":
