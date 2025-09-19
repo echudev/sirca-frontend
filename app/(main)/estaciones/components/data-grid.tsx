@@ -21,7 +21,7 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
       case "s":
         return "text-status-m";
       case "c":
-        return "text-status-m";
+        return "text-status-a";
       case "av":
         return "text-status-av";
       case "mv":
@@ -32,22 +32,24 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
   };
   const getStatusText = (status: Status) => {
     switch (status) {
+      case "k":
+        return "OK";
       case "a":
-        return "alarma";
+        return "Alarma equipo";
       case "v":
-        return "valor";
+        return "Valor erróneo";
       case "m":
-        return "mant";
+        return "Mantenimiento";
       case "z":
-        return "zero";
+        return "Zero cal";
       case "s":
-        return "span";
+        return "Span cal";
       case "c":
-        return "cal";
+        return "Error de conexión";
       case "av":
-        return "alarma";
+        return "Alarma";
       case "mv":
-        return "mant/cal";
+        return "Mantenimiento";
       default:
         return "";
     }
@@ -122,43 +124,45 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
                 key={contaminante.key}
                 className={cn(
                   "relative p-5 overflow-hidden border border-border/40 backdrop-blur-3xl bg-gradient-to-br from-primary to-primary/90 transition-all duration-300 hover:shadow-md shadow-sm shadow-black/30 cursor-pointer",
+                  status == null ? "hidden" : "",
                   value == null
                     ? "brightness-90 text-primary-foreground/60"
                     : "border-border/60 text-primary-foreground/80"
                 )}
               >
                 <CardHeader className="p-0">
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-base">
-                        {contaminante.nombre}
-                      </span>
-                      <span className="font-medium text-xs">
-                        ({contaminante.unidad})
-                      </span>
-                    </div>
+                  <div className="flex items-center justify-between gap-2 text-sm font-semibold">
+                    <span>{contaminante.nombreCompleto}</span>
+                    <span>({contaminante.nombre})</span>
                   </div>
                 </CardHeader>
                 <CardContent className="py-3 px-0">
                   <div
                     className={cn(
-                      "text-3xl font-bold transition-all",
+                      "text-3xl text-center font-bold transition-all p-2",
                       statusColor
                     )}
                   >
                     {value ?? "--"}
+                    <span className="font-bold text-sm">
+                      {" "}
+                      {contaminante.unidad}
+                    </span>
                   </div>
                 </CardContent>
 
-                <div className="text-xs leading-tight flex items-center justify-between">
-                  {contaminante.nombreCompleto}
-                  <span
-                    className={cn(
-                      "text-xs font-bold rounded-full",
-                      statusColor
-                    )}
-                  >
-                    {getStatusText(status as Status)}
+                <div className="text-xs leading-tight flex items-center">
+                  <span className="font-bold text-xs">
+                    Estado:
+                    <span
+                      className={cn(
+                        "text-xs font-bold rounded-full",
+                        statusColor
+                      )}
+                    >
+                      {" "}
+                      {getStatusText(status as Status)}
+                    </span>
                   </span>
                 </div>
               </Card>
