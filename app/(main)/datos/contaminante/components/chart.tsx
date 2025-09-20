@@ -109,7 +109,7 @@ export default function Chart({ data }: ChartProps) {
           margin={{ top: 50, right: 30, left: 0, bottom: 5 }}
         >
           <Label
-            value="NO2 y NO acumulados + NOx totales"
+            value="NO2 y NO apilados + NOx totales"
             position="top"
             offset={30}
             style={{
