@@ -13,6 +13,7 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
+  SelectSeparator,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -26,9 +27,8 @@ import {
 
 export const contaminantesOptions = [
   { label: "CO", value: "co" },
-  { label: "NO", value: "no" },
-  { label: "NO2", value: "no2" },
-  { label: "NOx", value: "nox" },
+  { label: "NO2 Solo", value: "no2" },
+  { label: "NOx Totales", value: "nox" },
   { label: "PM10", value: "pm10" },
   { label: "O3", value: "o3" },
   { label: "SO2", value: "so2" },
@@ -228,6 +228,7 @@ export default function Filtros({
         </div>
 
         {/* Select locations con selección múltiple (checkboxes) */}
+        {/* Si metrica es NOx, permite seleccionar solo 1 estación */}
         <div className="flex flex-col gap-3">
           <Label htmlFor="locations" className="px-1">
             Estaciones
@@ -270,10 +271,14 @@ export default function Filtros({
                   );
                 })}
               </div>
+              <SelectSeparator className="my-2" />
+              <div className="text-xs text-primary">
+                Para métrica &quot;NOx Totales&quot; seleccionar una sola
+                estación
+              </div>
             </PopoverContent>
           </Popover>
         </div>
-
         {/* start date date picker */}
         <div className="flex flex-col gap-3">
           <Label htmlFor="date" className="px-1">

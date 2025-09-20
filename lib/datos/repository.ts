@@ -39,13 +39,26 @@ export async function fetchDatosPorContaminante(params: {
 
   const column = columnMap[contaminant] || "co_mean";
 
-  // Construir SELECT dinámico para las ubicaciones (estructura original que funciona con InfluxDB)
-  const locationSelects = locations
-    .map(
-      (location) =>
-        `AVG(CASE WHEN LOWER(TRIM(location)) = LOWER(TRIM('${location}')) THEN ${column} END) AS "${location}"`
-    )
-    .join(",\n  ");
+  // Si el usuario pide nox_mean, buscamos no, no2 y nox (oxidos totales)
+  let locationSelects;
+  if (column === "nox_mean") {
+    locationSelects = locations
+      .map(
+        (location) =>
+          `AVG(CASE WHEN LOWER(TRIM(location)) = LOWER(TRIM('${location}')) THEN no2_mean END) AS "${location} NO2",
+          AVG(CASE WHEN LOWER(TRIM(location)) = LOWER(TRIM('${location}')) THEN no_mean END) AS "${location} NO",
+          AVG(CASE WHEN LOWER(TRIM(location)) = LOWER(TRIM('${location}')) THEN nox_mean END) AS "${location} NOx"`
+      )
+      .join(",\n  ");
+  } else {
+    // Construir SELECT dinámico para las ubicaciones (estructura original que funciona con InfluxDB)
+    locationSelects = locations
+      .map(
+        (location) =>
+          `AVG(CASE WHEN LOWER(TRIM(location)) = LOWER(TRIM('${location}')) THEN ${column} END) AS "${location}"`
+      )
+      .join(",\n  ");
+  }
 
   const query = `
   SELECT
