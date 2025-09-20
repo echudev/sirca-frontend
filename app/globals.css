@@ -6,9 +6,9 @@
 
 @theme {
   /* Color Estaciones */
-  --color-catalinas: #18a1cf;
-  --color-cordoba: #d43c5f;
-  --color-centenario: #06bb8a;
+  --color-catalinas: #008ebd;
+  --color-cordoba: #d03156;
+  --color-centenario: #006449;
   --color-cifa: #7b30b5;
   --color-otra: #ffd166;
 
@@ -21,16 +21,16 @@
   --color-status-mv: #f8bd34;
 
   /* Color Estaciones Contaminantes */
-  --color-catalinas-no: #979797;
-  --color-catalinas-no2: #18a1cf;
-  --color-catalinas-nox: #ff3434;
-  --color-cordoba-no: #979797;
-  --color-cordoba-no2: #d43c5f;
-  --color-cordoba-nox: #621df7;
-  --color-centenario-no: #979797;
-  --color-centenario-no2: #06bb8a;
-  --color-centenario-nox: #ff3434;
-  --color-cifa-no: #979797;
+  --color-catalinas-no: #777777;
+  --color-catalinas-no2: #008ebd;
+  --color-catalinas-nox: #5e35bd;
+  --color-cordoba-no: #777777;
+  --color-cordoba-no2: #d03156;
+  --color-cordoba-nox: #5e35bd;
+  --color-centenario-no: #777777;
+  --color-centenario-no2: #006449;
+  --color-centenario-nox: #5e35bd;
+  --color-cifa-no: #777777;
   --color-cifa-no2: #611585;
   --color-cifa-nox: #ff3434;
 

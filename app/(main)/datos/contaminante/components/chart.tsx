@@ -121,8 +121,16 @@ export default function Chart({ data }: ChartProps) {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={{ fontSize: 12 }}></XAxis>
           <YAxis />
-          <Tooltip />
-          <Legend />
+          <Tooltip
+            itemSorter={(item) => {
+              const name = typeof item.name === "string" ? item.name : "";
+              if (name.includes("NO2")) return 2;
+              if (name.includes("NOx")) return 0;
+              if (name.includes("NO")) return 1;
+              return 3;
+            }}
+          />
+          <Legend iconType="plainline" iconSize={20} />
           {locations.map((location) =>
             location.includes("NOx") ? (
               <Line
@@ -165,8 +173,16 @@ export default function Chart({ data }: ChartProps) {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={{ fontSize: 12 }}></XAxis>
           <YAxis />
-          <Tooltip />
-          <Legend />
+          <Tooltip
+            itemSorter={(item) => {
+              const name = typeof item.name === "string" ? item.name : "";
+              if (name.includes("NO2")) return 2;
+              if (name.includes("NOx")) return 0;
+              if (name.includes("NO")) return 1;
+              return 3;
+            }}
+          />
+          <Legend iconType="plainline" />
           {locations.map((location) => (
             <Line
               key={location}
@@ -179,7 +195,8 @@ export default function Chart({ data }: ChartProps) {
                   : location.charAt(0).toUpperCase() + location.slice(1)
               }
               dot={false}
-              strokeWidth={2}
+              strokeWidth={location.includes("NOx") ? 3 : 2}
+              strokeDasharray={location.includes("NOx") ? "4 7" : "4 0"}
             />
           ))}
         </LineChart>
