@@ -131,9 +131,8 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
                 )}
               >
                 <CardHeader className="p-0">
-                  <div className="flex items-center justify-between gap-2 text-sm font-semibold">
-                    <span>{contaminante.nombreCompleto}</span>
-                    <span>({contaminante.nombre})</span>
+                  <div className="flex items-center text-base font-bold">
+                    <span>{contaminante.nombre}</span>
                   </div>
                 </CardHeader>
                 <CardContent className="py-3 px-0">
