@@ -139,7 +139,7 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
                 <CardContent className="py-3 px-0">
                   <div
                     className={cn(
-                      "text-3xl text-center font-bold transition-all p-2",
+                      "text-3xl font-bold transition-all p-2",
                       statusColor
                     )}
                   >
