@@ -3,7 +3,7 @@ import { differenceInMinutes } from "date-fns";
 import { FullLocationData } from "./models"; // el tipo que devuelve tu repo
 
 // Umbral configurable (ej: 2 minutos)
-const FRESHNESS_THRESHOLD_MINUTES = 2;
+const FRESHNESS_THRESHOLD_MINUTES = 4;
 
 export function applyFreshnessCheck(data: FullLocationData) {
   const now = new Date();
