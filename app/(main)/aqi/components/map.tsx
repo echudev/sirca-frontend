@@ -1,7 +1,6 @@
 "use client";
 
 import Map, { Marker, Popup } from "react-map-gl/maplibre";
-import "maplibre-gl/dist/maplibre-gl.css";
 import { useRef, useState } from "react";
 import type { StyleSpecification } from "maplibre-gl";
 
