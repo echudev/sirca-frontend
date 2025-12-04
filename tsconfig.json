@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -10,7 +14,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
       {
@@ -19,10 +23,14 @@
     ],
     "baseUrl": ".", // Define la raíz del proyecto
     "paths": {
-      "@/*": ["./*"] // Crea el alias "@" para la carpeta raíz
+      "@/*": [
+        "./*"
+      ] // Crea el alias "@" para la carpeta raíz
     },
     "target": "ES2017",
-    "types": ["vitest"]
+    "types": [
+      "vitest"
+    ]
   },
   "include": [
     "next-env.d.ts",
@@ -30,7 +38,10 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "tests",
-    "vite.config.mts"
+    "vite.config.mts",
+    ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }
