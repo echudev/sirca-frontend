@@ -37,9 +37,9 @@
     "dotenv": "^17.2.2",
     "drizzle-orm": "^0.44.5",
     "drizzle-seed": "^0.3.1",
-    "esbuild": "^0.25.9",
+    "esbuild": "^0.27.1",
     "jose": "^6.1.0",
-    "lucide-react": "^0.542.0",
+    "lucide-react": "^0.555.0",
     "luxon": "^3.7.2",
     "mapbox-gl": "^3.14.0",
     "maplibre-gl": "^5.7.1",
@@ -67,15 +67,15 @@
     "@vitejs/plugin-react": "^5.0.2",
     "drizzle-kit": "^0.31.4",
     "eslint": "^9.35.0",
-    "eslint-config-next": "^15.5.2",
-    "eslint-plugin-testing-library": "^7.6.8",
-    "jsdom": "^26.1.0",
+    "eslint-config-next": "^16.0.7",
+    "eslint-plugin-testing-library": "^7.13.5",
+    "jsdom": "^27.2.0",
     "postcss": "^8",
     "prettier": "^3.6.2",
     "tailwindcss": "^4.1.13",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.5",
     "typescript": "^5",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.15"
   }
 }
