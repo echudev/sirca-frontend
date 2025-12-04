@@ -29,7 +29,7 @@ describe("actions.ts", () => {
   describe("login", () => {
     it("should return validation errors if form data is invalid", async () => {
       const formData = new FormData();
-      formData.set("name", ""); // Invalid data
+      formData.set("email", ""); // Invalid data
       formData.set("password", "");
 
       const state = {};
@@ -42,12 +42,12 @@ describe("actions.ts", () => {
 
     it("should call loginUser and redirect on successful login", async () => {
       const formData = new FormData();
-      formData.set("name", "testuser");
+      formData.set("email", "testuser");
       formData.set("password", "password123");
 
       vi.spyOn(LoginFormSchema, "safeParse").mockReturnValue({
         success: true,
-        data: { name: "testuser", password: "password123" },
+        data: { email: "testuser", password: "password123" },
       });
 
       vi.mocked(loginUser).mockResolvedValue({
@@ -58,7 +58,7 @@ describe("actions.ts", () => {
       await login(state, formData);
 
       expect(loginUser).toHaveBeenCalledWith({
-        name: "testuser",
+        email: "testuser",
         password: "password123",
       });
       expect(redirect).toHaveBeenCalledWith("/dashboard");
@@ -66,12 +66,12 @@ describe("actions.ts", () => {
 
     it("should return an error if loginUser fails", async () => {
       const formData = new FormData();
-      formData.set("name", "testuser");
+      formData.set("email", "testuser");
       formData.set("password", "password123");
 
       vi.spyOn(LoginFormSchema, "safeParse").mockReturnValue({
         success: true,
-        data: { name: "testuser", password: "password123" },
+        data: { email: "testuser", password: "password123" },
       });
 
       vi.mocked(loginUser).mockResolvedValue({
@@ -83,7 +83,7 @@ describe("actions.ts", () => {
       const result = await login(state, formData);
 
       expect(loginUser).toHaveBeenCalledWith({
-        name: "testuser",
+        email: "testuser",
         password: "password123",
       });
       expect(result).toMatchObject({
@@ -130,6 +130,7 @@ describe("actions.ts", () => {
         success: true,
         data: {
           name: "testuser",
+          lastName: "testuser",
           email: "testuser@example.com",
           password: "password123",
           role: "EDITOR",
@@ -175,6 +176,7 @@ describe("actions.ts", () => {
         success: true,
         data: {
           name: "testuser",
+          lastName: "testuser",
           email: "testuser@example.com",
           password: "password123",
           role: "ADMIN",
