@@ -4,9 +4,24 @@ import { FiltrosType } from "./components/filters";
 import SonnerToaster from "@/components/sonner-toaster";
 import Table from "./components/table";
 import useFetchDescargas from "@/hooks/useFetchDescargas";
-import { Loader2, AlertCircle, FileWarning } from "lucide-react";
+import { Loader2, AlertCircle, FileWarning, Download } from "lucide-react";
 import Image from "next/image";
 import Filtros from "./components/filters";
+import {
+  downloadAsCSV,
+  downloadAsExcel,
+  generateFilename,
+} from "@/lib/descargas/download";
+import { toast } from "sonner";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 export default function DescargasPage() {
   const [filters, setFilters] = useState<FiltrosType>({
@@ -15,11 +30,38 @@ export default function DescargasPage() {
     startDate: undefined,
     endDate: undefined,
   });
+  const [downloadFormat, setDownloadFormat] = useState<"csv" | "xlsx">("csv");
   const { data, error, isLoading, fetchDescargas } = useFetchDescargas();
 
   const handleFetch = (newFilters: FiltrosType) => {
     setFilters(newFilters);
     fetchDescargas(newFilters);
+  };
+
+  const handleDownload = async () => {
+    if (!data || data.length === 0) {
+      toast.error("No hay datos para descargar");
+      return;
+    }
+
+    try {
+      const filename = generateFilename(filters, downloadFormat);
+      if (downloadFormat === "csv") {
+        downloadAsCSV(data, filename);
+        toast.success(
+          `Archivo ${downloadFormat.toUpperCase()} descargado exitosamente`
+        );
+      } else if (downloadFormat === "xlsx") {
+        await downloadAsExcel(data, filename);
+        toast.success(
+          `Archivo ${downloadFormat.toUpperCase()} descargado exitosamente`
+        );
+      }
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Error al descargar el archivo";
+      toast.error(errorMessage);
+    }
   };
   return (
     <div className="space-y-8">
@@ -51,7 +93,34 @@ export default function DescargasPage() {
         </div>
       )}
       {Array.isArray(data) && data.length > 0 && !isLoading && !error && (
-        <Table data={data} />
+        <>
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center p-2">
+            <div className="flex gap-2 border border-primary/20 p-2 rounded-md">
+              <Select
+                value={downloadFormat}
+                onValueChange={(value: "csv" | "xlsx") =>
+                  setDownloadFormat(value)
+                }
+              >
+                <SelectTrigger id="download-format" className="w-[130px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="csv">CSV</SelectItem>
+                  <SelectItem value="xlsx">Excel</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                onClick={handleDownload}
+                className="btn btn-primary text-primary bg-secondary hover:bg-secondary/90 hover:shadow-primary active:shadow-none active:scale-99 cursor-pointer select-none transition-all"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Guardar Datos
+              </Button>
+            </div>
+          </div>
+          <Table data={data} />
+        </>
       )}
       {Array.isArray(data) && data.length === 0 && !isLoading && !error && (
         <div className="w-full h-full flex flex-col items-center justify-center text-center">

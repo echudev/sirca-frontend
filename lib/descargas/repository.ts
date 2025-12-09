@@ -60,7 +60,7 @@ export async function fetchDatosPorEstacion(params: {
   const queries = Object.entries(TABLE_CONFIG).map(([key, config]) => {
     const { table, metrics } = config;
     const metricsSelect = metrics
-      .map((metric) => `AVG(${metric}) AS ${metric}`)
+      .map((metric) => `AVG(${metric}) AS ${metric.replace("_mean", "")}`)
       .join(", ");
 
     const query = `

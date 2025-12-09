@@ -281,7 +281,7 @@ export default function Filtros({
           onClick={handleApply}
           disabled={isLoading}
         >
-          Descargar
+          Buscar Datos
         </Button>
       </div>
     </div>
