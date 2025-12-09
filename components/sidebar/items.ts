@@ -1,4 +1,10 @@
-import { Wind, ChartLine, MapPin, ChartNoAxesColumn } from "lucide-react";
+import {
+  Wind,
+  ChartLine,
+  MapPin,
+  ChartNoAxesColumn,
+  Download,
+} from "lucide-react";
 
 export const aqi = [
   {
@@ -34,9 +40,9 @@ export const estaciones = {
 
 export const datos = [
   {
-    title: "Por Contaminante",
+    title: "Explorar Datos",
     url: "/datos/contaminante",
-    icon: ChartNoAxesColumn,
+    icon: ChartLine,
   },
 ];
 
@@ -44,49 +50,14 @@ export const reportes = [
   {
     title: "Reportes",
     url: "/reportes",
-    icon: ChartLine,
+    icon: ChartNoAxesColumn,
   },
 ];
 
-// Mantainance , WrenchIconMenu items.
-// export const mantenimiento = {
-//   title: "Mantenimiento",
-//   icon: WrenchIcon,
-//   items: [
-//     {
-//       title: "Órdenes",
-//       url: "/mantenimiento/ordenes",
-//     },
-//     {
-//       title: "Calibraciones",
-//       url: "/mantenimiento/calibraciones",
-//     },
-//     {
-//       title: "Programado",
-//       url: "/mantenimiento/programado",
-//     },
-//   ],
-// };
-
-// export const inventario = {
-//   title: "Inventario",
-//   icon: Package2Icon,
-//   items: [
-//     {
-//       title: "Estaciones",
-//       url: "/inventario/estaciones",
-//     },
-//     {
-//       title: "Equipos",
-//       url: "/inventario/equipos",
-//     },
-//     {
-//       title: "Partes",
-//       url: "/inventario/partes",
-//     },
-//     {
-//       title: "Gases",
-//       url: "/inventario/gases",
-//     },
-//   ],
-// };
+export const descargas = [
+  {
+    title: "Descargas",
+    url: "/descargas",
+    icon: Download,
+  },
+];

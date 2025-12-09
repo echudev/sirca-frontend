@@ -1,29 +1,26 @@
 "use client";
 import { useState } from "react";
-import Filtros from "./components/filters";
+import { FiltrosType } from "./components/filters";
 import SonnerToaster from "@/components/sonner-toaster";
-import Chart from "./components/chart";
 import Table from "./components/table";
-import useFetchDatos from "@/hooks/useFetchDatos";
+import useFetchDescargas from "@/hooks/useFetchDescargas";
 import { Loader2, AlertCircle, FileWarning } from "lucide-react";
 import Image from "next/image";
-import { FiltrosType } from "@/app/(main)/datos/contaminante/components/filters";
+import Filtros from "./components/filters";
 
-export default function CrudosPage() {
+export default function DescargasPage() {
   const [filters, setFilters] = useState<FiltrosType>({
-    metrica: "co",
-    interval: "hour",
+    integration: "hour",
+    location: "centenario",
     startDate: undefined,
     endDate: undefined,
-    locations: "",
   });
-  const { data, error, isLoading, fetchDatos } = useFetchDatos();
+  const { data, error, isLoading, fetchDescargas } = useFetchDescargas();
 
   const handleFetch = (newFilters: FiltrosType) => {
     setFilters(newFilters);
-    fetchDatos(newFilters);
+    fetchDescargas(newFilters);
   };
-
   return (
     <div className="space-y-8">
       <SonnerToaster />
@@ -54,10 +51,7 @@ export default function CrudosPage() {
         </div>
       )}
       {Array.isArray(data) && data.length > 0 && !isLoading && !error && (
-        <>
-          <Chart data={data} />
-          <Table data={data} />
-        </>
+        <Table data={data} />
       )}
       {Array.isArray(data) && data.length === 0 && !isLoading && !error && (
         <div className="w-full h-full flex flex-col items-center justify-center text-center">
@@ -70,12 +64,12 @@ export default function CrudosPage() {
         </div>
       )}
       {data == undefined && !isLoading && !error && (
-        <div className="w-full h-full flex flex-col items-center justify-center text-center">
+        <div className="w-full flex flex-col items-center justify-center text-center">
           <Image
-            src="/data-search.png"
+            src="/data_download.png"
             alt="No hay datos"
-            width={400}
-            height={400}
+            width={450}
+            height={450}
           />
         </div>
       )}

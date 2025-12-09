@@ -2,7 +2,13 @@
 
 import { Menu } from "./sidebar-menu";
 import { MenuSub } from "./sidebar-menu-sub";
-import { datos, reportes, aqi, estaciones } from "@/components/sidebar/items";
+import {
+  datos,
+  reportes,
+  aqi,
+  estaciones,
+  descargas,
+} from "@/components/sidebar/items";
 import {
   SidebarContent,
   SidebarGroup,
@@ -23,16 +29,7 @@ export function Content() {
         <SidebarGroupLabel>Datos Históricos</SidebarGroupLabel>
         <Menu items={datos} />
         <Menu items={reportes} />
-        {/* <MenuSub
-            title={inventario.title}
-            items={inventario.items}
-            icon={inventario.icon}
-          />
-          <MenuSub
-            title={mantenimiento.title}
-            items={mantenimiento.items}
-            icon={mantenimiento.icon}
-          /> */}
+        <Menu items={descargas} />
       </SidebarGroup>
     </SidebarContent>
   );

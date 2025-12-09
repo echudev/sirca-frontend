@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { z } from "zod";
-import { filtrosSchema } from "@/lib/datos/models";
+import { filtrosSchema } from "@/lib/descargas/models";
 import { toast } from "sonner";
 import { ChevronDownIcon } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
@@ -12,47 +12,34 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-  SelectSeparator,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export interface FiltrosType {
-  metrica: string;
-  interval: string;
-  startDate: Date | undefined;
-  endDate: Date | undefined;
-  locations: string;
-}
-
-export const contaminantesOptions = [
-  { label: "CO", value: "co" },
-  { label: "NO2 Solo", value: "no2" },
-  { label: "NOx Totales", value: "nox" },
-  { label: "PM10", value: "pm10" },
-  { label: "O3", value: "o3" },
-  { label: "SO2", value: "so2" },
-];
-
 export const promedioOptions = [
-  { label: "Minutos", value: "minute" },
-  { label: "Horas", value: "hour" },
-  { label: "Días", value: "day" },
+  { label: "Minutales", value: "minute" },
+  { label: "Horarios", value: "hour" },
 ];
 
-export const locationsOptions = [
+export const locationOptions = [
   { label: "Centenario", value: "centenario" },
   { label: "La Boca", value: "catalinas" },
   { label: "Cordoba", value: "cordoba" },
   { label: "Cifa", value: "cifa" },
 ];
+
+export interface FiltrosType {
+  location: string;
+  integration: string;
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+}
 
 interface FiltrosProps {
   currentFilters: FiltrosType;
@@ -74,7 +61,6 @@ export default function Filtros({
   // Estado para popup de date pickers
   const [openStartDate, setOpenStartDate] = useState(false);
   const [openEndDate, setOpenEndDate] = useState(false);
-  const [openLocations, setOpenLocations] = useState(false);
 
   // Helper que formatea la fecha para la UI: 'lun, dd/mm/yyyy'
   const formatDateUI = (date: string | Date | undefined) => {
@@ -92,23 +78,6 @@ export default function Filtros({
   // Setter genérico de cambios locales y limpieza de errores del campo
   const handleChange = (key: string, value: unknown) => {
     setLocalFilters((prev) => ({ ...prev, [key]: value }));
-  };
-
-  // Helpers para manejar selección múltiple de estaciones
-  const selectedLocations = (localFilters.locations || "")
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-  const toggleLocation = (loc: string, checked: boolean) => {
-    const set = new Set(selectedLocations);
-    if (checked) {
-      set.add(loc);
-    } else {
-      set.delete(loc);
-    }
-    const joined = Array.from(set).join(",");
-    handleChange("locations", joined);
   };
 
   // Valida usando Zod y devuelve un objeto con errores por campo (no muta estado)
@@ -144,8 +113,7 @@ export default function Filtros({
 
     // Enviar filtros ya validados
     const filtersToSend = {
-      metrica: localFilters.metrica,
-      interval: localFilters.interval,
+      integration: localFilters.integration,
       startDate:
         typeof localFilters.startDate === "string"
           ? new Date(localFilters.startDate)
@@ -154,22 +122,21 @@ export default function Filtros({
         typeof localFilters.endDate === "string"
           ? new Date(localFilters.endDate)
           : localFilters.endDate,
-      locations: localFilters.locations,
+      location: localFilters.location,
     } as const;
     if (onFetch) onFetch(filtersToSend);
 
     // Actualizar URL solo con valores presentes
     const params = new URLSearchParams();
-    params.set("metrica", localFilters.metrica);
-    params.set("interval", localFilters.interval ?? "");
+    params.set("integration", localFilters.integration ?? "");
     if (filtersToSend.startDate) {
       params.set("startDate", filtersToSend.startDate.toISOString());
     }
     if (filtersToSend.endDate) {
       params.set("endDate", filtersToSend.endDate.toISOString());
     }
-    if ((localFilters.locations || "").trim()) {
-      params.set("locations", localFilters.locations);
+    if ((localFilters.location || "").trim()) {
+      params.set("location", localFilters.location);
     }
     router.replace(`${pathname}?${params.toString()}`);
   };
@@ -178,30 +145,30 @@ export default function Filtros({
     <div className="p-2">
       <header className="mb-10">
         <h1 className="text-2xl font-bold text-primary text-center relative z-10 uppercase tracking-wider mb-2">
-          Datos de Calidad del Aire
+          Red de Calidad del Aire
         </h1>
-        <h2 className="text-primary/70 text-center font-semibold">
-          Seleccioná el contaminante, el tipo de integración y el rango de
-          fechas para consultar los datos.
-        </h2>
+        <h3 className="text-primary/70 text-center font-semibold">
+          Seleccioná estación, integración y rango de fechas para descargar los
+          datos.
+        </h3>
       </header>
       <div className="flex flex-col flex-wrap md:flex-row gap-4 items-center justify-center text-primary">
-        {/* Select contaminante (metrica) */}
+        {/* Select location */}
         <div className="flex flex-col gap-3">
-          <Label htmlFor="metrica" className="px-1">
-            Métrica
+          <Label htmlFor="location" className="px-1">
+            Estación
           </Label>
           <Select
-            name="metrica"
-            value={localFilters.metrica}
-            onValueChange={(value) => handleChange("metrica", value)}
+            name="location"
+            value={localFilters.location ?? "centenario"}
+            onValueChange={(value) => handleChange("location", value)}
             disabled={isLoading}
           >
-            <SelectTrigger id="metrica" className="w-[120px]">
+            <SelectTrigger id="location" className="w-[180px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {contaminantesOptions.map((opt) => (
+              {locationOptions.map((opt) => (
                 <SelectItem key={opt.value} value={opt.value}>
                   {opt.label}
                 </SelectItem>
@@ -210,18 +177,18 @@ export default function Filtros({
           </Select>
         </div>
 
-        {/* Select promedio (minutal, horario, diario) */}
+        {/* Select promedio (minutal, horario) */}
         <div className="flex flex-col gap-3">
-          <Label htmlFor="interval" className="px-1">
+          <Label htmlFor="integration" className="px-1">
             Integración
           </Label>
           <Select
-            name="interval"
-            value={localFilters.interval ?? ""}
-            onValueChange={(value) => handleChange("interval", value)}
+            name="integration"
+            value={localFilters.integration ?? ""}
+            onValueChange={(value) => handleChange("integration", value)}
             disabled={isLoading}
           >
-            <SelectTrigger id="interval" className="w-[180px]">
+            <SelectTrigger id="integration" className="w-[180px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -234,58 +201,6 @@ export default function Filtros({
           </Select>
         </div>
 
-        {/* Select locations con selección múltiple (checkboxes) */}
-        {/* Si metrica es NOx, permite seleccionar solo 1 estación */}
-        <div className="flex flex-col gap-3">
-          <Label htmlFor="locations" className="px-1">
-            Estaciones
-          </Label>
-          <Popover open={openLocations} onOpenChange={setOpenLocations}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                id="locations"
-                className="w-[220px] justify-between font-normal"
-                disabled={isLoading}
-              >
-                {selectedLocations.length > 0
-                  ? `${selectedLocations.length} seleccionada$${""}`.replace(
-                      "$",
-                      selectedLocations.length === 1 ? "" : "s"
-                    )
-                  : "Elegir estaciones"}
-                <ChevronDownIcon />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-60 p-2" align="start">
-              <div className="flex flex-col gap-2 max-h-64 overflow-auto">
-                {locationsOptions.map((opt) => {
-                  const checked = selectedLocations.includes(opt.value);
-                  return (
-                    <label
-                      key={opt.value}
-                      className="flex items-center gap-2 cursor-pointer"
-                    >
-                      <Checkbox
-                        checked={checked}
-                        onCheckedChange={(val) =>
-                          toggleLocation(opt.value, Boolean(val))
-                        }
-                        id={`loc-${opt.value}`}
-                      />
-                      <span className="text-sm">{opt.label}</span>
-                    </label>
-                  );
-                })}
-              </div>
-              <SelectSeparator className="my-2" />
-              <div className="text-xs text-primary">
-                Para métrica &quot;NOx Totales&quot; seleccionar una sola
-                estación
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
         {/* start date date picker */}
         <div className="flex flex-col gap-3">
           <Label htmlFor="startDate" className="px-1">
@@ -295,8 +210,8 @@ export default function Filtros({
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                id="startDate"
                 name="startDate"
+                id="startDate"
                 className="w-48 justify-between font-normal"
               >
                 {formatDateUI(localFilters.startDate)}
@@ -333,8 +248,8 @@ export default function Filtros({
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                id="endDate"
                 name="endDate"
+                id="endDate"
                 className="w-48 justify-between font-normal"
               >
                 {formatDateUI(localFilters.endDate)}
@@ -366,7 +281,7 @@ export default function Filtros({
           onClick={handleApply}
           disabled={isLoading}
         >
-          Traer Datos
+          Descargar
         </Button>
       </div>
     </div>

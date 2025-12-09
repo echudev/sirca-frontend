@@ -1,8 +1,8 @@
 import { z } from "zod";
 import {
-  contaminantesOptions,
   promedioOptions,
-} from "@/app/(main)/datos/contaminante/components/filters";
+  locationOptions,
+} from "@/app/(main)/descargas/components/filters";
 
 // ============================================================================
 // ENUMS Y TIPOS BASE
@@ -23,8 +23,8 @@ export const ContaminantEnum = z.enum([
 ]);
 export type Contaminant = z.infer<typeof ContaminantEnum>;
 
-export const IntervalEnum = z.enum(["minute", "hour", "day"]);
-export type Interval = z.infer<typeof IntervalEnum>;
+export const IntegrationEnum = z.enum(["minute", "hour"]);
+export type Integration = z.infer<typeof IntegrationEnum>;
 
 export const LocationEnum = z.enum([
   "centenario",
@@ -39,12 +39,7 @@ export type Location = z.infer<typeof LocationEnum>;
 // ============================================================================
 
 export const QueryParamsSchema = z.object({
-  contaminant: ContaminantEnum.default("co"),
-  locations: z
-    .string()
-    .transform((val) => val.split(",").map((loc) => loc.trim()))
-    .pipe(z.array(z.string()))
-    .default(["centenario", "cordoba", "catalinas", "cifa"]),
+  location: LocationEnum.default("centenario"),
   startDate: z
     .string()
     .refine((s) => !Number.isNaN(Date.parse(s)), {
@@ -57,7 +52,7 @@ export const QueryParamsSchema = z.object({
       message: "Invalid datetime",
     })
     .default("2025-07-30T00:00:00Z"),
-  interval: IntervalEnum.default("hour"),
+  integration: IntegrationEnum.default("hour"),
 });
 export type QueryParams = z.infer<typeof QueryParamsSchema>;
 
@@ -65,21 +60,52 @@ export type QueryParams = z.infer<typeof QueryParamsSchema>;
 // SCHEMAS DE DATOS
 // ============================================================================
 
+// Helper to convert BigInt to number and handle null values
+const bigIntToNumberOrNull = z.preprocess(
+  (val) => {
+    if (typeof val === "bigint") {
+      return Number(val);
+    }
+    if (val === null || val === undefined) {
+      return null;
+    }
+    return val;
+  },
+  z.union([z.number(), z.string(), StatusEnum, z.null()]).nullable()
+);
+
+// Helper to convert time to string (handles number, Date, string, BigInt)
+const timeToString = z.preprocess((val) => {
+  if (val === null || val === undefined) {
+    return "";
+  }
+  if (typeof val === "bigint") {
+    return String(Number(val));
+  }
+  if (typeof val === "number") {
+    // If it's a timestamp, convert to ISO string
+    return new Date(val).toISOString();
+  }
+  if (val instanceof Date) {
+    return val.toISOString();
+  }
+  return String(val);
+}, z.string());
+
 export const DataPointSchema = z
   .object({
-    time: z.string(),
+    time: timeToString,
   })
-  .catchall(z.union([z.number(), z.string(), StatusEnum]));
+  .catchall(bigIntToNumberOrNull);
 export type DataPoint = z.infer<typeof DataPointSchema>;
 
 export const QueryResultSchema = z.object({
   data: z.array(DataPointSchema),
   meta: z.object({
-    contaminant: ContaminantEnum,
-    locations: z.array(z.string()),
+    location: z.string(),
     startDate: z.string(),
     endDate: z.string(),
-    interval: IntervalEnum,
+    integration: z.string(),
     count: z.number(),
   }),
 });
@@ -88,24 +114,16 @@ export type QueryResult = z.infer<typeof QueryResultSchema>;
 // Validación con Zod para los inputs de en filtros
 export const filtrosSchema = z
   .object({
-    metrica: z
-      .string()
-      .refine((v) => contaminantesOptions.some((o) => o.value === v), {
-        message: "Seleccioná una métrica válida.",
-      }),
-    interval: z
+    integration: z
       .string()
       .refine((v) => promedioOptions.some((o) => o.value === v), {
         message: "Seleccioná un tipo de integración.",
       }),
-    locations: z.string().refine(
-      (s) =>
-        (s || "")
-          .split(",")
-          .map((t) => t.trim())
-          .filter(Boolean).length > 0,
-      { message: "Seleccioná al menos una estación." }
-    ),
+    location: z
+      .string()
+      .refine((s) => locationOptions.some((o) => o.value === s), {
+        message: "Seleccioná una estación válida.",
+      }),
     startDate: z.preprocess(
       (arg) => {
         if (arg instanceof Date) return arg;

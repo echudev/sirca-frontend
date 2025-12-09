@@ -1,27 +1,26 @@
 import { useState } from "react";
-import type { FiltrosType } from "../app/(main)/datos/contaminante/components/filters";
+import type { FiltrosType } from "../app/(main)/descargas/components/filters";
 
 export interface DataRow extends Record<string, string | number> {
   time: string;
 }
-
-export default function useFetchDatos() {
+export default function useFetchDescargas() {
   const [data, setData] = useState<DataRow[] | undefined>(undefined);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchDatos = async (filters: FiltrosType) => {
+  const fetchDescargas = async (filters: FiltrosType) => {
+    console.log(filters);
     setIsLoading(true);
     setError("");
     try {
       const params = new URLSearchParams({
-        contaminant: filters.metrica,
-        interval: filters.interval,
-        locations: filters.locations,
+        integration: filters.integration,
+        location: filters.location,
         startDate: filters.startDate ? filters.startDate.toISOString() : "",
         endDate: filters.endDate ? filters.endDate.toISOString() : "",
       });
-      const response = await fetch(`/api/datos?${params.toString()}`);
+      const response = await fetch(`/api/descargas?${params.toString()}`);
       if (!response.ok) {
         const errorText = await response.text();
         setError(errorText || "Error al obtener los datos");
@@ -41,5 +40,9 @@ export default function useFetchDatos() {
     setIsLoading(false);
   };
 
-  return { data, error, isLoading, fetchDatos };
+  console.log(data);
+  console.log(error);
+  console.log(isLoading);
+
+  return { data, error, isLoading, fetchDescargas };
 }
