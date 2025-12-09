@@ -4,7 +4,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { filtrosSchema } from "@/lib/descargas/models";
 import { toast } from "sonner";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, Search } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import {
   Select,
@@ -281,6 +281,7 @@ export default function Filtros({
           onClick={handleApply}
           disabled={isLoading}
         >
+          <Search className="w-4 h-4" />
           Buscar Datos
         </Button>
       </div>

@@ -4,7 +4,7 @@ import { FiltrosType } from "./components/filters";
 import SonnerToaster from "@/components/sonner-toaster";
 import Table from "./components/table";
 import useFetchDescargas from "@/hooks/useFetchDescargas";
-import { Loader2, AlertCircle, FileWarning, Download } from "lucide-react";
+import { Loader2, AlertCircle, FileWarning, FileDown } from "lucide-react";
 import Image from "next/image";
 import Filtros from "./components/filters";
 import {
@@ -30,7 +30,7 @@ export default function DescargasPage() {
     startDate: undefined,
     endDate: undefined,
   });
-  const [downloadFormat, setDownloadFormat] = useState<"csv" | "xlsx">("csv");
+  const [downloadFormat, setDownloadFormat] = useState<"csv" | "xlsx">("xlsx");
   const { data, error, isLoading, fetchDescargas } = useFetchDescargas();
 
   const handleFetch = (newFilters: FiltrosType) => {
@@ -96,6 +96,13 @@ export default function DescargasPage() {
         <>
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-center p-2">
             <div className="flex gap-2 border border-primary/20 p-2 rounded-md">
+              <Button
+                onClick={handleDownload}
+                className="btn btn-primary text-primary bg-secondary hover:bg-secondary/90 hover:shadow-primary active:shadow-none active:scale-99 cursor-pointer select-none transition-all"
+              >
+                <FileDown className="w-4 h-4" />
+                Guardar Archivo
+              </Button>
               <Select
                 value={downloadFormat}
                 onValueChange={(value: "csv" | "xlsx") =>
@@ -106,17 +113,10 @@ export default function DescargasPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="csv">CSV</SelectItem>
                   <SelectItem value="xlsx">Excel</SelectItem>
+                  <SelectItem value="csv">CSV</SelectItem>
                 </SelectContent>
               </Select>
-              <Button
-                onClick={handleDownload}
-                className="btn btn-primary text-primary bg-secondary hover:bg-secondary/90 hover:shadow-primary active:shadow-none active:scale-99 cursor-pointer select-none transition-all"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Guardar Datos
-              </Button>
             </div>
           </div>
           <Table data={data} />
