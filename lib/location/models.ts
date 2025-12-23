@@ -82,6 +82,8 @@ export const MeteoRowSchema = z.object({
   temp_in_mean: formatNumber(1),
   vv_mean: formatNumber(2),
   pa_mean: formatNumber(0),
+  rs_mean: formatNumber(0),
+  uv_mean: formatNumber(0),
 });
 
 // Esquema para la respuesta combinada
@@ -122,7 +124,8 @@ export const FullLocationDataSchema = z.object({
   temp_in_mean: formatNumber(1),
   vv_mean: formatNumber(1),
   pa_mean: formatNumber(0),
-
+  rs_mean: formatNumber(0),
+  uv_mean: formatNumber(0),
   // 👉 Nuevo bloque freshness
   freshness: z
     .object({

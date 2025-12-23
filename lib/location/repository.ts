@@ -101,7 +101,7 @@ export async function fetchLastMinuteByLocation(locationName: string) {
   // Query para Meteo
   const meteoQuery = `
       SELECT time, location, dv_mean, hr_in_mean, hr_mean, 
-             lluvia_mean, temp_mean, temp_in_mean, vv_mean, pa_mean
+             lluvia_mean, temp_mean, temp_in_mean, vv_mean, pa_mean, rs_mean, uv_mean
       FROM meteo_minutales 
       WHERE location = '${locationName}'
       ORDER BY time DESC 
@@ -208,6 +208,8 @@ export async function fetchLastMinuteByLocation(locationName: string) {
       temp_in_mean: meteoRow?.temp_in_mean ?? null,
       vv_mean: meteoRow?.vv_mean ?? null,
       pa_mean: meteoRow?.pa_mean ?? null,
+      rs_mean: meteoRow?.rs_mean ?? null,
+      uv_mean: meteoRow?.uv_mean ?? null,
     };
 
     return FullLocationDataSchema.parse(combinedData);

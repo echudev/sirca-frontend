@@ -5,6 +5,7 @@ import {
   CloudRain,
   WindArrowDownIcon,
   Compass,
+  Sun,
   type LucideIcon,
 } from "lucide-react";
 
@@ -23,6 +24,8 @@ export enum MetricKey {
   VV_MEAN = "vv_mean",
   LLUVIA_MEAN = "lluvia_mean",
   PA_MEAN = "pa_mean",
+  RS_MEAN = "rs_mean",
+  UV_MEAN = "uv_mean",
 }
 
 type Contaminante = {
@@ -127,5 +130,19 @@ export const meteorologica: Meteorologica[] = [
     nombreCompleto: "Presión Atmosférica",
     unidad: "hPa",
     icon: WindArrowDownIcon,
+  },
+  {
+    key: MetricKey.RS_MEAN,
+    nombre: "Radiación Solar",
+    nombreCompleto: "Radiación Solar",
+    unidad: "W/m²",
+    icon: Sun,
+  },
+  {
+    key: MetricKey.UV_MEAN,
+    nombre: "UV",
+    nombreCompleto: "Ultravioleta",
+    unidad: "UV",
+    icon: Sun,
   },
 ];
