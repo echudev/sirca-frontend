@@ -1,4 +1,5 @@
 import type { DataPoint } from "@/lib/descargas/models";
+import { TABLE_CONFIG } from "@/lib/descargas/config";
 
 interface TableProps {
   data: DataPoint[];
@@ -13,8 +14,40 @@ export default function Table({ data }: TableProps) {
     );
   }
 
-  // Obtener las ubicaciones (columnas) dinámicamente excluyendo 'time'
-  const locations = Object.keys(data[0] || {}).filter((key) => key !== "time");
+  // Generar orden de columnas basado en TABLE_CONFIG
+  const orderedFields: string[] = [];
+  Object.entries(TABLE_CONFIG).forEach(([tableKey, config]) => {
+    // Agregar métricas de cada tabla
+    config.metrics.forEach((metric) => {
+      const fieldName = metric.replace("_mean", "");
+      if (data.some((row) => fieldName in row)) {
+        orderedFields.push(fieldName);
+      }
+    });
+    // Agregar campo de status de cada tabla
+    const statusField = `${tableKey}_k_status`;
+    if (data.some((row) => statusField in row)) {
+      orderedFields.push(statusField);
+    }
+  });
+
+  // Agregar cualquier campo adicional que no esté en TABLE_CONFIG
+  const allFields = new Set<string>();
+  data.forEach((row) => {
+    Object.keys(row).forEach((key) => {
+      if (key !== "time") {
+        allFields.add(key);
+      }
+    });
+  });
+
+  allFields.forEach((field) => {
+    if (!orderedFields.includes(field)) {
+      orderedFields.push(field);
+    }
+  });
+
+  const locations = orderedFields;
 
   // Helper function to format cell values
   const formatCellValue = (

@@ -5,6 +5,49 @@ import {
   locationOptions,
   promedioOptions,
 } from "@/app/(main)/descargas/components/filters";
+import { TABLE_CONFIG } from "./config";
+
+/**
+ * Genera las columnas ordenadas según TABLE_CONFIG y presentes en los datos
+ */
+function getOrderedColumns(data: DataRow[]): string[] {
+  if (!data || data.length === 0) return [];
+
+  // Generar orden de columnas basado en TABLE_CONFIG
+  const orderedFields: string[] = [];
+  Object.entries(TABLE_CONFIG).forEach(([tableKey, config]) => {
+    // Agregar métricas de cada tabla
+    config.metrics.forEach((metric) => {
+      const fieldName = metric.replace("_mean", "");
+      if (data.some((row) => fieldName in row)) {
+        orderedFields.push(fieldName);
+      }
+    });
+    // Agregar campo de status de cada tabla
+    const statusField = `${tableKey}_k_status`;
+    if (data.some((row) => statusField in row)) {
+      orderedFields.push(statusField);
+    }
+  });
+
+  // Agregar cualquier campo adicional que no esté en TABLE_CONFIG
+  const allFields = new Set<string>();
+  data.forEach((row) => {
+    Object.keys(row).forEach((key) => {
+      if (key !== "time" && key !== "location") {
+        allFields.add(key);
+      }
+    });
+  });
+
+  allFields.forEach((field) => {
+    if (!orderedFields.includes(field)) {
+      orderedFields.push(field);
+    }
+  });
+
+  return orderedFields;
+}
 
 /**
  * Genera un nombre de archivo descriptivo basado en los filtros aplicados
@@ -90,10 +133,8 @@ export function downloadAsCSV(data: DataRow[], filename: string): void {
     throw new Error("No hay datos para descargar");
   }
 
-  // Obtener todas las columnas (time + todas las demás)
-  const columns = Object.keys(data[0] || {}).filter(
-    (key) => key !== "location"
-  );
+  // Obtener todas las columnas ordenadas según TABLE_CONFIG
+  const columns = getOrderedColumns(data);
   const headers = [
     "Fecha y Hora",
     ...columns.map((col) => {
@@ -150,7 +191,7 @@ function addDataToWorksheet(
   data: DataRow[],
   columns: string[],
   includeTimeColumn: boolean,
-  useCommaForNumbers: boolean = false
+  isValidatedSheet: boolean = false
 ) {
   // Si includeTimeColumn es true, excluir "time" de las columnas porque ya lo mostramos como primera columna
   const dataColumns = includeTimeColumn
@@ -188,19 +229,29 @@ function addDataToWorksheet(
           return String(value).toUpperCase();
         }
         if (typeof value === "number") {
-          if (useCommaForNumbers) {
-            // Formatear número sin separador de miles y coma como separador decimal
-            return value.toFixed(3).replace(".", ",");
+          if (isValidatedSheet) {
+            // Para validados: mantener como número y aplicar formato de celda después
+            return value;
           }
-          return value;
+          // Para crudos: limitar a 1 decimal
+          return Number(value.toFixed(1));
         }
         return String(value);
       }),
     ];
     const addedRow = worksheet.addRow(values);
 
-    // Si usamos comas para números, las celdas ya tienen el formato como texto
-    // (sin separador de miles, coma como separador decimal)
+    // Aplicar formato numérico para mostrar coma como separador decimal en "validados"
+    if (isValidatedSheet) {
+      dataColumns.forEach((col, index) => {
+        const cell = addedRow.getCell(index + 2); // +2 porque columna 1 es Fecha y Hora
+        const value = row[col];
+        if (typeof value === "number") {
+          // Aplicar formato numérico con coma como separador decimal
+          cell.numFmt = "0.0"; // Una coma decimal
+        }
+      });
+    }
   });
 
   // Ajustar ancho de columnas
@@ -221,10 +272,8 @@ export async function downloadAsExcel(
     throw new Error("No hay datos para descargar");
   }
 
-  // Obtener todas las columnas (time + todas las demás)
-  const allColumns = Object.keys(data[0] || {}).filter(
-    (key) => key !== "location"
-  );
+  // Obtener todas las columnas ordenadas según TABLE_CONFIG
+  const allColumns = getOrderedColumns(data);
 
   // Crear workbook
   const workbook = new ExcelJS.Workbook();

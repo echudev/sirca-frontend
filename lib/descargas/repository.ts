@@ -1,41 +1,5 @@
 import { influx } from "@/db/influx";
-
-// Table configurations with their respective metrics
-const TABLE_CONFIG = {
-  nox: {
-    table: "nox_minutales",
-    metrics: ["no_mean", "no2_mean", "nox_mean"],
-  },
-  co: {
-    table: "co_minutales",
-    metrics: ["co_mean"],
-  },
-  o3: {
-    table: "o3_minutales",
-    metrics: ["o3_mean"],
-  },
-  pm10: {
-    table: "pm10_minutales",
-    metrics: ["pm10_mean"],
-  },
-  so2: {
-    table: "so2_minutales",
-    metrics: ["so2_mean"],
-  },
-  meteo: {
-    table: "meteo_minutales",
-    metrics: [
-      "dv_mean",
-      "vv_mean",
-      "temp_mean",
-      "hr_mean",
-      "pa_mean",
-      "uv_mean",
-      "lluvia_mean",
-      "rs_mean",
-    ],
-  },
-} as const;
+import { TABLE_CONFIG } from "./config";
 
 // Helper function to collect all rows from an async iterable
 async function collectRows<T>(iterable: AsyncIterable<T>): Promise<Array<T>> {
@@ -56,17 +20,15 @@ export async function fetchDatosPorEstacion(params: {
   const database = "minutales";
   const { location, startDate, endDate, integration } = params;
 
-  // DEBUG: Log de parámetros recibidos
-  console.log("=== DEBUG fetchDatosPorEstacion ===");
-  console.log("Params recibidos:", { location, startDate, endDate, integration });
-  console.log("startDate parseado:", new Date(startDate));
-  console.log("endDate parseado:", new Date(endDate));
-
   // Build queries for each table
   const queries = Object.entries(TABLE_CONFIG).map(([key, config]) => {
     const { table, metrics } = config;
     const metricsSelect = metrics
-      .map((metric) => `AVG(${metric}) AS ${metric.replace("_mean", "")}`)
+      .map((metric) =>
+        metric === "lluvia_mean"
+          ? `SUM(${metric}) AS ${metric.replace("_mean", "")}`
+          : `AVG(${metric}) AS ${metric.replace("_mean", "")}`
+      )
       .join(", ");
 
     let query: string;
@@ -110,11 +72,6 @@ export async function fetchDatosPorEstacion(params: {
     return { key, query, table };
   });
 
-  // DEBUG: Log de la primera query generada
-  if (queries.length > 0) {
-    console.log("Query ejemplo (primera tabla):", queries[0].query);
-  }
-
   try {
     // Execute all queries in parallel
     const results = await Promise.allSettled(
@@ -140,14 +97,7 @@ export async function fetchDatosPorEstacion(params: {
     results.forEach((result, index) => {
       if (result.status === "fulfilled" && result.value.success) {
         const { key, rows } = result.value;
-        // DEBUG: Log del primer timestamp de cada tabla
-        if (rows.length > 0 && index === 0) {
-          console.log(`=== DEBUG tipo de timestamp ===`);
-          console.log(`Tabla: ${key}`);
-          console.log(`row.time value:`, rows[0].time);
-          console.log(`row.time typeof:`, typeof rows[0].time);
-          console.log(`row.time constructor:`, rows[0].time?.constructor?.name);
-        }
+
         rows.forEach((row) => {
           // Convertir timestamp de milisegundos a ISO string
           let timeISO: string;
@@ -188,19 +138,6 @@ export async function fetchDatosPorEstacion(params: {
       const timeB = new Date(String(b.time)).getTime();
       return timeA - timeB;
     });
-
-    // DEBUG: Log de datos resultantes
-    console.log("Total filas devueltas:", sortedRows.length);
-    if (sortedRows.length > 0) {
-      console.log("Primera fila (time):", sortedRows[0].time);
-      console.log("Última fila (time):", sortedRows[sortedRows.length - 1].time);
-      // Mostrar algunas filas de ejemplo alrededor de las 12:00
-      const ejemplos = sortedRows.filter((row) => {
-        const timeStr = String(row.time);
-        return timeStr.includes("11:") || timeStr.includes("12:") || timeStr.includes("13:");
-      }).slice(0, 5);
-      console.log("Ejemplos cerca de las 12:00:", ejemplos.map(r => r.time));
-    }
 
     return {
       data: sortedRows,

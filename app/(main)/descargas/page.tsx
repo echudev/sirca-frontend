@@ -11,7 +11,7 @@ import {
   downloadAsCSV,
   downloadAsExcel,
   generateFilename,
-} from "@/lib/descargas/download";
+} from "@/lib/descargas/file-download";
 import { toast } from "sonner";
 import {
   Select,
