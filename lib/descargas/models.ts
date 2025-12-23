@@ -74,21 +74,24 @@ const bigIntToNumberOrNull = z.preprocess(
   z.union([z.number(), z.string(), StatusEnum, z.null()]).nullable()
 );
 
-// Helper to convert time to string (handles number, Date, string, BigInt)
+// Helper to convert time to string (handles number, Date, string)
+// Nota: El cliente @influxdata/influxdb3-client ya convierte nanosegundos a milisegundos
 const timeToString = z.preprocess((val) => {
   if (val === null || val === undefined) {
     return "";
   }
-  if (typeof val === "bigint") {
-    return String(Number(val));
-  }
+  // Si es número (milisegundos), convertir a ISO string
   if (typeof val === "number") {
-    // If it's a timestamp, convert to ISO string
-    return new Date(val).toISOString();
+    return new Date(Math.round(val)).toISOString();
+  }
+  // Si es BigInt (por si acaso), convertir a milisegundos
+  if (typeof val === "bigint") {
+    return new Date(Number(val)).toISOString();
   }
   if (val instanceof Date) {
     return val.toISOString();
   }
+  // Si ya es string (ISO), devolverlo tal cual
   return String(val);
 }, z.string());
 

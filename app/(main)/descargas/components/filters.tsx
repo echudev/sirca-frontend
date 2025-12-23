@@ -35,8 +35,8 @@ export const locationOptions = [
 ];
 
 export interface FiltrosType {
-  location: string;
-  integration: string;
+  location: "centenario" | "catalinas" | "cordoba" | "cifa";
+  integration: "hour" | "minute";
   startDate: Date | undefined;
   endDate: Date | undefined;
 }

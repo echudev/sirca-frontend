@@ -10,7 +10,6 @@ export default function useFetchDescargas() {
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchDescargas = async (filters: FiltrosType) => {
-    console.log(filters);
     setIsLoading(true);
     setError("");
     try {
@@ -39,10 +38,5 @@ export default function useFetchDescargas() {
     }
     setIsLoading(false);
   };
-
-  console.log(data);
-  console.log(error);
-  console.log(isLoading);
-
   return { data, error, isLoading, fetchDescargas };
 }

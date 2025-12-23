@@ -56,6 +56,12 @@ export async function fetchDatosPorEstacion(params: {
   const database = "minutales";
   const { location, startDate, endDate, integration } = params;
 
+  // DEBUG: Log de parámetros recibidos
+  console.log("=== DEBUG fetchDatosPorEstacion ===");
+  console.log("Params recibidos:", { location, startDate, endDate, integration });
+  console.log("startDate parseado:", new Date(startDate));
+  console.log("endDate parseado:", new Date(endDate));
+
   // Build queries for each table
   const queries = Object.entries(TABLE_CONFIG).map(([key, config]) => {
     const { table, metrics } = config;
@@ -63,7 +69,9 @@ export async function fetchDatosPorEstacion(params: {
       .map((metric) => `AVG(${metric}) AS ${metric.replace("_mean", "")}`)
       .join(", ");
 
-    const query = `
+    let query: string;
+    if (integration === "hour") {
+      query = `
       SELECT
         DATE_TRUNC('${integration}', time) AS time,
         location,
@@ -77,9 +85,35 @@ export async function fetchDatosPorEstacion(params: {
       GROUP BY DATE_TRUNC('${integration}', time), location
       ORDER BY time ASC
     `;
+    } else if (integration === "minute") {
+      // Para datos minutales, seleccionar campos directamente sin agregación
+      const metricsSelectDirect = metrics
+        .map((metric) => `${metric} AS ${metric.replace("_mean", "")}`)
+        .join(", ");
+
+      query = `
+        SELECT
+          time,
+          location,
+          ${metricsSelectDirect},
+          status as ${key}_status
+        FROM ${table}
+        WHERE location = '${location}'
+          AND time >= '${startDate}'
+          AND time < '${endDate}'
+        ORDER BY time ASC
+      `;
+    } else {
+      throw new Error("Invalid integration");
+    }
 
     return { key, query, table };
   });
+
+  // DEBUG: Log de la primera query generada
+  if (queries.length > 0) {
+    console.log("Query ejemplo (primera tabla):", queries[0].query);
+  }
 
   try {
     // Execute all queries in parallel
@@ -106,19 +140,39 @@ export async function fetchDatosPorEstacion(params: {
     results.forEach((result, index) => {
       if (result.status === "fulfilled" && result.value.success) {
         const { key, rows } = result.value;
+        // DEBUG: Log del primer timestamp de cada tabla
+        if (rows.length > 0 && index === 0) {
+          console.log(`=== DEBUG tipo de timestamp ===`);
+          console.log(`Tabla: ${key}`);
+          console.log(`row.time value:`, rows[0].time);
+          console.log(`row.time typeof:`, typeof rows[0].time);
+          console.log(`row.time constructor:`, rows[0].time?.constructor?.name);
+        }
         rows.forEach((row) => {
-          const timeKey = String(row.time || "");
+          // Convertir timestamp de milisegundos a ISO string
+          let timeISO: string;
+          if (typeof row.time === "number") {
+            // Redondear para evitar decimales extraños y convertir a ISO
+            timeISO = new Date(Math.round(row.time)).toISOString();
+          } else if (typeof row.time === "string") {
+            timeISO = row.time;
+          } else {
+            timeISO = String(row.time || "");
+          }
+
+          const timeKey = timeISO;
           const existingRow = rowMap.get(timeKey);
 
           if (existingRow) {
             // Merge with existing row for this time bucket
             Object.assign(existingRow, row);
+            existingRow.time = timeISO;
           } else {
             // Create new row for this time bucket
             const newRow: Record<string, string | number> = {
-              time: row.time || "",
-              location: row.location || location,
               ...row,
+              time: timeISO,
+              location: row.location || location,
             };
             rowMap.set(timeKey, newRow);
           }
@@ -134,6 +188,19 @@ export async function fetchDatosPorEstacion(params: {
       const timeB = new Date(String(b.time)).getTime();
       return timeA - timeB;
     });
+
+    // DEBUG: Log de datos resultantes
+    console.log("Total filas devueltas:", sortedRows.length);
+    if (sortedRows.length > 0) {
+      console.log("Primera fila (time):", sortedRows[0].time);
+      console.log("Última fila (time):", sortedRows[sortedRows.length - 1].time);
+      // Mostrar algunas filas de ejemplo alrededor de las 12:00
+      const ejemplos = sortedRows.filter((row) => {
+        const timeStr = String(row.time);
+        return timeStr.includes("11:") || timeStr.includes("12:") || timeStr.includes("13:");
+      }).slice(0, 5);
+      console.log("Ejemplos cerca de las 12:00:", ejemplos.map(r => r.time));
+    }
 
     return {
       data: sortedRows,

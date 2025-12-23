@@ -21,7 +21,6 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 
 export default function DescargasPage() {
   const [filters, setFilters] = useState<FiltrosType>({

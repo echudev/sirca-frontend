@@ -39,16 +39,16 @@ export class DatosService {
       const result = await fetchDatosPorEstacion(validatedParams);
 
       // Parse data through Zod to convert BigInt values to numbers and handle nulls
+      // El repository ya convierte el time a ISO string, pero por seguridad validamos
       const formattedData = result.data.map((row) => {
-        // Convert time to string if it's a number or Date
+        // El time ya debería ser un string ISO desde el repository
         let timeValue: unknown = row.time;
-        if (timeValue instanceof Date) {
+        if (typeof timeValue === "number") {
+          // Por si acaso llega como número (milisegundos)
+          timeValue = new Date(Math.round(timeValue)).toISOString();
+        } else if (timeValue instanceof Date) {
           timeValue = timeValue.toISOString();
-        } else if (typeof timeValue === "number") {
-          timeValue = new Date(timeValue).toISOString();
-        } else if (typeof timeValue === "bigint") {
-          timeValue = new Date(Number(timeValue)).toISOString();
-        } else {
+        } else if (typeof timeValue !== "string") {
           timeValue = String(timeValue || "");
         }
 
