@@ -35,16 +35,16 @@ export async function fetchDatosPorEstacion(params: {
     if (integration === "hour") {
       query = `
       SELECT
-        DATE_TRUNC('${integration}', time) AS time,
+        DATE_BIN('1 hour', time - INTERVAL '1 minute', '1970-01-01') AS time,
         location,
         ${metricsSelect},
         COUNT(*) AS ${key}_k_status
       FROM ${table}
       WHERE location = '${location}'
         AND status = 'k'
-        AND time >= '${startDate}'
-        AND time < '${endDate}'
-      GROUP BY DATE_TRUNC('${integration}', time), location
+        AND (time - INTERVAL '1 minute') >= '${startDate}'
+        AND (time - INTERVAL '1 minute') < '${endDate}'
+      GROUP BY DATE_BIN('1 hour', time - INTERVAL '1 minute', '1970-01-01'), location
       ORDER BY time ASC
     `;
     } else if (integration === "minute") {
