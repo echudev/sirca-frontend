@@ -48,17 +48,19 @@ export async function fetchDatosPorEstacion(params: {
       ORDER BY time ASC
     `;
     } else if (integration === "minute") {
-      // Para datos minutales, seleccionar campos directamente sin agregación
-      const metricsSelectDirect = metrics
+      // Para datos minutales, agrupar por minuto truncado con prioridad de status
+      // Para integración por minuto, seleccionar directamente sin filtrado por status
+      // Asumiendo que los datos están limpios y hay máximo un registro por minuto
+      const metricsSelect = metrics
         .map((metric) => `${metric} AS ${metric.replace("_mean", "")}`)
         .join(", ");
 
       query = `
         SELECT
-          time,
+          DATE_BIN('1 minute', time, '1970-01-01') AS time,
           location,
-          ${metricsSelectDirect},
-          status as ${key}_status
+          ${metricsSelect},
+          status AS ${key}_status
         FROM ${table}
         WHERE location = '${location}'
           AND time >= '${startDate}'
