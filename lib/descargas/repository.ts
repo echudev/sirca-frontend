@@ -26,7 +26,7 @@ export async function fetchDatosPorEstacion(params: {
     const metricsSelect = metrics
       .map((metric) =>
         metric === "lluvia_mean"
-          ? `SUM(${metric}) AS ${metric.replace("_mean", "")}`
+          ? `MAX(${metric}) AS ${metric.replace("_mean", "")}`
           : `AVG(${metric}) AS ${metric.replace("_mean", "")}`
       )
       .join(", ");
