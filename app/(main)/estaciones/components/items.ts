@@ -16,6 +16,7 @@ export enum MetricKey {
   NO2_MEAN = "no2_mean",
   NOX_MEAN = "nox_mean",
   PM10_MEAN = "pm10_mean",
+  PM25_MEAN = "pm25_mean",
   O3_MEAN = "o3_mean",
   SO2_MEAN = "so2_mean",
   TEMP_MEAN = "temp_mean",
@@ -72,6 +73,12 @@ export const contaminantes: Contaminante[] = [
     key: MetricKey.PM10_MEAN,
     nombre: "PM₁₀",
     nombreCompleto: "Material Particulado",
+    unidad: "μg/m³",
+  },
+  {
+    key: MetricKey.PM25_MEAN,
+    nombre: "PM₂₅",
+    nombreCompleto: "Material Particulado 2.5",
     unidad: "μg/m³",
   },
   {
