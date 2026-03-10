@@ -5,6 +5,7 @@ import {
   O3Row,
   So2Row,
   Pm10Row,
+  Pm25Row,
   MeteoRow,
   FullLocationDataSchema,
 } from "./models";
@@ -98,6 +99,15 @@ export async function fetchLastMinuteByLocation(locationName: string) {
       LIMIT 1;
     `;
 
+  // Query para PM2.5
+  const pm25Query = `
+      SELECT time, location, pm25_mean, status
+      FROM pm25_minutales 
+      WHERE location = '${locationName}'
+      ORDER BY time DESC 
+      LIMIT 1;
+    `;
+
   // Query para Meteo
   const meteoQuery = `
       SELECT time, location, dv_mean, hr_in_mean, hr_mean, 
@@ -126,12 +136,15 @@ export async function fetchLastMinuteByLocation(locationName: string) {
       getFirstRow<Pm10Row>(
         influx.query(pm10Query, database) as AsyncIterable<Pm10Row>
       ),
+      getFirstRow<Pm25Row>(
+        influx.query(pm25Query, database) as AsyncIterable<Pm25Row>
+      ),
       getFirstRow<MeteoRow>(
         influx.query(meteoQuery, database) as AsyncIterable<MeteoRow>
       ),
     ]);
 
-    const [coRes, noxRes, o3Res, so2Res, pm10Res, meteoRes] = results;
+    const [coRes, noxRes, o3Res, so2Res, pm10Res, pm25Res, meteoRes] = results;
 
     const coRow = coRes.status === "fulfilled" ? coRes.value : null;
     if (coRes.status === "rejected") {
@@ -158,6 +171,11 @@ export async function fetchLastMinuteByLocation(locationName: string) {
       console.error(`PM10 query failed for ${locationName}:`, pm10Res.reason);
     }
 
+    const pm25Row = pm25Res.status === "fulfilled" ? pm25Res.value : null;
+    if (pm25Res.status === "rejected") {
+      console.error(`PM2.5 query failed for ${locationName}:`, pm25Res.reason);
+    }
+
     const meteoRow = meteoRes.status === "fulfilled" ? meteoRes.value : null;
     if (meteoRes.status === "rejected") {
       console.error(`Meteo query failed for ${locationName}:`, meteoRes.reason);
@@ -172,6 +190,7 @@ export async function fetchLastMinuteByLocation(locationName: string) {
         o3: o3Row?.time ?? null,
         so2: so2Row?.time ?? null,
         pm10: pm10Row?.time ?? null,
+        pm25: pm25Row?.time ?? null,
         meteo: meteoRow?.time ?? null,
       },
       latest_time: getLatestTimestamp([
@@ -180,6 +199,7 @@ export async function fetchLastMinuteByLocation(locationName: string) {
         o3Row?.time,
         so2Row?.time,
         pm10Row?.time,
+        pm25Row?.time,
         meteoRow?.time,
       ]),
       // CO data
@@ -199,6 +219,9 @@ export async function fetchLastMinuteByLocation(locationName: string) {
       // PM10 data
       pm10_mean: pm10Row?.pm10_mean ?? null,
       pm10_mean_status: pm10Row?.status ?? null,
+      // PM2.5 data
+      pm25_mean: pm25Row?.pm25_mean ?? null,
+      pm25_mean_status: pm25Row?.status ?? null,
       // Meteo data
       dv_mean: meteoRow?.dv_mean ?? null,
       hr_in_mean: meteoRow?.hr_in_mean ?? null,

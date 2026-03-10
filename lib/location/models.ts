@@ -71,6 +71,13 @@ export const Pm10RowSchema = z.object({
   status: statusField,
 });
 
+export const Pm25RowSchema = z.object({
+  time: timeField,
+  location: locationField,
+  pm25_mean: formatNumber(2),
+  status: statusField,
+});
+
 export const MeteoRowSchema = z.object({
   time: timeField,
   location: locationField,
@@ -95,6 +102,7 @@ export const FullLocationDataSchema = z.object({
     o3: timeField,
     so2: timeField,
     pm10: timeField,
+    pm25: timeField,
     meteo: timeField,
   }),
   latest_time: timeField,
@@ -115,6 +123,9 @@ export const FullLocationDataSchema = z.object({
   // PM10 data
   pm10_mean: formatNumber(0),
   pm10_mean_status: statusField,
+  // PM2.5 data
+  pm25_mean: formatNumber(0),
+  pm25_mean_status: statusField,
   // Meteo data
   dv_mean: formatNumber(0),
   hr_in_mean: formatNumber(0),
@@ -134,6 +145,7 @@ export const FullLocationDataSchema = z.object({
       o3: z.enum(["fresh", "stale"]),
       so2: z.enum(["fresh", "stale"]),
       pm10: z.enum(["fresh", "stale"]),
+      pm25: z.enum(["fresh", "stale"]),
       meteo: z.enum(["fresh", "stale"]),
     })
     .optional(),
@@ -145,6 +157,7 @@ export type NoxRow = z.infer<typeof NoxRowSchema>;
 export type O3Row = z.infer<typeof O3RowSchema>;
 export type So2Row = z.infer<typeof So2RowSchema>;
 export type Pm10Row = z.infer<typeof Pm10RowSchema>;
+export type Pm25Row = z.infer<typeof Pm25RowSchema>;
 export type MeteoRow = z.infer<typeof MeteoRowSchema>;
 export type FullLocationData = z.infer<typeof FullLocationDataSchema>;
 export type Status = z.infer<typeof statusField>;
