@@ -124,7 +124,7 @@ export const FullLocationDataSchema = z.object({
   pm10_mean: formatNumber(0),
   pm10_mean_status: statusField,
   // PM2.5 data
-  pm25_mean: formatNumber(0),
+  pm25_mean: formatNumber(1),
   pm25_mean_status: statusField,
   // Meteo data
   dv_mean: formatNumber(0),
