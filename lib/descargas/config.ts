@@ -1,3 +1,11 @@
+/**
+ * @file Configuración de las tablas de descargas para la generación de archivos CSV y Excel.
+ * @description Las Metricas se van a descargar en excel en el orden que las pongas en cada metric dentro de TABLE_CONFIG.
+ * @author Ezequiel Maranda
+ * @version 1.0.0
+ * @since 2026-03-11
+ */
+
 // Table configurations with their respective metrics
 export const TABLE_CONFIG = {
   nox: {

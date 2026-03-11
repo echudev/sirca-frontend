@@ -8,43 +8,48 @@ import {
 import { TABLE_CONFIG } from "./config";
 
 /**
- * Genera las columnas ordenadas según TABLE_CONFIG y presentes en los datos
+ * Genera las columnas ordenadas según TABLE_CONFIG.
+ * Siempre incluye todas las columnas definidas en la config, aunque no existan en los datos.
  */
 function getOrderedColumns(data: DataRow[]): string[] {
-  if (!data || data.length === 0) return [];
-
-  // Generar orden de columnas basado en TABLE_CONFIG
+  // Generar orden de columnas basado en TABLE_CONFIG (sin depender de los datos)
   const orderedFields: string[] = [];
+  const seen = new Set<string>();
   Object.entries(TABLE_CONFIG).forEach(([tableKey, config]) => {
     // Agregar métricas de cada tabla
     config.metrics.forEach((metric) => {
       const fieldName = metric.replace("_mean", "");
-      if (data.some((row) => fieldName in row)) {
+      if (!seen.has(fieldName)) {
         orderedFields.push(fieldName);
+        seen.add(fieldName);
       }
     });
     // Agregar campo de status de cada tabla
     const statusField = `${tableKey}_k_status`;
-    if (data.some((row) => statusField in row)) {
+    if (!seen.has(statusField)) {
       orderedFields.push(statusField);
+      seen.add(statusField);
     }
   });
 
   // Agregar cualquier campo adicional que no esté en TABLE_CONFIG
-  const allFields = new Set<string>();
-  data.forEach((row) => {
-    Object.keys(row).forEach((key) => {
-      if (key !== "time" && key !== "location") {
-        allFields.add(key);
+  if (data && data.length > 0) {
+    const allFields = new Set<string>();
+    data.forEach((row) => {
+      Object.keys(row).forEach((key) => {
+        if (key !== "time" && key !== "location") {
+          allFields.add(key);
+        }
+      });
+    });
+
+    allFields.forEach((field) => {
+      if (!seen.has(field)) {
+        orderedFields.push(field);
+        seen.add(field);
       }
     });
-  });
-
-  allFields.forEach((field) => {
-    if (!orderedFields.includes(field)) {
-      orderedFields.push(field);
-    }
-  });
+  }
 
   return orderedFields;
 }
