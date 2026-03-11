@@ -59,7 +59,7 @@ function getOrderedColumns(data: DataRow[]): string[] {
  */
 export function generateFilename(
   filters: FiltrosType,
-  extension: "csv" | "xlsx"
+  extension: "csv" | "xlsx",
 ): string {
   const locationLabel =
     locationOptions.find((opt) => opt.value === filters.location)?.label ||
@@ -81,7 +81,7 @@ export function generateFilename(
   }
 
   const parts = ["descargas", locationSlug, integrationSlug, dateRange].filter(
-    Boolean
+    Boolean,
   );
 
   return `${parts.join("_")}.${extension}`;
@@ -195,18 +195,11 @@ function addDataToWorksheet(
   worksheet: ExcelJS.Worksheet,
   data: DataRow[],
   columns: string[],
-  includeTimeColumn: boolean,
-  isValidatedSheet: boolean = false
 ) {
-  // Si includeTimeColumn es true, excluir "time" de las columnas porque ya lo mostramos como primera columna
-  const dataColumns = includeTimeColumn
-    ? columns.filter((col) => col !== "time")
-    : columns;
-
   // Agregar encabezados
   const headers = [
     "Fecha y Hora",
-    ...dataColumns.map((col) => {
+    ...columns.map((col) => {
       if (col === "catalinas") return "La Boca";
       return col.charAt(0).toUpperCase() + col.slice(1);
     }),
@@ -224,8 +217,8 @@ function addDataToWorksheet(
   // Agregar filas de datos
   data.forEach((row, rowIndex) => {
     const values: (string | number)[] = [
-      includeTimeColumn ? row.time : formatDate(row.time),
-      ...dataColumns.map((col) => {
+      formatDate(row.time),
+      ...columns.map((col) => {
         const value = row[col];
         if (value === null || value === undefined) {
           return "s/d";
@@ -234,34 +227,17 @@ function addDataToWorksheet(
           return String(value).toUpperCase();
         }
         if (typeof value === "number") {
-          if (isValidatedSheet) {
-            // Para validados: mantener como número y aplicar formato de celda después
-            return value;
-          }
-          // Para crudos: limitar a 1 decimal
           return Number(value.toFixed(1));
         }
         return String(value);
       }),
     ];
-    const addedRow = worksheet.addRow(values);
-
-    // Aplicar formato numérico para mostrar coma como separador decimal en "validados"
-    if (isValidatedSheet) {
-      dataColumns.forEach((col, index) => {
-        const cell = addedRow.getCell(index + 2); // +2 porque columna 1 es Fecha y Hora
-        const value = row[col];
-        if (typeof value === "number") {
-          // Aplicar formato numérico con coma como separador decimal
-          cell.numFmt = "0.0"; // Una coma decimal
-        }
-      });
-    }
+    worksheet.addRow(values);
   });
 
   // Ajustar ancho de columnas
   worksheet.getColumn(1).width = 20; // Fecha y Hora / time
-  dataColumns.forEach((_, index) => {
+  columns.forEach((_, index) => {
     worksheet.getColumn(index + 2).width = 15;
   });
 }
@@ -271,7 +247,7 @@ function addDataToWorksheet(
  */
 export async function downloadAsExcel(
   data: DataRow[],
-  filename: string
+  filename: string,
 ): Promise<void> {
   if (!data || data.length === 0) {
     throw new Error("No hay datos para descargar");
@@ -285,14 +261,14 @@ export async function downloadAsExcel(
 
   // Primera worksheet: "crudos" con todas las columnas (incluyendo time y _k_status)
   const crudosWorksheet = workbook.addWorksheet("crudos");
-  addDataToWorksheet(crudosWorksheet, data, allColumns, true, false);
+  addDataToWorksheet(crudosWorksheet, data, allColumns);
 
   // Segunda worksheet: "validados" sin columnas que terminen en "_k_status" y sin "time"
   const validadosColumns = allColumns.filter(
-    (col) => col !== "time" && !col.endsWith("_k_status")
+    (col) => !col.endsWith("_k_status"),
   );
   const validadosWorksheet = workbook.addWorksheet("validados");
-  addDataToWorksheet(validadosWorksheet, data, validadosColumns, false, true);
+  addDataToWorksheet(validadosWorksheet, data, validadosColumns);
 
   // Generar buffer y descargar
   const buffer = await workbook.xlsx.writeBuffer();
