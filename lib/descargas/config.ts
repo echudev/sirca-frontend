@@ -16,6 +16,10 @@ export const TABLE_CONFIG = {
     table: "pm10_minutales",
     metrics: ["pm10_mean"],
   },
+  pm25: {
+    table: "pm25_minutales",
+    metrics: ["pm25_mean"],
+  },
   so2: {
     table: "so2_minutales",
     metrics: ["so2_mean"],
