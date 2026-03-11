@@ -32,6 +32,10 @@ export const TABLE_CONFIG = {
     table: "so2_minutales",
     metrics: ["so2_mean"],
   },
+  h2s: {
+    table: "h2s_minutales",
+    metrics: ["h2s_mean"],
+  },
   meteo: {
     table: "meteo_minutales",
     metrics: [

@@ -7,6 +7,33 @@ import {
 } from "@/app/(main)/descargas/components/filters";
 import { TABLE_CONFIG } from "./config";
 
+// Listas de columnas numéricas agrupadas por cantidad de decimales
+const ONE_DECIMAL_COLUMNS = new Set<string>([
+  // Ejemplo: variables meteorológicas, se pueden ajustar si es necesario
+  "dv",
+  "vv",
+  "temp",
+  "hr",
+  "pa",
+  "uv",
+  "lluvia",
+  "rs",
+]);
+
+// Resto de contaminantes con 2 decimales
+const TWO_DECIMAL_COLUMNS = new Set<string>([
+  "no",
+  "no2",
+  "nox",
+  "so2",
+  "o3",
+  "pm10",
+  "pm25",
+]);
+
+// CO con 3 decimales
+const THREE_DECIMAL_COLUMNS = new Set<string>(["co"]);
+
 /**
  * Genera las columnas ordenadas según TABLE_CONFIG.
  * Siempre incluye todas las columnas definidas en la config, aunque no existan en los datos.
@@ -227,7 +254,16 @@ function addDataToWorksheet(
           return String(value).toUpperCase();
         }
         if (typeof value === "number") {
-          return Number(value.toFixed(1));
+          // Determinar decimales según la columna
+          let decimals = 1;
+          if (THREE_DECIMAL_COLUMNS.has(col)) {
+            decimals = 3;
+          } else if (TWO_DECIMAL_COLUMNS.has(col)) {
+            decimals = 2;
+          } else if (ONE_DECIMAL_COLUMNS.has(col)) {
+            decimals = 1;
+          }
+          return Number(value.toFixed(decimals));
         }
         return String(value);
       }),
