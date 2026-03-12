@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { createSession } from "@/lib/auth-session";
 import { getUserByEmail, insertUser } from "./repository";
 import { UserInsert, UserSelect } from "@/db/schema/user";
