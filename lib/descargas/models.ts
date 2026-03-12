@@ -1,3 +1,12 @@
+/**
+ * @file Definiciones de tipos y esquemas de validación para el módulo de descargas.
+ * @description Utiliza Zod para garantizar la integridad de los datos de entrada de filtros,
+ * parámetros de consulta a InfluxDB y la estructura de los resultados.
+ * @author Ezequiel Maranda
+ * @version 1.1.0
+ * @since 2026-03-11
+ */
+
 import { z } from "zod";
 import {
   promedioOptions,
@@ -35,7 +44,7 @@ export const LocationEnum = z.enum([
 export type Location = z.infer<typeof LocationEnum>;
 
 // ============================================================================
-// SCHEMAS DE REQUEST/RESPONSE
+// SCHEMAS PARA VALIDACIÓN DE PETICIONES (API/SERVICE)
 // ============================================================================
 
 export const QueryParamsSchema = z.object({
@@ -114,7 +123,9 @@ export const QueryResultSchema = z.object({
 });
 export type QueryResult = z.infer<typeof QueryResultSchema>;
 
-// Validación con Zod para los inputs de en filtros
+// ============================================================================
+// SCHEMAS DE VALIDACIÓN PARA FORMULARIOS Y COMPONENTES UI
+// ============================================================================
 export const filtrosSchema = z
   .object({
     integration: z

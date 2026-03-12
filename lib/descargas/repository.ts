@@ -1,6 +1,20 @@
+/**
+ * @file Repositorio para la consulta de datos desde InfluxDB.
+ * @description Maneja las consultas dinámicas a InfluxDB3 para diferentes contaminantes y meteorología,
+ * realizando la unificación de datos basada en el tiempo y ajustes específicos de sensores.
+ * @author Ezequiel Maranda
+ * @version 1.1.0
+ * @since 2026-03-11
+ */
+
 import { influx } from "@/db/influx";
 import { TABLE_CONFIG } from "./config";
 
+/**
+ * Función auxiliar para recolectar todas las filas de un iterable asíncrono.
+ * @param iterable El flujo de datos asíncrono desde InfluxDB.
+ * @returns Un array con todos los registros obtenidos.
+ */
 // Helper function to collect all rows from an async iterable
 async function collectRows<T>(iterable: AsyncIterable<T>): Promise<Array<T>> {
   const rows: Array<T> = [];
@@ -10,7 +24,17 @@ async function collectRows<T>(iterable: AsyncIterable<T>): Promise<Array<T>> {
   return rows;
 }
 
-// CONSULTA DATOS DE INFLUXDB CON PARÁMETROS DINÁMICOS
+/**
+ * Consulta y unifica datos de múltiples tablas de InfluxDB para una estación específica.
+ * 
+ * @param params Objetos con los parámetros de búsqueda:
+ * - location: ID de la estación.
+ * - startDate: Fecha de inicio (ISO).
+ * - endDate: Fecha de fin (ISO).
+ * - integration: Tipo de promedio ("hour" o "minute").
+ * 
+ * @returns Objeto con los datos unificados y ordenados cronológicamente.
+ */
 export async function fetchDatosPorEstacion(params: {
   location: string;
   startDate: string;
@@ -92,35 +116,52 @@ export async function fetchDatosPorEstacion(params: {
       })
     );
 
-    // Collect all rows from successful queries
-    const allRows: Array<Record<string, string | number>> = [];
+    // rowMap se utiliza para unificar las métricas de diferentes tablas (CO, NOx, etc.)
+    // que corresponden al mismo instante de tiempo en una única fila.
     const rowMap = new Map<string, Record<string, string | number>>();
 
+    // Recorremos los resultados de las consultas (una por cada tabla en TABLE_CONFIG)
     results.forEach((result, index) => {
       if (result.status === "fulfilled" && result.value.success) {
         const { key, rows } = result.value;
 
+        // Procesamos cada registro individual de la tabla actual
         rows.forEach((row) => {
-          // Convertir timestamp de milisegundos a ISO string
-          let timeISO: string;
+          // Convertir el timestamp a milisegundos de forma confiable
+          let timeMs: number;
           if (typeof row.time === "number") {
-            // Redondear para evitar decimales extraños y convertir a ISO
-            timeISO = new Date(Math.round(row.time)).toISOString();
-          } else if (typeof row.time === "string") {
-            timeISO = row.time;
+            timeMs = row.time;
           } else {
-            timeISO = String(row.time || "");
+            timeMs = new Date(String(row.time || "")).getTime();
           }
 
+          // Restamos 1 hora (3600000 ms) para pm10 en Córdoba o Catalinas
+          // Esto se hace solo cuando el pm10 se mide con el equipo MetOne Bam1020
+          // El bam1020 primero mide durante una hora, y muestra el resultado durante la hora siguiente
+          if (key === "pm10" && (location === "cordoba" || location === "catalinas" || location === "centenario")) {
+            timeMs -= 60 * 60 * 1000;
+          }
+
+          // Si después del ajuste el registro cae antes del startDate pedido, lo descartamos.
+          // Esto ocurre cuando el primer registro del día (00:00) baja a las 23:xx del día anterior.
+          if (timeMs < new Date(startDate).getTime()) {
+            return;
+          }
+
+          // Convertir timestamp de milisegundos a ISO string para tener la key unificada
+          const timeISO = new Date(Math.round(timeMs)).toISOString();
+
+          // Buscamos si ya existe una fila para este timestamp en el mapa de unión
           const timeKey = timeISO;
           const existingRow = rowMap.get(timeKey);
 
           if (existingRow) {
-            // Merge with existing row for this time bucket
+            // Unificamos: agregamos las nuevas métricas al objeto existente en el mapa
+            // Object.assign muta el objeto por referencia, actualizando el valor en el Map
             Object.assign(existingRow, row);
             existingRow.time = timeISO;
           } else {
-            // Create new row for this time bucket
+            // Primera vez que vemos este horario: creamos un nuevo registro base
             const newRow: Record<string, string | number> = {
               ...row,
               time: timeISO,

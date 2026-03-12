@@ -1,3 +1,12 @@
+/**
+ * @file Utilidades para la generación y descarga de archivos CSV y Excel.
+ * @description Proporciona funciones para formatear datos crudos de la base de datos
+ * en archivos descargables, aplicando reglas de negocio sobre columnas y decimales.
+ * @author Ezequiel Maranda
+ * @version 1.2.0
+ * @since 2026-03-11
+ */
+
 import ExcelJS from "exceljs";
 import type { DataRow } from "@/hooks/useFetchDescargas";
 import type { FiltrosType } from "@/app/(main)/descargas/components/filters";
@@ -35,8 +44,11 @@ const TWO_DECIMAL_COLUMNS = new Set<string>([
 const THREE_DECIMAL_COLUMNS = new Set<string>(["co"]);
 
 /**
- * Genera las columnas ordenadas según TABLE_CONFIG.
- * Siempre incluye todas las columnas definidas en la config, aunque no existan en los datos.
+ * Genera el listado de columnas ordenadas basándose en la configuración global (TABLE_CONFIG).
+ * 
+ * @param data Los datos crudos obtenidos de la consulta.
+ * @param integration Opcional. Tipo de promedio para determinar los sufijos de las columnas de estado.
+ * @returns Array de strings con los nombres de las columnas en el orden correcto.
  */
 function getOrderedColumns(data: DataRow[], integration?: string): string[] {
   const allFields = new Set<string>();
@@ -95,7 +107,11 @@ function getOrderedColumns(data: DataRow[], integration?: string): string[] {
 }
 
 /**
- * Genera un nombre de archivo descriptivo basado en los filtros aplicados
+ * Genera un nombre de archivo descriptivo basado en los filtros aplicados.
+ * 
+ * @param filters Filtros de búsqueda (estación, fecha, integración).
+ * @param extension Extensión del archivo deseada ("csv" o "xlsx").
+ * @returns Nombre del archivo formateado.
  */
 export function generateFilename(
   filters: FiltrosType,
@@ -128,7 +144,11 @@ export function generateFilename(
 }
 
 /**
- * Formatea un valor para CSV, manejando valores nulos y especiales
+ * Formatea un valor individual para su correcta inclusión en una fila de CSV.
+ * Maneja el escape de comillas, comas y saltos de línea según el estándar RFC 4180.
+ * 
+ * @param value Valor crudo (número, string o nulo).
+ * @returns Valor formateado como string seguro para CSV.
  */
 function formatCSVValue(value: string | number | null | undefined): string {
   if (value === null || value === undefined) {
@@ -152,7 +172,10 @@ function formatCSVValue(value: string | number | null | undefined): string {
 }
 
 /**
- * Formatea una fecha para mostrar en CSV/Excel
+ * Formatea una fecha ISO a un formato local legible (es-AR).
+ * 
+ * @param dateString Fecha en formato string ISO.
+ * @returns Fecha y hora formateada (DD/MM/AAAA, HH:mm).
  */
 function formatDate(dateString: string): string {
   try {
@@ -171,7 +194,11 @@ function formatDate(dateString: string): string {
 }
 
 /**
- * Descarga los datos como archivo CSV
+ * Orquestador para descargar los datos en formato CSV.
+ * 
+ * @param data Array de objetos con las filas de datos.
+ * @param filename Nombre que tendrá el archivo descargado.
+ * @param integration Opcional. Ayuda a normalizar las columnas de estado.
  */
 export function downloadAsCSV(data: DataRow[], filename: string, integration?: string): void {
   if (!data || data.length === 0) {
@@ -229,7 +256,11 @@ export function downloadAsCSV(data: DataRow[], filename: string, integration?: s
 }
 
 /**
- * Helper para agregar datos a un worksheet con estilos
+ * Helper interno para volcar datos y aplicar estilos básicos a una hoja de ExcelJS.
+ * 
+ * @param worksheet Instancia de la hoja de Excel.
+ * @param data Datos a insertar.
+ * @param columns Lista de columnas a incluir en esta hoja.
  */
 function addDataToWorksheet(
   worksheet: ExcelJS.Worksheet,
@@ -292,7 +323,12 @@ function addDataToWorksheet(
 }
 
 /**
- * Descarga los datos como archivo Excel
+ * Orquestador para descargar los datos en formato Excel (.xlsx).
+ * Crea dos hojas: "crudos" (con estados) y "validados" (sin estados).
+ * 
+ * @param data Array de objetos con las filas de datos.
+ * @param filename Nombre que tendrá el archivo descargado.
+ * @param integration Opcional. Ayuda a normalizar las columnas de estado.
  */
 export async function downloadAsExcel(
   data: DataRow[],
