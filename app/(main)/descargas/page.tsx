@@ -46,12 +46,12 @@ export default function DescargasPage() {
     try {
       const filename = generateFilename(filters, downloadFormat);
       if (downloadFormat === "csv") {
-        downloadAsCSV(data, filename);
+        downloadAsCSV(data, filename, filters.integration);
         toast.success(
           `Archivo ${downloadFormat.toUpperCase()} descargado exitosamente`
         );
       } else if (downloadFormat === "xlsx") {
-        await downloadAsExcel(data, filename);
+        await downloadAsExcel(data, filename, filters.integration);
         toast.success(
           `Archivo ${downloadFormat.toUpperCase()} descargado exitosamente`
         );

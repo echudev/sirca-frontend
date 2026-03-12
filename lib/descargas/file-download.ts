@@ -38,10 +38,32 @@ const THREE_DECIMAL_COLUMNS = new Set<string>(["co"]);
  * Genera las columnas ordenadas según TABLE_CONFIG.
  * Siempre incluye todas las columnas definidas en la config, aunque no existan en los datos.
  */
-function getOrderedColumns(data: DataRow[]): string[] {
-  // Generar orden de columnas basado en TABLE_CONFIG (sin depender de los datos)
+function getOrderedColumns(data: DataRow[], integration?: string): string[] {
+  const allFields = new Set<string>();
+
+  // Collect all fields from data first
+  if (data && data.length > 0) {
+    data.forEach((row) => {
+      Object.keys(row).forEach((key) => {
+        if (key !== "time" && key !== "location") {
+          allFields.add(key);
+        }
+      });
+    });
+  }
+
+  // Si no pasaron integración, intentar inferirla basándonos en si ya hay alguna columna "_status" en los datos
+  let inferIntegration = integration;
+  // Este código se ejecuta solamente si no se pasó el string integration como argument en getOrderedColumns
+  if (!inferIntegration) {
+    const hasMinutalStatus = Array.from(allFields).some(f => f.endsWith("_status") && !f.endsWith("_k_status"));
+    inferIntegration = hasMinutalStatus ? "minute" : "hour";
+  }
+
+  // Generar orden de columnas basado en TABLE_CONFIG
   const orderedFields: string[] = [];
   const seen = new Set<string>();
+
   Object.entries(TABLE_CONFIG).forEach(([tableKey, config]) => {
     // Agregar métricas de cada tabla
     config.metrics.forEach((metric) => {
@@ -51,8 +73,10 @@ function getOrderedColumns(data: DataRow[]): string[] {
         seen.add(fieldName);
       }
     });
-    // Agregar campo de status de cada tabla
-    const statusField = `${tableKey}_k_status`;
+
+    // Agregar campo de status de cada tabla según el tipo de integración de la consulta
+    const statusField = inferIntegration === "minute" ? `${tableKey}_status` : `${tableKey}_k_status`;
+
     if (!seen.has(statusField)) {
       orderedFields.push(statusField);
       seen.add(statusField);
@@ -60,23 +84,12 @@ function getOrderedColumns(data: DataRow[]): string[] {
   });
 
   // Agregar cualquier campo adicional que no esté en TABLE_CONFIG
-  if (data && data.length > 0) {
-    const allFields = new Set<string>();
-    data.forEach((row) => {
-      Object.keys(row).forEach((key) => {
-        if (key !== "time" && key !== "location") {
-          allFields.add(key);
-        }
-      });
-    });
-
-    allFields.forEach((field) => {
-      if (!seen.has(field)) {
-        orderedFields.push(field);
-        seen.add(field);
-      }
-    });
-  }
+  allFields.forEach((field) => {
+    if (!seen.has(field)) {
+      orderedFields.push(field);
+      seen.add(field);
+    }
+  });
 
   return orderedFields;
 }
@@ -160,13 +173,13 @@ function formatDate(dateString: string): string {
 /**
  * Descarga los datos como archivo CSV
  */
-export function downloadAsCSV(data: DataRow[], filename: string): void {
+export function downloadAsCSV(data: DataRow[], filename: string, integration?: string): void {
   if (!data || data.length === 0) {
     throw new Error("No hay datos para descargar");
   }
 
   // Obtener todas las columnas ordenadas según TABLE_CONFIG
-  const columns = getOrderedColumns(data);
+  const columns = getOrderedColumns(data, integration);
   const headers = [
     "Fecha y Hora",
     ...columns.map((col) => {
@@ -284,13 +297,14 @@ function addDataToWorksheet(
 export async function downloadAsExcel(
   data: DataRow[],
   filename: string,
+  integration?: string,
 ): Promise<void> {
   if (!data || data.length === 0) {
     throw new Error("No hay datos para descargar");
   }
 
   // Obtener todas las columnas ordenadas según TABLE_CONFIG
-  const allColumns = getOrderedColumns(data);
+  const allColumns = getOrderedColumns(data, integration);
 
   // Crear workbook
   const workbook = new ExcelJS.Workbook();
@@ -299,9 +313,9 @@ export async function downloadAsExcel(
   const crudosWorksheet = workbook.addWorksheet("crudos");
   addDataToWorksheet(crudosWorksheet, data, allColumns);
 
-  // Segunda worksheet: "validados" sin columnas que terminen en "_k_status" y sin "time"
+  // Segunda worksheet: "validados" sin columnas que terminen en "_status" (incluye "_k_status") y sin "time"
   const validadosColumns = allColumns.filter(
-    (col) => !col.endsWith("_k_status"),
+    (col) => !col.endsWith("_status"),
   );
   const validadosWorksheet = workbook.addWorksheet("validados");
   addDataToWorksheet(validadosWorksheet, data, validadosColumns);
