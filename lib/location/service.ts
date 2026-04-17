@@ -49,6 +49,10 @@ export function applyFreshnessCheck(data: FullLocationData) {
           sanitizedData.pm10_mean = null;
           sanitizedData.pm10_mean_status = null;
           break;
+        case "pm25":
+          sanitizedData.pm25_mean = null;
+          sanitizedData.pm25_mean_status = null;
+          break;
         case "meteo":
           sanitizedData.dv_mean = null;
           sanitizedData.hr_in_mean = null;
