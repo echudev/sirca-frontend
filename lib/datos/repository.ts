@@ -12,9 +12,9 @@ export async function fetchDatosPorContaminante(params: {
   const { contaminant, locations, startDate, endDate, interval } = params;
 
   const runQuery = async (query: string) => {
-    const rows: Record<string, unknown>[] = [];
+    const rows: Record<string, string | number>[] = [];
     for await (const row of influx.query(query, database)) {
-      rows.push(row);
+      rows.push(row as Record<string, string | number>);
     }
     return rows;
   };
@@ -52,7 +52,7 @@ export async function fetchDatosPorContaminante(params: {
         runQuery(buildQuery("pm25_minutales", pm25Selects)),
       ]);
 
-      const mergedByTime = new Map<string, Record<string, unknown>>();
+      const mergedByTime = new Map<string, Record<string, string | number>>();
       for (const row of [...pm10Rows, ...pm25Rows]) {
         const time = String(row.time);
         const existing = mergedByTime.get(time);
