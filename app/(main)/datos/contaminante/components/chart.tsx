@@ -47,8 +47,17 @@ export default function Chart({ data }: ChartProps) {
     );
   }
 
-  // Obtengo los datos ordenados por ubicación (columnas) dinámicamente excluyendo 'time'
-  const locations = Object.keys(data[0] || {}).filter((key) => key !== "time");
+  // Obtengo los datos ordenados por ubicación (columnas) dinámicamente excluyendo 'time'.
+  // Recorro todas las filas por si la fuente mergeó tablas con timestamps distintos
+  // (p.ej. pm10 + pm25) y data[0] no tiene todas las columnas.
+  const locations = Array.from(
+    data.reduce((set, row) => {
+      Object.keys(row).forEach((k) => {
+        if (k !== "time") set.add(k);
+      });
+      return set;
+    }, new Set<string>())
+  );
   // Verifico si el contaminante seleccionado por el usuario es NOx totales
   // para mostrar grafico de area acumulativo no + no2 y nox
   const isNox = locations.some((location) => location.includes("NOx"));
@@ -71,12 +80,31 @@ export default function Chart({ data }: ChartProps) {
     "cifa NO": "var(--color-cifa-no)",
     "cifa NO2": "var(--color-cifa-no2)",
     "cifa NOx": "var(--color-cifa-nox)",
+    "centenario PM10": "#006449",
+    "centenario PM25": "#4a9477",
+    "cordoba PM10": "#d03156",
+    "cordoba PM25": "#e27a8f",
+    "catalinas PM10": "#008ebd",
+    "catalinas PM25": "#4db8d9",
+    "cifa PM10": "#7b30b5",
+    "cifa PM25": "#a878c4",
     otra: "var(--color-otra)",
+  };
+
+  const displayName = (location: string) => {
+    let label = location;
+    if (label === "catalinas" || label.startsWith("catalinas ")) {
+      label = label.replace(/^catalinas/, "La Boca");
+    } else {
+      label = label.charAt(0).toUpperCase() + label.slice(1);
+    }
+    // Mostrar "PM2.5" al usuario aunque la clave interna sea "PM25"
+    return label.replace(/\bPM25\b/, "PM2.5");
   };
 
   // Mapeo los datos para el gráfico
   const chartData = data.map((row) => {
-    const mappedRow: Record<string, string | number> = {
+    const mappedRow: Record<string, string | number | null> = {
       timestamp: new Intl.DateTimeFormat("es-AR", {
         year: "numeric",
         month: "2-digit",
@@ -88,10 +116,16 @@ export default function Chart({ data }: ChartProps) {
     };
 
     locations.forEach((location) => {
-      mappedRow[location] =
-        row[location] !== null && row[location] !== undefined
-          ? Number(row[location]).toFixed(3)
-          : "0.000";
+      const raw = row[location];
+      // Devuelvo número real (no string con toFixed) para que recharts escale
+      // bien y no arrastre NaN; null para puntos faltantes así la línea
+      // salta el hueco en vez de caer a 0.
+      if (raw === null || raw === undefined || raw === "") {
+        mappedRow[location] = null;
+        return;
+      }
+      const n = Number(raw);
+      mappedRow[location] = Number.isFinite(n) ? n : null;
     });
 
     return mappedRow;
@@ -137,6 +171,7 @@ export default function Chart({ data }: ChartProps) {
                 key={location}
                 type="monotone"
                 dataKey={location}
+                name={displayName(location)}
                 stroke={stationColor[location] ?? "var(--color-otra)"}
                 dot={false}
                 strokeWidth={3}
@@ -147,6 +182,7 @@ export default function Chart({ data }: ChartProps) {
                 key={location}
                 type="monotone"
                 dataKey={location}
+                name={displayName(location)}
                 stackId="1"
                 stroke={stationColor[location] ?? "var(--color-otra)"}
                 fill={stationColor[location] ?? "var(--color-otra)"}
@@ -189,11 +225,7 @@ export default function Chart({ data }: ChartProps) {
               type="linear"
               dataKey={location}
               stroke={stationColor[location] ?? "var(--color-otra)"}
-              name={
-                location == "catalinas"
-                  ? "La Boca"
-                  : location.charAt(0).toUpperCase() + location.slice(1)
-              }
+              name={displayName(location)}
               dot={false}
               strokeWidth={location.includes("NOx") ? 3 : 2}
               strokeDasharray={location.includes("NOx") ? "4 7" : "4 0"}

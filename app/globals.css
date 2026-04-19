@@ -33,6 +33,14 @@
   --color-cifa-no: #777777;
   --color-cifa-no2: #611585;
   --color-cifa-nox: #ff3434;
+  --color-catalinas-pm10: #008ebd;
+  --color-catalinas-pm25: #4db8d9;
+  --color-cordoba-pm10: #d03156;
+  --color-cordoba-pm25: #e27a8f;
+  --color-centenario-pm10: #006449;
+  --color-centenario-pm25: #4a9477;
+  --color-cifa-pm10: #7b30b5;
+  --color-cifa-pm25: #a878c4;
 
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));

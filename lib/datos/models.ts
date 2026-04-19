@@ -18,6 +18,7 @@ export const ContaminantEnum = z.enum([
   "nox",
   "pm10",
   "pm25",
+  "pm1025",
   "o3",
   "so2",
 ]);
@@ -104,7 +105,7 @@ export const filtrosSchema = z
           .split(",")
           .map((t) => t.trim())
           .filter(Boolean).length > 0,
-      { message: "Seleccioná al menos una estación." }
+      { message: "Seleccioná al menos una estación." },
     ),
     startDate: z.preprocess(
       (arg) => {
@@ -117,7 +118,7 @@ export const filtrosSchema = z
       },
       z.instanceof(Date, {
         message: 'Seleccioná una fecha "desde" válida.',
-      })
+      }),
     ),
     endDate: z.preprocess(
       (arg) => {
@@ -130,7 +131,7 @@ export const filtrosSchema = z
       },
       z.instanceof(Date, {
         message: 'Seleccioná una fecha "hasta" válida.',
-      })
+      }),
     ),
   })
   .refine((d) => d.startDate.getTime() <= d.endDate.getTime(), {

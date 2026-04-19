@@ -11,8 +11,26 @@ export default function Table({ data }: TableProps) {
     );
   }
 
-  // Obtener las ubicaciones (columnas) dinámicamente excluyendo 'time'
-  const locations = Object.keys(data[0] || {}).filter((key) => key !== "time");
+  // Recorro todas las filas para cubrir casos con merge (p.ej. pm10 + pm25)
+  // donde data[0] puede no contener todas las columnas.
+  const locations = Array.from(
+    data.reduce((set, row) => {
+      Object.keys(row).forEach((k) => {
+        if (k !== "time") set.add(k);
+      });
+      return set;
+    }, new Set<string>())
+  );
+
+  const displayName = (location: string) => {
+    let label = location;
+    if (label === "catalinas" || label.startsWith("catalinas ")) {
+      label = label.replace(/^catalinas/, "La Boca");
+    } else {
+      label = label.charAt(0).toUpperCase() + label.slice(1);
+    }
+    return label.replace(/\bPM25\b/, "PM2.5");
+  };
 
   return (
     <div className="overflow-x-auto p-2">
@@ -22,9 +40,7 @@ export default function Table({ data }: TableProps) {
             <th className="border px-2 py-1">Fecha y Hora</th>
             {locations.map((location) => (
               <th key={location} className="border px-2 py-1 capitalize">
-                {location == "catalinas"
-                  ? "La Boca"
-                  : location.charAt(0).toUpperCase() + location.slice(1)}
+                {displayName(location)}
               </th>
             ))}
           </tr>

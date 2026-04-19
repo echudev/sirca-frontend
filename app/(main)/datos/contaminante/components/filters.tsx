@@ -37,6 +37,8 @@ export const contaminantesOptions = [
   { label: "NO2 Solo", value: "no2" },
   { label: "NOx Totales", value: "nox" },
   { label: "PM10", value: "pm10" },
+  { label: "PM2.5", value: "pm25" },
+  { label: "PM10 y 2.5", value: "pm1025" },
   { label: "O3", value: "o3" },
   { label: "SO2", value: "so2" },
 ];
@@ -250,9 +252,9 @@ export default function Filtros({
               >
                 {selectedLocations.length > 0
                   ? `${selectedLocations.length} seleccionada$${""}`.replace(
-                      "$",
-                      selectedLocations.length === 1 ? "" : "s"
-                    )
+                    "$",
+                    selectedLocations.length === 1 ? "" : "s"
+                  )
                   : "Elegir estaciones"}
                 <ChevronDownIcon />
               </Button>
