@@ -21,7 +21,6 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".", // Define la raíz del proyecto
     "paths": {
       "@/*": [
         "./*"
