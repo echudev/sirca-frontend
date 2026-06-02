@@ -1,7 +1,7 @@
-import { Content } from "./sidebar-content";
 import { Sidebar, SidebarSeparator } from "@/components/ui/sidebar";
-import { Header } from "./sidebar-header";
+import { Content } from "./sidebar-content";
 import { Footer } from "./sidebar-footer";
+import { Header } from "./sidebar-header";
 
 export async function AppSidebar() {
   return (

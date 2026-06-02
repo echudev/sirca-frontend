@@ -4,7 +4,7 @@
 // build de Web Crypto y el Uint8Array de jsdom falla el chequeo `instanceof`
 // (distinto realm). Corriendo este archivo en el entorno `node`, jose usa su
 // build de Node y el round-trip funciona. next/headers está mockeado igual.
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Cookie store falso. Se crea con vi.hoisted para poder referenciarlo dentro
 // del factory de vi.mock (que se eleva al tope del archivo).
@@ -25,10 +25,10 @@ vi.mock("next/navigation", () => ({
 }));
 
 import {
-  encrypt,
-  decrypt,
   createSession,
+  decrypt,
   deleteSession,
+  encrypt,
 } from "@/lib/auth-session";
 
 const samplePayload = {

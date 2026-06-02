@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import AQIMap from "./components/map";
 
 export const metadata: Metadata = {

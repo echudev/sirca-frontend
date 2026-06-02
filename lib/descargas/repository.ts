@@ -26,13 +26,13 @@ async function collectRows<T>(iterable: AsyncIterable<T>): Promise<Array<T>> {
 
 /**
  * Consulta y unifica datos de múltiples tablas de InfluxDB para una estación específica.
- * 
+ *
  * @param params Objetos con los parámetros de búsqueda:
  * - location: ID de la estación.
  * - startDate: Fecha de inicio (ISO).
  * - endDate: Fecha de fin (ISO).
  * - integration: Tipo de promedio ("hour" o "minute").
- * 
+ *
  * @returns Objeto con los datos unificados y ordenados cronológicamente.
  */
 export async function fetchDatosPorEstacion(params: {
@@ -51,7 +51,7 @@ export async function fetchDatosPorEstacion(params: {
       .map((metric) =>
         metric === "lluvia_mean"
           ? `MAX(${metric}) AS ${metric.replace("_mean", "")}`
-          : `AVG(${metric}) AS ${metric.replace("_mean", "")}`
+          : `AVG(${metric}) AS ${metric.replace("_mean", "")}`,
       )
       .join(", ");
 
@@ -106,14 +106,14 @@ export async function fetchDatosPorEstacion(params: {
           const rows = await collectRows(
             influx.query(query, database) as AsyncIterable<
               Record<string, string | number>
-            >
+            >,
           );
           return { key, rows, success: true };
         } catch (error) {
           console.error(`Error querying ${table} for ${location}:`, error);
           return { key, rows: [], success: false, error };
         }
-      })
+      }),
     );
 
     // rowMap se utiliza para unificar las métricas de diferentes tablas (CO, NOx, etc.)
@@ -138,7 +138,12 @@ export async function fetchDatosPorEstacion(params: {
           // Restamos 1 hora (3600000 ms) para pm10 en Córdoba o Catalinas
           // Esto se hace solo cuando el pm10 se mide con el equipo MetOne Bam1020
           // El bam1020 primero mide durante una hora, y muestra el resultado durante la hora siguiente
-          if (key === "pm10" && (location === "cordoba" || location === "catalinas" || location === "centenario")) {
+          if (
+            key === "pm10" &&
+            (location === "cordoba" ||
+              location === "catalinas" ||
+              location === "centenario")
+          ) {
             timeMs -= 60 * 60 * 1000;
           }
 

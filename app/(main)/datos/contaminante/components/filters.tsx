@@ -1,28 +1,28 @@
 "use client";
 
-import { useState } from "react";
-import { z } from "zod";
-import { filtrosSchema } from "@/lib/datos/models";
-import { toast } from "sonner";
 import { ChevronDownIcon, Search } from "lucide-react";
-import { useRouter, usePathname } from "next/navigation";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-  SelectSeparator,
-} from "@/components/ui/select";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { filtrosSchema } from "@/lib/datos/models";
 
 export interface FiltrosType {
   metrica: string;
@@ -82,7 +82,7 @@ export default function Filtros({
   const formatDateUI = (date: string | Date | undefined) => {
     if (!date) return "Elegir Fecha";
     const d = typeof date === "string" ? new Date(date) : date;
-    if (isNaN(d.getTime())) return "Elegir Fecha";
+    if (Number.isNaN(d.getTime())) return "Elegir Fecha";
     return d.toLocaleDateString("es-AR", {
       weekday: "short",
       day: "2-digit",
@@ -140,7 +140,9 @@ export default function Filtros({
       // Mostrar toasts de error (máx. 3)
       Object.values(nextErrors)
         .slice(0, 3)
-        .forEach((m) => toast.error(m));
+        .forEach((m) => {
+          toast.error(m);
+        });
       return;
     }
 
@@ -252,9 +254,9 @@ export default function Filtros({
               >
                 {selectedLocations.length > 0
                   ? `${selectedLocations.length} seleccionada$${""}`.replace(
-                    "$",
-                    selectedLocations.length === 1 ? "" : "s"
-                  )
+                      "$",
+                      selectedLocations.length === 1 ? "" : "s",
+                    )
                   : "Elegir estaciones"}
                 <ChevronDownIcon />
               </Button>

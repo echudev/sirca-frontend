@@ -14,5 +14,5 @@ export const itemSubcategory = table(
         onDelete: "cascade",
       }),
   },
-  (table) => [t.unique().on(table.categoryId, table.name)]
+  (table) => [t.unique().on(table.categoryId, table.name)],
 );

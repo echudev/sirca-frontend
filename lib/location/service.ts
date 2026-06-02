@@ -1,6 +1,6 @@
 // freshnessService.ts
 import { differenceInMinutes } from "date-fns";
-import { FullLocationData } from "./models"; // el tipo que devuelve tu repo
+import type { FullLocationData } from "./models"; // el tipo que devuelve tu repo
 
 // Umbral configurable (ej: 2 minutos)
 const FRESHNESS_THRESHOLD_MINUTES = 4;

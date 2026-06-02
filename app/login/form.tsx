@@ -1,18 +1,18 @@
 "use client";
 
-import { Loader2, EyeIcon, EyeOffIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
 import { useActionState, useState } from "react";
 import { login } from "@/app/actions/auth/";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
-  CardHeader,
-  CardTitle,
   CardContent,
   CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 function SubmitButton({ isPending }: { isPending: boolean }) {
@@ -21,7 +21,7 @@ function SubmitButton({ isPending }: { isPending: boolean }) {
       disabled={isPending}
       type="submit"
       className={cn(
-        "font-bold w-full bg-(--button-bkg) hover:bg-(--button-hover) hover:border-(--button-hover-border) border border-secondary text-primary"
+        "font-bold w-full bg-(--button-bkg) hover:bg-(--button-hover) hover:border-(--button-hover-border) border border-secondary text-primary",
       )}
     >
       {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Ingresar"}
@@ -35,9 +35,7 @@ export function LoginForm() {
 
   return (
     <Card
-      className={cn(
-        "w-[350px] border-(--card-border) bg-(--card) shadow-md"
-      )}
+      className={cn("w-[350px] border-(--card-border) bg-(--card) shadow-md")}
     >
       <CardHeader>
         <CardTitle className="text-center">Ingresa con tus datos</CardTitle>

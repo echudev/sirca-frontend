@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
 import { decrypt } from "@/lib/auth-session";
 
 // 1. Specify protected and public routes
@@ -29,7 +29,7 @@ export default async function proxy(req: NextRequest) {
   if (path === "/") {
     if (session?.userId) {
       return NextResponse.redirect(
-        new URL("/estaciones/centenario", req.nextUrl)
+        new URL("/estaciones/centenario", req.nextUrl),
       );
     } else {
       return NextResponse.redirect(new URL("/login", req.nextUrl));
@@ -48,7 +48,7 @@ export default async function proxy(req: NextRequest) {
     !req.nextUrl.pathname.startsWith("/estaciones/centenario")
   ) {
     return NextResponse.redirect(
-      new URL("/estaciones/centenario", req.nextUrl)
+      new URL("/estaciones/centenario", req.nextUrl),
     );
   }
 

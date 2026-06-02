@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock de la capa repository: evita importar @/db/influx y pegarle a InfluxDB.
 vi.mock("@/lib/descargas/repository", () => ({
@@ -19,13 +19,13 @@ vi.mock("@/app/(main)/descargas/components/filters", () => ({
   ],
 }));
 
-import { datosService } from "@/lib/descargas/service";
-import { fetchDatosPorEstacion } from "@/lib/descargas/repository";
 import {
-  QueryParamsSchema,
   DataPointSchema,
   filtrosSchema,
+  QueryParamsSchema,
 } from "@/lib/descargas/models";
+import { fetchDatosPorEstacion } from "@/lib/descargas/repository";
+import { datosService } from "@/lib/descargas/service";
 
 const validRawParams = {
   location: "centenario",
@@ -167,14 +167,14 @@ describe("filtrosSchema (descargas)", () => {
   });
 
   it("rechaza una integración inválida", () => {
-    expect(filtrosSchema.safeParse({ ...base, integration: "year" }).success).toBe(
-      false,
-    );
+    expect(
+      filtrosSchema.safeParse({ ...base, integration: "year" }).success,
+    ).toBe(false);
   });
 
   it("rechaza una estación inválida", () => {
-    expect(filtrosSchema.safeParse({ ...base, location: "marte" }).success).toBe(
-      false,
-    );
+    expect(
+      filtrosSchema.safeParse({ ...base, location: "marte" }).success,
+    ).toBe(false);
   });
 });

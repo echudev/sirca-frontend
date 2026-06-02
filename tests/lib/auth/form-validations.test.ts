@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   LoginFormSchema,
   RegisterFormSchema,
@@ -94,13 +94,10 @@ describe("RegisterFormSchema", () => {
     }
   });
 
-  it.each(["ADMIN", "EDITOR", "VIEWER"])(
-    "acepta el rol válido %s",
-    (role) => {
-      const result = RegisterFormSchema.safeParse({ ...validInput, role });
-      expect(result.success).toBe(true);
-    },
-  );
+  it.each(["ADMIN", "EDITOR", "VIEWER"])("acepta el rol válido %s", (role) => {
+    const result = RegisterFormSchema.safeParse({ ...validInput, role });
+    expect(result.success).toBe(true);
+  });
 
   it("rechaza un rol fuera del enum", () => {
     const result = RegisterFormSchema.safeParse({

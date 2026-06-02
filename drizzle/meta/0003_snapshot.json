@@ -39,9 +39,7 @@
         "brand_name_unique": {
           "name": "brand_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         }
       },
       "policies": {},
@@ -118,12 +116,8 @@
           "name": "detail_analyzer_item_id_item_id_fk",
           "tableFrom": "detail_analyzer",
           "tableTo": "item",
-          "columnsFrom": [
-            "item_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["item_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -131,12 +125,8 @@
           "name": "detail_analyzer_model_model_id_fk",
           "tableFrom": "detail_analyzer",
           "tableTo": "model",
-          "columnsFrom": [
-            "model"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["model"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -146,9 +136,7 @@
         "detail_analyzer_item_id_unique": {
           "name": "detail_analyzer_item_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "item_id"
-          ]
+          "columns": ["item_id"]
         }
       },
       "policies": {},
@@ -195,12 +183,8 @@
           "name": "detail_consumable_item_id_item_id_fk",
           "tableFrom": "detail_consumable",
           "tableTo": "item",
-          "columnsFrom": [
-            "item_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["item_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -275,12 +259,8 @@
           "name": "detail_cylinder_item_id_item_id_fk",
           "tableFrom": "detail_cylinder",
           "tableTo": "item",
-          "columnsFrom": [
-            "item_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["item_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -331,12 +311,8 @@
           "name": "detail_sparepart_item_id_item_id_fk",
           "tableFrom": "detail_sparepart",
           "tableTo": "item",
-          "columnsFrom": [
-            "item_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["item_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -370,12 +346,8 @@
           "name": "equipment_to_spareparts_equipment_id_item_id_fk",
           "tableFrom": "equipment_to_spareparts",
           "tableTo": "item",
-          "columnsFrom": [
-            "equipment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["equipment_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -383,12 +355,8 @@
           "name": "equipment_to_spareparts_sparepart_id_item_id_fk",
           "tableFrom": "equipment_to_spareparts",
           "tableTo": "item",
-          "columnsFrom": [
-            "sparepart_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["sparepart_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -396,10 +364,7 @@
       "compositePrimaryKeys": {
         "equipment_to_spareparts_equipment_id_sparepart_id_pk": {
           "name": "equipment_to_spareparts_equipment_id_sparepart_id_pk",
-          "columns": [
-            "equipment_id",
-            "sparepart_id"
-          ]
+          "columns": ["equipment_id", "sparepart_id"]
         }
       },
       "uniqueConstraints": {},
@@ -474,12 +439,8 @@
           "name": "inventory_item_id_item_id_fk",
           "tableFrom": "inventory",
           "tableTo": "item",
-          "columnsFrom": [
-            "item_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["item_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -487,12 +448,8 @@
           "name": "inventory_station_id_station_id_fk",
           "tableFrom": "inventory",
           "tableTo": "station",
-          "columnsFrom": [
-            "station_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["station_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -500,10 +457,7 @@
       "compositePrimaryKeys": {
         "inventory_item_id_station_id_pk": {
           "name": "inventory_item_id_station_id_pk",
-          "columns": [
-            "item_id",
-            "station_id"
-          ]
+          "columns": ["item_id", "station_id"]
         }
       },
       "uniqueConstraints": {},
@@ -551,9 +505,7 @@
         "item_category_name_unique": {
           "name": "item_category_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         }
       },
       "policies": {},
@@ -600,12 +552,8 @@
           "name": "item_subcategory_category_id_item_category_id_fk",
           "tableFrom": "item_subcategory",
           "tableTo": "item_category",
-          "columnsFrom": [
-            "category_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["category_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -615,10 +563,7 @@
         "item_subcategory_category_id_name_unique": {
           "name": "item_subcategory_category_id_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "category_id",
-            "name"
-          ]
+          "columns": ["category_id", "name"]
         }
       },
       "policies": {},
@@ -690,12 +635,8 @@
           "name": "item_subcategory_id_item_subcategory_id_fk",
           "tableFrom": "item",
           "tableTo": "item_subcategory",
-          "columnsFrom": [
-            "subcategory_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["subcategory_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -703,12 +644,8 @@
           "name": "item_model_id_model_id_fk",
           "tableFrom": "item",
           "tableTo": "model",
-          "columnsFrom": [
-            "model_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["model_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -718,9 +655,7 @@
         "item_item_code_unique": {
           "name": "item_item_code_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "item_code"
-          ]
+          "columns": ["item_code"]
         }
       },
       "policies": {},
@@ -767,12 +702,8 @@
           "name": "model_brand_id_brand_id_fk",
           "tableFrom": "model",
           "tableTo": "brand",
-          "columnsFrom": [
-            "brand_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["brand_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -782,10 +713,7 @@
         "model_brand_id_name_unique": {
           "name": "model_brand_id_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "brand_id",
-            "name"
-          ]
+          "columns": ["brand_id", "name"]
         }
       },
       "policies": {},
@@ -923,12 +851,8 @@
           "name": "transaction_item_id_item_id_fk",
           "tableFrom": "transaction",
           "tableTo": "item",
-          "columnsFrom": [
-            "item_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["item_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -936,12 +860,8 @@
           "name": "transaction_station_id_origen_station_id_fk",
           "tableFrom": "transaction",
           "tableTo": "station",
-          "columnsFrom": [
-            "station_id_origen"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["station_id_origen"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -949,12 +869,8 @@
           "name": "transaction_station_id_destino_station_id_fk",
           "tableFrom": "transaction",
           "tableTo": "station",
-          "columnsFrom": [
-            "station_id_destino"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["station_id_destino"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1061,16 +977,12 @@
         "user_name_unique": {
           "name": "user_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         },
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},

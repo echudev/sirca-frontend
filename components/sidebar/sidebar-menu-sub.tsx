@@ -1,23 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { ChevronRight, type LucideIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronRight, LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useState } from "react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
-  SidebarMenuSubItem,
   SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
 
 interface Item {
   title: string;

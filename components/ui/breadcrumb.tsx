@@ -1,6 +1,6 @@
-import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -20,7 +20,7 @@ const BreadcrumbList = React.forwardRef<
     ref={ref}
     className={cn(
       "flex flex-wrap items-center gap-1.5 break-words text-sm text-neutral-500 sm:gap-2.5 dark:text-neutral-400",
-      className
+      className,
     )}
     {...props}
   />
@@ -52,7 +52,7 @@ const BreadcrumbLink = React.forwardRef<
       ref={ref}
       className={cn(
         "transition-colors hover:text-neutral-950 dark:hover:text-neutral-50",
-        className
+        className,
       )}
       {...props}
     />
@@ -66,12 +66,11 @@ const BreadcrumbPage = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <span
     ref={ref}
-    role="link"
     aria-disabled="true"
     aria-current="page"
     className={cn(
       "font-normal text-neutral-950 dark:text-neutral-50",
-      className
+      className,
     )}
     {...props}
   />
@@ -88,7 +87,7 @@ const BreadcrumbSeparator = ({
     aria-hidden="true"
     className={cn(
       "[&>svg]:w-3.5 [&>svg]:h-3.5 font-bold text-primary",
-      className
+      className,
     )}
     {...props}
   >
@@ -115,10 +114,10 @@ BreadcrumbEllipsis.displayName = "BreadcrumbElipssis";
 
 export {
   Breadcrumb,
-  BreadcrumbList,
+  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
+  BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-  BreadcrumbEllipsis,
 };

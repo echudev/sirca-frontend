@@ -19,7 +19,7 @@ export default function Table({ data }: TableProps) {
         if (k !== "time") set.add(k);
       });
       return set;
-    }, new Set<string>())
+    }, new Set<string>()),
   );
 
   const displayName = (location: string) => {

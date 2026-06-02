@@ -1,5 +1,5 @@
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { LoginForm } from "@/app/login/form";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import balogo from "@/public/BA-primary.png";
 

@@ -123,7 +123,7 @@ export async function fetchDatosPorContaminante(params: {
     };
     const column = columnMap[contaminant] || "co_mean";
 
-    let locationSelects;
+    let locationSelects: string;
     if (column === "nox_mean") {
       locationSelects = locations
         .map(

@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { datosService } from "@/lib/descargas/service";
 import { extractQueryParams } from "@/lib/descargas/utils";
 
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       { error: "Error interno al obtener los datos" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

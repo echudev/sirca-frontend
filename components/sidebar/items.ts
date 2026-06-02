@@ -1,9 +1,9 @@
 import {
-  Wind,
   ChartLine,
-  MapPin,
   ChartNoAxesColumn,
   Download,
+  MapPin,
+  Wind,
 } from "lucide-react";
 
 export const aqi = [

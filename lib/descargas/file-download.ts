@@ -8,12 +8,12 @@
  */
 
 import ExcelJS from "exceljs";
-import type { DataRow } from "@/hooks/useFetchDescargas";
 import type { FiltrosType } from "@/app/(main)/descargas/components/filters";
 import {
   locationOptions,
   promedioOptions,
 } from "@/app/(main)/descargas/components/filters";
+import type { DataRow } from "@/hooks/useFetchDescargas";
 import { TABLE_CONFIG } from "./config";
 
 // Listas de columnas numéricas agrupadas por cantidad de decimales
@@ -45,7 +45,7 @@ const THREE_DECIMAL_COLUMNS = new Set<string>(["co"]);
 
 /**
  * Genera el listado de columnas ordenadas basándose en la configuración global (TABLE_CONFIG).
- * 
+ *
  * @param data Los datos crudos obtenidos de la consulta.
  * @param integration Opcional. Tipo de promedio para determinar los sufijos de las columnas de estado.
  * @returns Array de strings con los nombres de las columnas en el orden correcto.
@@ -68,7 +68,9 @@ function getOrderedColumns(data: DataRow[], integration?: string): string[] {
   let inferIntegration = integration;
   // Este código se ejecuta solamente si no se pasó el string integration como argument en getOrderedColumns
   if (!inferIntegration) {
-    const hasMinutalStatus = Array.from(allFields).some(f => f.endsWith("_status") && !f.endsWith("_k_status"));
+    const hasMinutalStatus = Array.from(allFields).some(
+      (f) => f.endsWith("_status") && !f.endsWith("_k_status"),
+    );
     inferIntegration = hasMinutalStatus ? "minute" : "hour";
   }
 
@@ -87,7 +89,10 @@ function getOrderedColumns(data: DataRow[], integration?: string): string[] {
     });
 
     // Agregar campo de status de cada tabla según el tipo de integración de la consulta
-    const statusField = inferIntegration === "minute" ? `${tableKey}_status` : `${tableKey}_k_status`;
+    const statusField =
+      inferIntegration === "minute"
+        ? `${tableKey}_status`
+        : `${tableKey}_k_status`;
 
     if (!seen.has(statusField)) {
       orderedFields.push(statusField);
@@ -108,7 +113,7 @@ function getOrderedColumns(data: DataRow[], integration?: string): string[] {
 
 /**
  * Genera un nombre de archivo descriptivo basado en los filtros aplicados.
- * 
+ *
  * @param filters Filtros de búsqueda (estación, fecha, integración).
  * @param extension Extensión del archivo deseada ("csv" o "xlsx").
  * @returns Nombre del archivo formateado.
@@ -146,7 +151,7 @@ export function generateFilename(
 /**
  * Formatea un valor individual para su correcta inclusión en una fila de CSV.
  * Maneja el escape de comillas, comas y saltos de línea según el estándar RFC 4180.
- * 
+ *
  * @param value Valor crudo (número, string o nulo).
  * @returns Valor formateado como string seguro para CSV.
  */
@@ -173,7 +178,7 @@ function formatCSVValue(value: string | number | null | undefined): string {
 
 /**
  * Formatea una fecha ISO a un formato local legible (es-AR).
- * 
+ *
  * @param dateString Fecha en formato string ISO.
  * @returns Fecha y hora formateada (DD/MM/AAAA, HH:mm).
  */
@@ -195,12 +200,16 @@ function formatDate(dateString: string): string {
 
 /**
  * Orquestador para descargar los datos en formato CSV.
- * 
+ *
  * @param data Array de objetos con las filas de datos.
  * @param filename Nombre que tendrá el archivo descargado.
  * @param integration Opcional. Ayuda a normalizar las columnas de estado.
  */
-export function downloadAsCSV(data: DataRow[], filename: string, integration?: string): void {
+export function downloadAsCSV(
+  data: DataRow[],
+  filename: string,
+  integration?: string,
+): void {
   if (!data || data.length === 0) {
     throw new Error("No hay datos para descargar");
   }
@@ -257,7 +266,7 @@ export function downloadAsCSV(data: DataRow[], filename: string, integration?: s
 
 /**
  * Helper interno para volcar datos y aplicar estilos básicos a una hoja de ExcelJS.
- * 
+ *
  * @param worksheet Instancia de la hoja de Excel.
  * @param data Datos a insertar.
  * @param columns Lista de columnas a incluir en esta hoja.
@@ -286,7 +295,7 @@ function addDataToWorksheet(
   };
 
   // Agregar filas de datos
-  data.forEach((row, rowIndex) => {
+  data.forEach((row, _rowIndex) => {
     const values: (string | number)[] = [
       formatDate(row.time),
       ...columns.map((col) => {
@@ -325,7 +334,7 @@ function addDataToWorksheet(
 /**
  * Orquestador para descargar los datos en formato Excel (.xlsx).
  * Crea dos hojas: "crudos" (con estados) y "validados" (sin estados).
- * 
+ *
  * @param data Array de objetos con las filas de datos.
  * @param filename Nombre que tendrá el archivo descargado.
  * @param integration Opcional. Ayuda a normalizar las columnas de estado.
@@ -350,9 +359,7 @@ export async function downloadAsExcel(
   addDataToWorksheet(crudosWorksheet, data, allColumns);
 
   // Segunda worksheet: "validados" sin columnas que terminen en "_status" (incluye "_k_status") y sin "time"
-  const validadosColumns = allColumns.filter(
-    (col) => !col.endsWith("_status"),
-  );
+  const validadosColumns = allColumns.filter((col) => !col.endsWith("_status"));
   const validadosWorksheet = workbook.addWorksheet("validados");
   addDataToWorksheet(validadosWorksheet, data, validadosColumns);
 

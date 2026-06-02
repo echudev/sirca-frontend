@@ -1,7 +1,7 @@
+import { Calendar, Clock, Droplets, Thermometer } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FullLocationData, Status } from "@/lib/location/models";
+import type { FullLocationData, Status } from "@/lib/location/models";
 import { cn } from "@/lib/utils";
-import { Thermometer, Droplets, Clock, Calendar } from "lucide-react";
 import { contaminantes, meteorologica } from "./items";
 import CardCabina from "./ui/card-cabina";
 
@@ -64,13 +64,13 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
             label="Temperatura Cabina"
             icon={<Thermometer className="w-4 h-4 text-primary" />}
             value={
-              data.temp_in_mean !== null ? data.temp_in_mean + " °C" : "--"
+              data.temp_in_mean !== null ? `${data.temp_in_mean} °C` : "--"
             }
           />
           <CardCabina
             label="Humedad Cabina"
             icon={<Droplets className="w-4 h-4 text-primary " />}
-            value={data.hr_in_mean !== null ? data.hr_in_mean + " %" : "--"}
+            value={data.hr_in_mean !== null ? `${data.hr_in_mean} %` : "--"}
           />
         </div>
         {/* Fecha y hora actualizacion*/}
@@ -101,7 +101,7 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
       </header>
 
       {/* Contaminantes Title */}
-      <div className="my-6 space-y-4" aria-label="Contaminantes">
+      <div className="my-6 space-y-4" role="region" aria-label="Contaminantes">
         <div className="flex items-center gap-3">
           <div className="w-1 h-6 rounded-full bg-primary" />
           <h2 className="text-xl font-bold text-foreground uppercase tracking-wider">
@@ -127,7 +127,7 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
                   status == null ? "hidden" : "",
                   value == null
                     ? "brightness-90 text-primary-foreground/60"
-                    : "border-border/60 text-primary-foreground/80"
+                    : "border-border/60 text-primary-foreground/80",
                 )}
               >
                 <CardHeader className="p-0">
@@ -140,7 +140,7 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
                   <div
                     className={cn(
                       "text-3xl font-bold transition-all p-2",
-                      statusColor
+                      statusColor,
                     )}
                   >
                     {value ?? "--"}
@@ -153,7 +153,7 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
                     <span
                       className={cn(
                         "text-xs font-bold rounded-full",
-                        statusColor
+                        statusColor,
                       )}
                     >
                       {" "}
@@ -168,7 +168,7 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
       </div>
 
       {/* Meteorologica Title */}
-      <div className="my-6 space-y-4" aria-label="Meteorologica">
+      <div className="my-6 space-y-4" role="region" aria-label="Meteorologica">
         <div className="flex items-center gap-3">
           <div className="w-1 h-6 rounded-full bg-primary" />
           <h2 className="text-xl font-semibold text-foreground uppercase tracking-wider">
@@ -193,7 +193,7 @@ export default function DataGrid({ data }: { data: FullLocationData }) {
                   <div
                     className={cn(
                       "text-xl font-bold transition-colors",
-                      value == null ? "text-primary/70" : "text-primary"
+                      value == null ? "text-primary/70" : "text-primary",
                     )}
                   >
                     {value ?? "--"}{" "}

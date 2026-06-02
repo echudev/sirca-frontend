@@ -1,6 +1,6 @@
-import { QueryResult, DataPointSchema, QueryResultSchema } from "./models";
-import { fetchDatosPorEstacion } from "./repository";
 import { z } from "zod";
+import { DataPointSchema, type QueryResult, QueryResultSchema } from "./models";
+import { fetchDatosPorEstacion } from "./repository";
 
 // Schema for validation of query parameters
 const EstacionQueryParamsSchema = z.object({

@@ -1,9 +1,9 @@
 "use server";
 
+import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { SignJWT, jwtVerify } from "jose";
 // The payload should contain the minimum, unique user data that'll be used in subsequent requests,
 // such as the user's ID, role, etc. It should not contain personally identifiable information
 // like phone number, email address, credit card information, etc, or sensitive data like passwords.
@@ -42,10 +42,16 @@ export async function createSession(
   userId: string,
   userName: string,
   role: string,
-  email: string
+  email: string,
 ) {
   const expiresAt = new Date(Date.now() + 7 * 60 * 60 * 1000);
-  const sessionPayload: SessionPayload = { userId, userName, role, email, expiresAt };
+  const sessionPayload: SessionPayload = {
+    userId,
+    userName,
+    role,
+    email,
+    expiresAt,
+  };
   const session = await encrypt(sessionPayload);
 
   // Guardar la sesión en las cookies

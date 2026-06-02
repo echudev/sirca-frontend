@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import React from "react";
 import {
   Breadcrumb,
@@ -8,8 +9,7 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { usePathname } from "next/navigation";
-import { splitPathName, cn } from "@/lib/utils";
+import { cn, splitPathName } from "@/lib/utils";
 
 export function AppBreadCrumb() {
   const pathName = usePathname();
@@ -24,14 +24,14 @@ export function AppBreadCrumb() {
               <BreadcrumbLink
                 // href={`/${parte}`}
                 className={cn(
-                  "font-medium text-primary hover:text-secondary cursor-pointer select-none"
+                  "font-medium text-primary hover:text-secondary cursor-pointer select-none",
                 )}
               >
                 {parte.includes("-")
                   ? parte
                       .split("-")
                       .map(
-                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                        (word) => word.charAt(0).toUpperCase() + word.slice(1),
                       )
                       .join(" ")
                   : parte.charAt(0).toUpperCase() + parte.slice(1)}

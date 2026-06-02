@@ -1,13 +1,13 @@
 import { influx } from "@/db/influx";
 import {
-  CoRow,
-  NoxRow,
-  O3Row,
-  So2Row,
-  Pm10Row,
-  Pm25Row,
-  MeteoRow,
+  type CoRow,
   FullLocationDataSchema,
+  type MeteoRow,
+  type NoxRow,
+  type O3Row,
+  type Pm10Row,
+  type Pm25Row,
+  type So2Row,
 } from "./models";
 
 // Función auxiliar para obtener el timestamp más reciente
@@ -29,13 +29,13 @@ function parseFlexibleTimestamp(ts: string | number | Date | null | undefined) {
       return isMilliseconds ? new Date(num) : new Date(num * 1000);
     }
     const d = new Date(ts);
-    return isNaN(d.getTime()) ? null : d;
+    return Number.isNaN(d.getTime()) ? null : d;
   }
   return null;
 }
 
 function getLatestTimestamp(
-  timestamps: Array<string | number | Date | null | undefined>
+  timestamps: Array<string | number | Date | null | undefined>,
 ) {
   const parsed = timestamps
     .map((t) => parseFlexibleTimestamp(t))
@@ -122,25 +122,25 @@ export async function fetchLastMinuteByLocation(locationName: string) {
     // Ejecutar todas las queries en paralelo y manejar fallos individuales
     const results = await Promise.allSettled([
       getFirstRow<CoRow>(
-        influx.query(coQuery, database) as AsyncIterable<CoRow>
+        influx.query(coQuery, database) as AsyncIterable<CoRow>,
       ),
       getFirstRow<NoxRow>(
-        influx.query(noxQuery, database) as AsyncIterable<NoxRow>
+        influx.query(noxQuery, database) as AsyncIterable<NoxRow>,
       ),
       getFirstRow<O3Row>(
-        influx.query(o3Query, database) as AsyncIterable<O3Row>
+        influx.query(o3Query, database) as AsyncIterable<O3Row>,
       ),
       getFirstRow<So2Row>(
-        influx.query(so2Query, database) as AsyncIterable<So2Row>
+        influx.query(so2Query, database) as AsyncIterable<So2Row>,
       ),
       getFirstRow<Pm10Row>(
-        influx.query(pm10Query, database) as AsyncIterable<Pm10Row>
+        influx.query(pm10Query, database) as AsyncIterable<Pm10Row>,
       ),
       getFirstRow<Pm25Row>(
-        influx.query(pm25Query, database) as AsyncIterable<Pm25Row>
+        influx.query(pm25Query, database) as AsyncIterable<Pm25Row>,
       ),
       getFirstRow<MeteoRow>(
-        influx.query(meteoQuery, database) as AsyncIterable<MeteoRow>
+        influx.query(meteoQuery, database) as AsyncIterable<MeteoRow>,
       ),
     ]);
 

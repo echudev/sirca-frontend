@@ -5,9 +5,9 @@ import {
   SidebarMenuButton,
   useSidebar,
 } from "@/components/ui/sidebar";
-import balogo from "../../public/BA-primary.png";
-import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import { cn } from "@/lib/utils";
+import balogo from "../../public/BA-primary.png";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 export function Header() {
   const { open } = useSidebar();

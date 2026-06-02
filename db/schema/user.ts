@@ -1,5 +1,5 @@
-import { integer, pgTable, varchar, text } from "drizzle-orm/pg-core";
-import { InferSelectModel, InferInsertModel } from "drizzle-orm";
+import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import { integer, pgTable, text, varchar } from "drizzle-orm/pg-core";
 import { commonColumns } from "./common-columns";
 
 export const userTable = pgTable("user", {

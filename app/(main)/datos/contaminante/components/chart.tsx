@@ -1,17 +1,17 @@
 "use client";
 
 import {
-  LineChart,
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Label,
+  Legend,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  Label,
 } from "recharts";
 
 interface ChartProps {
@@ -56,7 +56,7 @@ export default function Chart({ data }: ChartProps) {
         if (k !== "time") set.add(k);
       });
       return set;
-    }, new Set<string>())
+    }, new Set<string>()),
   );
   // Verifico si el contaminante seleccionado por el usuario es NOx totales
   // para mostrar grafico de area acumulativo no + no2 y nox
@@ -187,7 +187,7 @@ export default function Chart({ data }: ChartProps) {
                 stroke={stationColor[location] ?? "var(--color-otra)"}
                 fill={stationColor[location] ?? "var(--color-otra)"}
               />
-            )
+            ),
           )}
         </AreaChart>
       </ResponsiveContainer>

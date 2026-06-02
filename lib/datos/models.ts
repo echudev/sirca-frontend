@@ -112,7 +112,7 @@ export const filtrosSchema = z
         if (arg instanceof Date) return arg;
         if (typeof arg === "string") {
           const d = new Date(arg);
-          return isNaN(d.getTime()) ? undefined : d;
+          return Number.isNaN(d.getTime()) ? undefined : d;
         }
         return undefined;
       },
@@ -125,7 +125,7 @@ export const filtrosSchema = z
         if (arg instanceof Date) return arg;
         if (typeof arg === "string") {
           const d = new Date(arg);
-          return isNaN(d.getTime()) ? undefined : d;
+          return Number.isNaN(d.getTime()) ? undefined : d;
         }
         return undefined;
       },

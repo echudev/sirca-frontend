@@ -1,19 +1,19 @@
 "use client";
 
-import { Menu } from "./sidebar-menu";
-import { MenuSub } from "./sidebar-menu-sub";
 import {
-  datos,
-  reportes,
   aqi,
-  estaciones,
+  datos,
   descargas,
+  estaciones,
+  reportes,
 } from "@/components/sidebar/items";
 import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar";
+import { Menu } from "./sidebar-menu";
+import { MenuSub } from "./sidebar-menu-sub";
 
 export function Content() {
   return (

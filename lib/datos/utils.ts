@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
 /**
  * Utilidades para manejar parámetros de consulta
@@ -8,7 +8,7 @@ import { NextRequest } from "next/server";
  * Extrae parámetros de una URL y los convierte a un objeto plano
  */
 export function extractQueryParams(
-  request: NextRequest
+  request: NextRequest,
 ): Record<string, unknown> {
   const searchParams = request.nextUrl.searchParams;
   const params: Record<string, unknown> = {};

@@ -1,9 +1,9 @@
+import { sql } from "drizzle-orm";
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
+import { commonColumns } from "../common-columns";
 import { itemTable } from "./item";
 import { location } from "./location";
-import { commonColumns } from "../common-columns";
 
 export const inventory = table(
   "inventory",
@@ -22,5 +22,5 @@ export const inventory = table(
   (table) => [
     t.primaryKey({ columns: [table.itemId, table.locationID] }),
     t.check("quantity_check", sql`${table.quantity} >= 0`),
-  ]
+  ],
 );

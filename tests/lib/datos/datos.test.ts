@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock de la capa repository: evita importar @/db/influx y pegarle a InfluxDB.
 vi.mock("@/lib/datos/repository", () => ({
@@ -25,9 +25,9 @@ vi.mock("@/app/(main)/datos/contaminante/components/filters", () => ({
   ],
 }));
 
-import { datosService } from "@/lib/datos/service";
+import { filtrosSchema, QueryParamsSchema } from "@/lib/datos/models";
 import { fetchDatosPorContaminante } from "@/lib/datos/repository";
-import { QueryParamsSchema, filtrosSchema } from "@/lib/datos/models";
+import { datosService } from "@/lib/datos/service";
 
 const validRawParams = {
   contaminant: "co",
@@ -148,18 +148,28 @@ describe("QueryParamsSchema (datos)", () => {
   });
 
   it("transforma 'locations' CSV en un array recortando espacios", () => {
-    const parsed = QueryParamsSchema.parse({ locations: "centenario, cordoba ,catalinas" });
+    const parsed = QueryParamsSchema.parse({
+      locations: "centenario, cordoba ,catalinas",
+    });
     expect(parsed.locations).toEqual(["centenario", "cordoba", "catalinas"]);
   });
 
   it("rechaza fechas inválidas", () => {
-    expect(QueryParamsSchema.safeParse({ startDate: "nope" }).success).toBe(false);
-    expect(QueryParamsSchema.safeParse({ endDate: "nope" }).success).toBe(false);
+    expect(QueryParamsSchema.safeParse({ startDate: "nope" }).success).toBe(
+      false,
+    );
+    expect(QueryParamsSchema.safeParse({ endDate: "nope" }).success).toBe(
+      false,
+    );
   });
 
   it("rechaza contaminant e interval fuera del enum", () => {
-    expect(QueryParamsSchema.safeParse({ contaminant: "xx" }).success).toBe(false);
-    expect(QueryParamsSchema.safeParse({ interval: "year" }).success).toBe(false);
+    expect(QueryParamsSchema.safeParse({ contaminant: "xx" }).success).toBe(
+      false,
+    );
+    expect(QueryParamsSchema.safeParse({ interval: "year" }).success).toBe(
+      false,
+    );
   });
 });
 
@@ -183,9 +193,9 @@ describe("filtrosSchema (datos)", () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(
-        result.error.issues.some((i) => i.path[0] === "startDate"),
-      ).toBe(true);
+      expect(result.error.issues.some((i) => i.path[0] === "startDate")).toBe(
+        true,
+      );
     }
   });
 
@@ -196,8 +206,8 @@ describe("filtrosSchema (datos)", () => {
   });
 
   it("rechaza cuando no se selecciona ninguna estación", () => {
-    expect(filtrosSchema.safeParse({ ...base, locations: "  ,  " }).success).toBe(
-      false,
-    );
+    expect(
+      filtrosSchema.safeParse({ ...base, locations: "  ,  " }).success,
+    ).toBe(false);
   });
 });

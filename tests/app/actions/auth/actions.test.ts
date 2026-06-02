@@ -1,12 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { redirect } from "next/navigation";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { login, logout, register } from "@/app/actions/auth/";
-import { loginUser, registerUser } from "@/lib/auth/service";
 import {
   LoginFormSchema,
   RegisterFormSchema,
 } from "@/lib/auth/form-validations";
+import { loginUser, registerUser } from "@/lib/auth/service";
 import { deleteSession } from "@/lib/auth-session";
-import { redirect } from "next/navigation";
 
 vi.mock("@/lib/auth/service", () => ({
   loginUser: vi.fn(),

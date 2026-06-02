@@ -1,9 +1,9 @@
 import {
+  type Contaminant,
+  type Interval,
+  type QueryParams,
   QueryParamsSchema,
-  QueryResult,
-  QueryParams,
-  Contaminant,
-  Interval,
+  type QueryResult,
 } from "./models";
 import { fetchDatosPorContaminante } from "./repository";
 
@@ -34,7 +34,7 @@ export class DatosService {
         (row: Record<string, string | number>) => ({
           time: String(row.time || ""),
           ...row,
-        })
+        }),
       );
 
       // Retornar en formato estandarizado con conteo de registros

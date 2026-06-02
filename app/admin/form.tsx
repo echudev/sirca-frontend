@@ -1,24 +1,26 @@
 "use client";
 
-import { z } from "zod";
-import { Loader2, EyeIcon, EyeOffIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
 import {
-  RegisterFormSchema,
-  RegisterFormState,
-} from "@/lib/auth/form-validations";
-import { useActionState, useState, useEffect, ChangeEvent } from "react";
+  type ChangeEvent,
+  useActionState,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { z } from "zod";
 import { register } from "@/app/actions/auth/";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -26,6 +28,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  RegisterFormSchema,
+  type RegisterFormState,
+} from "@/lib/auth/form-validations";
 
 function SubmitButton({
   isPending,
@@ -122,7 +128,7 @@ export function RegisterForm() {
       RegisterFormSchema.safeParse({
         ...formData,
         [name]: value,
-      }).success
+      }).success,
     );
   };
 
@@ -132,11 +138,11 @@ export function RegisterForm() {
       RegisterFormSchema.safeParse({
         ...formData,
         role: value,
-      }).success
+      }).success,
     );
   };
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setFormData({
       name: "",
       lastName: "",
@@ -154,7 +160,7 @@ export function RegisterForm() {
         role: [],
       },
     });
-  };
+  }, []);
 
   // Resetea el formulario cuando se envía la acción
   // los valores de los input los resetea el useActionState.
@@ -162,7 +168,7 @@ export function RegisterForm() {
     if (state && !state.success) {
       resetForm();
     }
-  }, [state]);
+  }, [state, resetForm]);
 
   return (
     <Card className="w-[350px]">
@@ -180,7 +186,7 @@ export function RegisterForm() {
               placeholder="Jhon"
               onChange={handleInputChange}
               className={`w-full ${
-                (localErrors?.errors?.name?.length ?? 0 > 0)
+                (localErrors?.errors?.name?.length ?? 0) > 0
                   ? "border-red-500 focus-visible:ring-red-500"
                   : ""
               }`}
@@ -200,7 +206,7 @@ export function RegisterForm() {
               placeholder="Doe"
               onChange={handleInputChange}
               className={`w-full ${
-                (localErrors?.errors?.lastName?.length ?? 0 > 0)
+                (localErrors?.errors?.lastName?.length ?? 0) > 0
                   ? "border-red-500 focus-visible:ring-red-500"
                   : ""
               }`}
@@ -220,7 +226,7 @@ export function RegisterForm() {
               placeholder="correo@ejemplo.com"
               onChange={handleInputChange}
               className={`w-full ${
-                (localErrors?.errors?.email?.length ?? 0 > 0)
+                (localErrors?.errors?.email?.length ?? 0) > 0
                   ? "border-red-500 focus-visible:ring-red-500"
                   : ""
               }`}
@@ -241,7 +247,7 @@ export function RegisterForm() {
               placeholder="********"
               onChange={handleInputChange}
               className={`w-full ${
-                (localErrors?.errors?.password?.length ?? 0 > 0)
+                (localErrors?.errors?.password?.length ?? 0) > 0
                   ? "border-red-500 focus-visible:ring-red-500"
                   : ""
               }`}

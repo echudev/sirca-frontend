@@ -1,7 +1,8 @@
-export function UsersIcon(props: React.SVGProps<SVGSVGElement>) {
+export function UsersIcon(_props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
       width="42"
       height="42"
       viewBox="0 0 24 24"
@@ -20,10 +21,11 @@ export function UsersIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export function SettingsIcon(props: React.SVGProps<SVGSVGElement>) {
+export function SettingsIcon(_props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
       width="20"
       height="20"
       viewBox="0 0 24 24"
@@ -51,6 +53,7 @@ export function Spinner() {
   return (
     <div className="absolute right-0 top-0 bottom-0 flex items-center justify-center">
       <svg
+        aria-hidden="true"
         className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-700"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -78,6 +81,7 @@ export function HammerIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
       width="24"
       height="24"
       viewBox="0 0 24 24"
@@ -96,10 +100,11 @@ export function HammerIcon() {
   );
 }
 
-export function HomeIcon(props: React.SVGProps<SVGSVGElement>) {
+export function HomeIcon(_props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
       width="24"
       height="24"
       viewBox="0 0 24 24"
@@ -118,10 +123,11 @@ export function HomeIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export function BoxIcon(props: React.SVGProps<SVGSVGElement>) {
+export function BoxIcon(_props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
       width="24"
       height="24"
       viewBox="0 0 24 24"
@@ -140,10 +146,11 @@ export function BoxIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export function CalendarIcon(props: React.SVGProps<SVGSVGElement>) {
+export function CalendarIcon(_props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
       width="24"
       height="24"
       viewBox="0 0 24 24"
@@ -162,10 +169,11 @@ export function CalendarIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export function ArrowIcon(props: React.SVGProps<SVGSVGElement>) {
+export function ArrowIcon(_props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
       width="16"
       height="16"
       viewBox="0 0 24 24"
@@ -184,10 +192,11 @@ export function ArrowIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
+export function SearchIcon(_props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
       width="24"
       height="24"
       viewBox="0 0 24 24"

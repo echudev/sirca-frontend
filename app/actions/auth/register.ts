@@ -1,13 +1,13 @@
 "use server";
 
+import type { UserInsert } from "@/db/schema/user";
 import {
   RegisterFormSchema,
-  RegisterFormState,
+  type RegisterFormState,
 } from "@/lib/auth/form-validations";
-import { UserInsert } from "@/db/schema/user";
 import { registerUser } from "@/lib/auth/service";
 
-export async function register(state: RegisterFormState, formData: FormData) {
+export async function register(_state: RegisterFormState, formData: FormData) {
   // 1. Valido campos del formulario
   const validatedFields = RegisterFormSchema.safeParse({
     name: formData.get("name"),

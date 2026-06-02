@@ -1,4 +1,4 @@
-import { timestamp, boolean, varchar } from "drizzle-orm/pg-core";
+import { boolean, timestamp, varchar } from "drizzle-orm/pg-core";
 
 export const commonColumns = {
   createdAt: timestamp("created_at").defaultNow().notNull(),

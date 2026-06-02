@@ -8,7 +8,7 @@ const formatNumber = (decimals: number = 2) =>
     .optional()
     .transform((val) => {
       if (val === null || val === undefined) return null;
-      const multiplier = Math.pow(10, decimals);
+      const multiplier = 10 ** decimals;
       return Math.round(val * multiplier) / multiplier;
     });
 

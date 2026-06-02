@@ -1,5 +1,6 @@
-import dotenv from "dotenv";
 import { InfluxDBClient } from "@influxdata/influxdb3-client";
+import dotenv from "dotenv";
+
 dotenv.config();
 
 export const influx = new InfluxDBClient({

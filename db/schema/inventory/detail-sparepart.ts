@@ -1,7 +1,7 @@
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
 import { itemTable } from "./item";
-import { SparePartState } from "./types";
+import type { SparePartState } from "./types";
 
 export const detailSparepart = table("detail_sparepart", {
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),

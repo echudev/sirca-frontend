@@ -1,13 +1,13 @@
 "use client";
-import { useState } from "react";
-import Filtros from "./components/filters";
-import SonnerToaster from "@/components/sonner-toaster";
-import Chart from "./components/chart";
-import Table from "./components/table";
-import useFetchDatos from "@/hooks/useFetchDatos";
-import { Loader2, AlertCircle, FileWarning } from "lucide-react";
+import { AlertCircle, FileWarning, Loader2 } from "lucide-react";
 import Image from "next/image";
-import { FiltrosType } from "@/app/(main)/datos/contaminante/components/filters";
+import { useState } from "react";
+import type { FiltrosType } from "@/app/(main)/datos/contaminante/components/filters";
+import SonnerToaster from "@/components/sonner-toaster";
+import useFetchDatos from "@/hooks/useFetchDatos";
+import Chart from "./components/chart";
+import Filtros from "./components/filters";
+import Table from "./components/table";
 
 export default function CrudosPage() {
   const [filters, setFilters] = useState<FiltrosType>({
@@ -69,7 +69,7 @@ export default function CrudosPage() {
           </h3>
         </div>
       )}
-      {data == undefined && !isLoading && !error && (
+      {data === undefined && !isLoading && !error && (
         <div className="w-full h-full flex flex-col items-center justify-center text-center">
           <Image
             src="/data-search.png"

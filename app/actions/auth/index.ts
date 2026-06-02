@@ -1,5 +1,5 @@
 import { login } from "./login";
-import { register } from "./register";
 import { logout } from "./logout";
+import { register } from "./register";
 
-export { login, register, logout };
+export { login, logout, register };

@@ -1,8 +1,8 @@
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
 import { itemTable } from "./item";
-import { AnalyzerState } from "./types";
 import { model } from "./model";
+import type { AnalyzerState } from "./types";
 
 export const detailAnalizer = table("detail_analyzer", {
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),

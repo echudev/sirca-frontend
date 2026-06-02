@@ -1,8 +1,8 @@
+import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
-import { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import { itemSubcategory } from "./item-subcategory";
 import { commonColumns } from "../common-columns";
+import { itemSubcategory } from "./item-subcategory";
 import { model } from "./model";
 
 export const itemTable = table("item", {

@@ -1,26 +1,25 @@
 "use client";
-import { useState } from "react";
-import { FiltrosType } from "./components/filters";
-import SonnerToaster from "@/components/sonner-toaster";
-import Table from "./components/table";
-import useFetchDescargas from "@/hooks/useFetchDescargas";
-import { Loader2, AlertCircle, FileWarning, FileDown } from "lucide-react";
+import { AlertCircle, FileDown, FileWarning, Loader2 } from "lucide-react";
 import Image from "next/image";
-import Filtros from "./components/filters";
+import { useState } from "react";
+import { toast } from "sonner";
+import SonnerToaster from "@/components/sonner-toaster";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import useFetchDescargas from "@/hooks/useFetchDescargas";
 import {
   downloadAsCSV,
   downloadAsExcel,
   generateFilename,
 } from "@/lib/descargas/file-download";
-import { toast } from "sonner";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import Filtros, { type FiltrosType } from "./components/filters";
+import Table from "./components/table";
 
 export default function DescargasPage() {
   const [filters, setFilters] = useState<FiltrosType>({
@@ -48,12 +47,12 @@ export default function DescargasPage() {
       if (downloadFormat === "csv") {
         downloadAsCSV(data, filename, filters.integration);
         toast.success(
-          `Archivo ${downloadFormat.toUpperCase()} descargado exitosamente`
+          `Archivo ${downloadFormat.toUpperCase()} descargado exitosamente`,
         );
       } else if (downloadFormat === "xlsx") {
         await downloadAsExcel(data, filename, filters.integration);
         toast.success(
-          `Archivo ${downloadFormat.toUpperCase()} descargado exitosamente`
+          `Archivo ${downloadFormat.toUpperCase()} descargado exitosamente`,
         );
       }
     } catch (err) {
@@ -131,7 +130,7 @@ export default function DescargasPage() {
           </h3>
         </div>
       )}
-      {data == undefined && !isLoading && !error && (
+      {data === undefined && !isLoading && !error && (
         <div className="w-full flex flex-col items-center justify-center text-center">
           <Image
             src="/data_download.png"

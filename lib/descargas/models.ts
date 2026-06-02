@@ -9,8 +9,8 @@
 
 import { z } from "zod";
 import {
-  promedioOptions,
   locationOptions,
+  promedioOptions,
 } from "@/app/(main)/descargas/components/filters";
 
 // ============================================================================
@@ -70,18 +70,15 @@ export type QueryParams = z.infer<typeof QueryParamsSchema>;
 // ============================================================================
 
 // Helper to convert BigInt to number and handle null values
-const bigIntToNumberOrNull = z.preprocess(
-  (val) => {
-    if (typeof val === "bigint") {
-      return Number(val);
-    }
-    if (val === null || val === undefined) {
-      return null;
-    }
-    return val;
-  },
-  z.union([z.number(), z.string(), StatusEnum, z.null()]).nullable()
-);
+const bigIntToNumberOrNull = z.preprocess((val) => {
+  if (typeof val === "bigint") {
+    return Number(val);
+  }
+  if (val === null || val === undefined) {
+    return null;
+  }
+  return val;
+}, z.union([z.number(), z.string(), StatusEnum, z.null()]).nullable());
 
 // Helper to convert time to string (handles number, Date, string)
 // Nota: El cliente @influxdata/influxdb3-client ya convierte nanosegundos a milisegundos
@@ -143,26 +140,26 @@ export const filtrosSchema = z
         if (arg instanceof Date) return arg;
         if (typeof arg === "string") {
           const d = new Date(arg);
-          return isNaN(d.getTime()) ? undefined : d;
+          return Number.isNaN(d.getTime()) ? undefined : d;
         }
         return undefined;
       },
       z.instanceof(Date, {
         message: 'Seleccioná una fecha "desde" válida.',
-      })
+      }),
     ),
     endDate: z.preprocess(
       (arg) => {
         if (arg instanceof Date) return arg;
         if (typeof arg === "string") {
           const d = new Date(arg);
-          return isNaN(d.getTime()) ? undefined : d;
+          return Number.isNaN(d.getTime()) ? undefined : d;
         }
         return undefined;
       },
       z.instanceof(Date, {
         message: 'Seleccioná una fecha "hasta" válida.',
-      })
+      }),
     ),
   })
   .refine((d) => d.startDate.getTime() <= d.endDate.getTime(), {

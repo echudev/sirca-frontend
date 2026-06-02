@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
+import type { UserInsert, UserSelect } from "@/db/schema/user";
 import { createSession } from "@/lib/auth-session";
 import { getUserByEmail, insertUser } from "./repository";
-import { UserInsert, UserSelect } from "@/db/schema/user";
 
 export interface AuthResponse {
   success: boolean;
@@ -27,7 +27,12 @@ export async function loginUser(data: UserSelect): Promise<AuthResponse> {
   }
 
   // Crear la sesión del usuario
-  await createSession(usuario.id.toString(), usuario.name, usuario.role, usuario.email);
+  await createSession(
+    usuario.id.toString(),
+    usuario.name,
+    usuario.role,
+    usuario.email,
+  );
 
   // Retornar el nombre del usuario para posibles personalizaciones
   return {

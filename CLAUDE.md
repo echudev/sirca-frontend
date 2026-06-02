@@ -7,7 +7,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 npm run dev          # Start dev server with Turbopack at localhost:3000
 npm run build        # Production build
-npm run lint         # ESLint
+npm run lint         # Biome linter
+npm run format       # Biome formatter (writes changes)
+npm run check        # Biome lint + format + import organization (read-only)
 npm run test         # Run tests with Vitest
 npm run test:watch   # Watch mode tests
 npm run test:coverage # Coverage report

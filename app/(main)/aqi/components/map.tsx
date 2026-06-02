@@ -1,8 +1,9 @@
 "use client";
 
-import Map, { Marker, Popup } from "react-map-gl/maplibre";
-import { useRef, useState } from "react";
 import type { StyleSpecification } from "maplibre-gl";
+import { useRef, useState } from "react";
+// biome-ignore lint/suspicious/noShadowRestrictedNames: "Map" es el nombre del componente de react-map-gl
+import Map, { Marker, Popup } from "react-map-gl/maplibre";
 
 type NativeMarker = {
   setScale?: (scale: number) => void;
@@ -36,8 +37,8 @@ export default function AQIMap() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const markerRefs = useRef<Array<NativeMarker | null>>([]);
 
-  const aqiValue = 250;
-  const getAqiColor = (aqi: number): string => {
+  const _aqiValue = 250;
+  const _getAqiColor = (aqi: number): string => {
     if (aqi <= 50) return "green";
     if (aqi <= 100) return "yellow";
     if (aqi <= 150) return "orange";

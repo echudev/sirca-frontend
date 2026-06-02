@@ -1,5 +1,5 @@
-import type { DataPoint } from "@/lib/descargas/models";
 import { TABLE_CONFIG } from "@/lib/descargas/config";
+import type { DataPoint } from "@/lib/descargas/models";
 
 interface TableProps {
   data: DataPoint[];
@@ -51,7 +51,7 @@ export default function Table({ data }: TableProps) {
 
   // Helper function to format cell values
   const formatCellValue = (
-    value: string | number | null | undefined
+    value: string | number | null | undefined,
   ): string => {
     if (value === null || value === undefined) {
       return "s/d";
@@ -79,7 +79,7 @@ export default function Table({ data }: TableProps) {
             <th className="border px-2 py-1">Fecha y Hora</th>
             {locations.map((location) => (
               <th key={location} className="border px-2 py-1 capitalize">
-                {location == "catalinas"
+                {location === "catalinas"
                   ? "La Boca"
                   : location.charAt(0).toUpperCase() + location.slice(1)}
               </th>

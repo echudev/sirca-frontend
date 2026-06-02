@@ -1,5 +1,5 @@
-import { RegisterForm } from "./form";
 import { verifySession } from "@/lib/auth-session";
+import { RegisterForm } from "./form";
 
 export default async function RegisterPage() {
   const cookie = await verifySession();

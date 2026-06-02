@@ -1,11 +1,14 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { LoginFormSchema, LoginFormState } from "@/lib/auth/form-validations";
+import type { UserSelect } from "@/db/schema/user";
+import {
+  LoginFormSchema,
+  type LoginFormState,
+} from "@/lib/auth/form-validations";
 import { loginUser } from "@/lib/auth/service";
-import { UserSelect } from "@/db/schema/user";
 
-export async function login(state: LoginFormState, formData: FormData) {
+export async function login(_state: LoginFormState, formData: FormData) {
   // 1. Valido campos del formulario
   const validatedFields = LoginFormSchema.safeParse({
     email: formData.get("email"),

@@ -1,12 +1,12 @@
 import {
-  Thermometer,
-  Droplets,
-  Wind,
   CloudRain,
-  WindArrowDownIcon,
   Compass,
-  Sun,
+  Droplets,
   type LucideIcon,
+  Sun,
+  Thermometer,
+  Wind,
+  WindArrowDownIcon,
 } from "lucide-react";
 
 // Tipos de apoyo para tipar las métricas y evitar indexación por string

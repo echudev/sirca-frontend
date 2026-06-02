@@ -1,11 +1,11 @@
 "use client";
 
-import DataGrid from "./data-grid";
-import useSSE from "@/hooks/useSSE";
+import { AlertCircle, Loader2, WifiOff } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { WifiOff, AlertCircle, Loader2 } from "lucide-react";
-import { FullLocationData } from "@/lib/location/models";
+import useSSE from "@/hooks/useSSE";
+import type { FullLocationData } from "@/lib/location/models";
 import { cn } from "@/lib/utils";
+import DataGrid from "./data-grid";
 
 function toTitle(location: string) {
   if (!location) return "Estación";

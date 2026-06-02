@@ -12,5 +12,5 @@ export const model = table(
       .notNull()
       .references(() => brand.id, { onDelete: "cascade" }),
   },
-  (table) => [t.unique().on(table.brandId, table.name)]
+  (table) => [t.unique().on(table.brandId, table.name)],
 );

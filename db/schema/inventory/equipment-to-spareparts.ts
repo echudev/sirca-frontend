@@ -1,7 +1,7 @@
+import { sql } from "drizzle-orm";
 import * as t from "drizzle-orm/pg-core";
 import { pgTable as table } from "drizzle-orm/pg-core";
 import { itemTable } from "./item";
-import { sql } from "drizzle-orm";
 
 export const equipmentToSpareparts = table(
   "equipment_to_spareparts",
@@ -19,8 +19,8 @@ export const equipmentToSpareparts = table(
     t.primaryKey({ columns: [table.equipmentID, table.sparepartID] }),
     t.check(
       "no_self_reference",
-      sql`${table.sparepartID} <> ${table.equipmentID}`
+      sql`${table.sparepartID} <> ${table.equipmentID}`,
       // agregar chequeo de categoría y subcategoría desde lógica de la app
     ),
-  ]
+  ],
 );

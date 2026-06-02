@@ -1,5 +1,5 @@
+import type { Metadata } from "next";
 import { PageUnderConstruction } from "@/components/page-under-construction";
-import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "SIRCA - Reportes",
@@ -7,7 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default async function ReportesPage() {
-  return (
-    <PageUnderConstruction />
-  );
+  return <PageUnderConstruction />;
 }

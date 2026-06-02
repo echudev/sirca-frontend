@@ -1,9 +1,9 @@
 import { cookies } from "next/headers";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { Suspense } from "react";
-import Loading from "../loading";
 import { AppBreadCrumb } from "@/components/app-breadcrumb";
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import Loading from "../loading";
 
 export const metadata = {
   title: "SIRCA - Inicio",
