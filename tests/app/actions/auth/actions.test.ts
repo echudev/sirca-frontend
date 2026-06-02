@@ -8,12 +8,12 @@ import {
 import { deleteSession } from "@/lib/auth-session";
 import { redirect } from "next/navigation";
 
-vi.mock("@/app/actions/user/service", () => ({
+vi.mock("@/lib/auth/service", () => ({
   loginUser: vi.fn(),
   registerUser: vi.fn(),
 }));
 
-vi.mock("@/lib/session", () => ({
+vi.mock("@/lib/auth-session", () => ({
   deleteSession: vi.fn(),
 }));
 
@@ -61,7 +61,7 @@ describe("actions.ts", () => {
         email: "testuser",
         password: "password123",
       });
-      expect(redirect).toHaveBeenCalledWith("/dashboard");
+      expect(redirect).toHaveBeenCalledWith("/estaciones/centenario");
     });
 
     it("should return an error if loginUser fails", async () => {
@@ -151,6 +151,7 @@ describe("actions.ts", () => {
 
       expect(registerUser).toHaveBeenCalledWith({
         name: "testuser",
+        lastName: "testuser",
         email: "testuser@example.com",
         password: "password123",
         role: "EDITOR",
@@ -193,6 +194,7 @@ describe("actions.ts", () => {
 
       expect(registerUser).toHaveBeenCalledWith({
         name: "testuser",
+        lastName: "testuser",
         email: "testuser@example.com",
         password: "password123",
         role: "ADMIN",
