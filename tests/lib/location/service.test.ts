@@ -142,7 +142,11 @@ describe("applyFreshnessCheck", () => {
       expect(r[campo as keyof typeof r]).toBeNull();
     });
 
-    it("anula el bloque meteorológico cuando vence", () => {
+    // Las diez magnitudes salen del mismo datalogger: si el timestamp venció,
+    // vencieron todas. rs_mean (radiación solar) y uv_mean faltaban en el
+    // switch y quedaban a la vista con el último valor conocido mientras el
+    // resto del bloque se anulaba, indistinguibles de una medición actual.
+    it("anula el bloque meteorológico completo cuando vence", () => {
       const r = applyFreshnessCheck(estacion({ meteo: haceMinutos(10) }));
 
       expect(r.dv_mean).toBeNull();
@@ -153,21 +157,9 @@ describe("applyFreshnessCheck", () => {
       expect(r.temp_in_mean).toBeNull();
       expect(r.vv_mean).toBeNull();
       expect(r.pa_mean).toBeNull();
+      expect(r.rs_mean).toBeNull();
+      expect(r.uv_mean).toBeNull();
     });
-
-    // HALLAZGO: el `case "meteo"` del switch anula ocho campos pero omite
-    // rs_mean (radiación solar) y uv_mean. Con la estación meteorológica caída,
-    // esos dos siguen mostrando el último valor conocido mientras el resto del
-    // bloque queda en blanco. Se documenta el comportamiento actual en vez de
-    // cambiar la fuente: si es un olvido, el fix va con su propio cambio.
-    it("hoy NO anula rs_mean ni uv_mean con meteo vencida", () => {
-      const r = applyFreshnessCheck(estacion({ meteo: haceMinutos(10) }));
-
-      expect(r.rs_mean).toBe(800);
-      expect(r.uv_mean).toBe(5);
-    });
-
-    it.todo("debería anular también rs_mean y uv_mean cuando meteo vence");
   });
 
   it("no muta el objeto recibido", () => {
