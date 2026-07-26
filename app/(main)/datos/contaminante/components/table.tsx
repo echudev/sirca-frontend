@@ -46,9 +46,9 @@ export default function Table({ data }: TableProps) {
           </tr>
         </thead>
         <tbody>
-          {data.map((row, idx) => {
+          {data.map((row) => {
             return (
-              <tr key={idx}>
+              <tr key={String(row.time)}>
                 <td className="border px-2 py-1 text-center">
                   {new Intl.DateTimeFormat("es-AR", {
                     year: "numeric",

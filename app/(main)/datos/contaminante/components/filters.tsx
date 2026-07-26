@@ -268,6 +268,7 @@ export default function Filtros({
                   return (
                     <label
                       key={opt.value}
+                      htmlFor={`loc-${opt.value}`}
                       className="flex items-center gap-2 cursor-pointer"
                     >
                       <Checkbox

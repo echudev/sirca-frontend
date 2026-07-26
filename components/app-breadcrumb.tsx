@@ -19,7 +19,7 @@ export function AppBreadCrumb() {
     <Breadcrumb className={cn("flex items-center ml-5")}>
       <BreadcrumbList>
         {partesRuta.map((parte, index) => (
-          <React.Fragment key={index}>
+          <React.Fragment key={partesRuta.slice(0, index + 1).join("/")}>
             <BreadcrumbItem>
               <BreadcrumbLink
                 // href={`/${parte}`}
