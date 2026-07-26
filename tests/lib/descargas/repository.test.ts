@@ -1,0 +1,257 @@
+// @vitest-environment node
+//
+// Mismo enfoque que el repositorio de datos: se intercepta el cliente de
+// InfluxDB y se afirma sobre el SQL generado y sobre la unificación de filas.
+// Acá hay además dos comportamientos que sólo se ven en el resultado y no en
+// la query: el corrimiento del BAM1020 —que depende de la estación— y la
+// tolerancia a que una tabla falle sin arrastrar a las demás.
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+type Fila = Record<string, string | number>;
+
+const { influx, state } = vi.hoisted(() => {
+  const state = {
+    queries: [] as string[],
+    responder: (_sql: string): Fila[] => [],
+  };
+
+  const influx = {
+    query: (sql: string, _database: string) => {
+      state.queries.push(sql);
+      const filas = state.responder(sql);
+      return (async function* () {
+        for (const fila of filas) yield fila;
+      })();
+    },
+  };
+
+  return { influx, state };
+});
+
+vi.mock("@/db/influx", () => ({ influx }));
+
+import { TABLE_CONFIG } from "@/lib/descargas/config";
+import { fetchDatosPorEstacion } from "@/lib/descargas/repository";
+
+function queries(): string[] {
+  return state.queries.map((q) => q.replace(/\s+/g, " ").trim());
+}
+
+/** Query emitida contra una tabla puntual. */
+function queryDe(tabla: string): string {
+  const q = queries().find((s) => s.includes(`FROM ${tabla}`));
+  if (!q) throw new Error(`No se emitió query contra ${tabla}`);
+  return q;
+}
+
+const PARAMS_BASE = {
+  location: "cifa",
+  startDate: "2026-01-01T00:00:00Z",
+  endDate: "2026-01-02T00:00:00Z",
+  integration: "hour",
+};
+
+describe("fetchDatosPorEstacion", () => {
+  beforeEach(() => {
+    state.queries = [];
+    state.responder = () => [];
+  });
+
+  it("consulta todas las tablas configuradas", async () => {
+    await fetchDatosPorEstacion(PARAMS_BASE);
+
+    // Una query por tabla de TABLE_CONFIG: si se agrega un contaminante nuevo
+    // a la config y el repositorio deja de recorrerla, esto lo marca.
+    expect(state.queries).toHaveLength(Object.keys(TABLE_CONFIG).length);
+    for (const { table } of Object.values(TABLE_CONFIG)) {
+      expect(queries().some((q) => q.includes(`FROM ${table}`))).toBe(true);
+    }
+  });
+
+  describe("integración horaria", () => {
+    it("agrupa en bins de una hora corriendo el minuto de cierre", async () => {
+      await fetchDatosPorEstacion(PARAMS_BASE);
+
+      expect(queryDe("co_minutales")).toContain(
+        "DATE_BIN('1 hour', time - INTERVAL '1 minute', '1970-01-01')",
+      );
+    });
+
+    // El promedio horario sólo debe construirse con minutos validados. Sin este
+    // filtro, un minuto marcado como inválido contamina toda la hora.
+    it("promedia únicamente los minutos con status k", async () => {
+      await fetchDatosPorEstacion(PARAMS_BASE);
+
+      expect(queryDe("co_minutales")).toContain("status = 'k'");
+    });
+
+    it("expone cuántos minutos válidos respaldan cada hora", async () => {
+      await fetchDatosPorEstacion(PARAMS_BASE);
+
+      // El conteo es lo que permite al usuario descartar horas armadas con
+      // pocos minutos; si desapareciera, el dato se vuelve inauditable.
+      expect(queryDe("co_minutales")).toContain("COUNT(*) AS co_k_status");
+    });
+
+    // La lluvia es acumulada: promediarla da un número sin sentido físico.
+    it("acumula la lluvia con MAX y promedia el resto de lo meteorológico", async () => {
+      await fetchDatosPorEstacion(PARAMS_BASE);
+
+      const meteo = queryDe("meteo_minutales");
+      expect(meteo).toContain("MAX(lluvia_mean) AS lluvia");
+      expect(meteo).toContain("AVG(temp_mean) AS temp");
+      expect(meteo).not.toContain("AVG(lluvia_mean)");
+    });
+  });
+
+  describe("integración minutal", () => {
+    it("agrupa en bins de un minuto sin corrimiento", async () => {
+      await fetchDatosPorEstacion({ ...PARAMS_BASE, integration: "minute" });
+
+      expect(queryDe("co_minutales")).toContain(
+        "DATE_BIN('1 minute', time, '1970-01-01')",
+      );
+    });
+
+    // A nivel minutal no se promedia nada, así que no hay razón para descartar
+    // filas: se devuelve el status y que el usuario decida.
+    it("no filtra por status y lo devuelve como columna", async () => {
+      await fetchDatosPorEstacion({ ...PARAMS_BASE, integration: "minute" });
+
+      const co = queryDe("co_minutales");
+      expect(co).not.toContain("status = 'k'");
+      expect(co).toContain("status AS co_status");
+    });
+  });
+
+  it("rechaza una integración desconocida", async () => {
+    await expect(
+      fetchDatosPorEstacion({ ...PARAMS_BASE, integration: "semana" }),
+    ).rejects.toThrow("Invalid integration");
+  });
+
+  describe("corrimiento del BAM1020 en pm10", () => {
+    // El equipo mide durante una hora y publica el resultado en la hora
+    // siguiente, así que el valor hay que devolverlo a la hora que midió. Sólo
+    // aplica donde está instalado ese analizador.
+    it("retrasa una hora el pm10 en las estaciones con BAM1020", async () => {
+      state.responder = (sql) =>
+        sql.includes("pm10_minutales")
+          ? [{ time: "2026-01-01T10:00:00Z", pm10: 42 }]
+          : [];
+
+      const { data } = await fetchDatosPorEstacion({
+        ...PARAMS_BASE,
+        location: "cordoba",
+      });
+
+      expect(data[0].time).toBe("2026-01-01T09:00:00.000Z");
+    });
+
+    it("no toca el pm10 de las estaciones sin BAM1020", async () => {
+      state.responder = (sql) =>
+        sql.includes("pm10_minutales")
+          ? [{ time: "2026-01-01T10:00:00Z", pm10: 42 }]
+          : [];
+
+      const { data } = await fetchDatosPorEstacion({
+        ...PARAMS_BASE,
+        location: "cifa",
+      });
+
+      expect(data[0].time).toBe("2026-01-01T10:00:00.000Z");
+    });
+
+    it("descarta el registro que el corrimiento saca de la ventana pedida", async () => {
+      // El primero del día baja a las 23:xx del día anterior: queda fuera del
+      // rango que el usuario pidió y devolverlo sería un dato de más.
+      state.responder = (sql) =>
+        sql.includes("pm10_minutales")
+          ? [{ time: "2026-01-01T00:00:00Z", pm10: 42 }]
+          : [];
+
+      const { data } = await fetchDatosPorEstacion({
+        ...PARAMS_BASE,
+        location: "cordoba",
+      });
+
+      expect(data).toHaveLength(0);
+    });
+  });
+
+  describe("unificación de tablas", () => {
+    it("junta en una sola fila las métricas del mismo instante", async () => {
+      state.responder = (sql) => {
+        if (sql.includes("co_minutales"))
+          return [{ time: "2026-01-01T10:00:00Z", co: 1 }];
+        if (sql.includes("o3_minutales"))
+          return [{ time: "2026-01-01T10:00:00Z", o3: 2 }];
+        return [];
+      };
+
+      const { data } = await fetchDatosPorEstacion(PARAMS_BASE);
+
+      expect(data).toHaveLength(1);
+      expect(data[0]).toMatchObject({ co: 1, o3: 2 });
+    });
+
+    it("ordena cronológicamente el resultado", async () => {
+      state.responder = (sql) => {
+        if (sql.includes("co_minutales"))
+          return [{ time: "2026-01-01T12:00:00Z", co: 1 }];
+        if (sql.includes("o3_minutales"))
+          return [{ time: "2026-01-01T08:00:00Z", o3: 2 }];
+        return [];
+      };
+
+      const { data } = await fetchDatosPorEstacion(PARAMS_BASE);
+
+      expect(data.map((f) => f.time)).toEqual([
+        "2026-01-01T08:00:00.000Z",
+        "2026-01-01T12:00:00.000Z",
+      ]);
+    });
+
+    it("normaliza los timestamps a ISO para poder unificarlos", async () => {
+      state.responder = (sql) =>
+        sql.includes("co_minutales")
+          ? [{ time: new Date("2026-01-01T10:00:00Z").getTime(), co: 1 }]
+          : [];
+
+      const { data } = await fetchDatosPorEstacion(PARAMS_BASE);
+
+      // Las tablas pueden devolver epoch o string; sin normalizar, el mismo
+      // instante genera dos filas distintas en el archivo descargado.
+      expect(data[0].time).toBe("2026-01-01T10:00:00.000Z");
+    });
+  });
+
+  // Promise.allSettled y no Promise.all: son ocho tablas independientes y que
+  // falte h2s no es razón para no entregar CO, O3 y meteorología.
+  it("devuelve los datos de las tablas que sí respondieron cuando una falla", async () => {
+    const consola = vi.spyOn(console, "error").mockImplementation(() => {});
+    state.responder = (sql) => {
+      if (sql.includes("h2s_minutales")) throw new Error("tabla caída");
+      if (sql.includes("co_minutales"))
+        return [{ time: "2026-01-01T10:00:00Z", co: 1 }];
+      return [];
+    };
+
+    const { data } = await fetchDatosPorEstacion(PARAMS_BASE);
+
+    expect(data).toHaveLength(1);
+    expect(data[0]).toMatchObject({ co: 1 });
+    consola.mockRestore();
+  });
+
+  it("propaga el rango pedido en meta", async () => {
+    const { meta } = await fetchDatosPorEstacion(PARAMS_BASE);
+
+    expect(meta).toEqual({
+      location: "cifa",
+      startDate: "2026-01-01T00:00:00Z",
+      endDate: "2026-01-02T00:00:00Z",
+      integration: "hour",
+    });
+  });
+});
