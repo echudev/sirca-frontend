@@ -7,6 +7,14 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./"), // Configuración del alias "@"
+      // `server-only` lanza al importarse fuera de la condición "react-server",
+      // que Vitest no aplica. Apuntamos al no-op que el propio paquete expone
+      // para esa condición, en vez de agregar "react-server" a resolve.conditions
+      // (eso cambiaría también cómo resuelve React y rompería tests de UI).
+      "server-only": path.resolve(
+        __dirname,
+        "./node_modules/server-only/empty.js",
+      ),
     },
   },
   test: {
