@@ -54,6 +54,9 @@ export function applyFreshnessCheck(data: FullLocationData) {
           sanitizedData.pm25_mean_status = null;
           break;
         case "meteo":
+          // Las diez salen del mismo datalogger: si el timestamp está vencido,
+          // vencieron todas. rs_mean y uv_mean faltaban acá y quedaban a la
+          // vista con el último valor conocido mientras el resto se anulaba.
           sanitizedData.dv_mean = null;
           sanitizedData.hr_in_mean = null;
           sanitizedData.hr_mean = null;
@@ -62,6 +65,8 @@ export function applyFreshnessCheck(data: FullLocationData) {
           sanitizedData.temp_in_mean = null;
           sanitizedData.vv_mean = null;
           sanitizedData.pa_mean = null;
+          sanitizedData.rs_mean = null;
+          sanitizedData.uv_mean = null;
           break;
       }
     }
