@@ -1,0 +1,124 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Un push nuevo sobre la misma rama cancela la corrida anterior.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: "24"
+
+jobs:
+  quality:
+    name: Lint, tipos y tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      # biome ci = lint + formato + organización de imports, sin escribir cambios
+      # y con anotaciones inline en el diff del PR.
+      - name: Biome
+        run: npm run check:ci
+
+      - name: TypeScript
+        run: npm run typecheck
+
+      # La suite es hermética: tests/setup.ts fija SESSION_SECRET / DATABASE_URL /
+      # INFLUXDB_TOKEN de prueba, así que no hace falta ningún secret acá.
+      # Los umbrales de coverage están en vite.config.mts y fallan el job si baja.
+      - name: Tests + coverage
+        run: npm run test:ci
+
+      # Se sube igual si los tests fallan: el reporte HTML sirve justamente para
+      # ver qué quedó sin cubrir cuando el umbral no se cumple.
+      - name: Subir reporte de coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 14
+
+  build:
+    name: Build de producción
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Cache de Next.js
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ hashFiles('**/*.[jt]s', '**/*.[jt]sx') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
+
+      # db/drizzle.ts y lib/auth-session.ts lanzan en tiempo de import si falta la
+      # variable, y el build evalúa esos módulos. Son valores dummy a propósito: el
+      # build no abre conexiones, sólo necesita que las variables existan. No usar
+      # secrets reales acá — un build de PR de un fork no debe poder leerlos.
+      - name: next build
+        env:
+          DATABASE_URL: postgresql://ci:ci@ci.invalid.neon.tech/ci?sslmode=require
+          SESSION_SECRET: Y2ktb25seS1kdW1teS1zZWNyZXQtMzJieXRlcy1sb25n
+          INFLUXDB_TOKEN: ci-dummy-token
+        run: npm run build
+
+  audit:
+    name: Auditoría de dependencias
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      # Informativo: imprime el estado completo del árbol de producción sin
+      # frenar nada. Hoy hay 13 advisories transitivas (exceljs → archiver,
+      # next → postcss/sharp) sin fix publicado río arriba; gatillar el job con
+      # ellas sería un rojo permanente que se termina ignorando.
+      - name: npm audit (informativo)
+        run: npm audit --omit=dev || true
+
+      # Esto sí frena: una advisory crítica en dependencias de producción no
+      # espera. Hoy da verde, así que un rojo acá es siempre algo nuevo.
+      - name: npm audit (bloqueante en critical)
+        run: npm audit --omit=dev --audit-level=critical

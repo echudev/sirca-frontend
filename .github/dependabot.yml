@@ -1,0 +1,43 @@
+version: 2
+
+updates:
+  # Dependencias de npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: "America/Argentina/Buenos_Aires"
+    open-pull-requests-limit: 5
+    labels: ["dependencias"]
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+    groups:
+      # Todo lo minor/patch entra en UN solo PR: son los cambios que el CI puede
+      # validar solo. Los major quedan fuera del grupo a propósito y siguen
+      # saliendo en PRs individuales, porque son los que rompen y hay que leer
+      # el changelog uno por uno (ej. Next 16 → 17).
+      minor-y-patch:
+        applies-to: version-updates
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+      # Los security updates NO se agrupan: cada vulnerabilidad merece su propio
+      # PR para poder mergearla sola y rápido, sin arrastrar bumps de rutina.
+
+  # Versiones de las actions usadas en los workflows (actions/checkout, etc.).
+  # Sin esto se quedan viejas y en algún momento GitHub deja de soportarlas.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: "America/Argentina/Buenos_Aires"
+    labels: ["ci"]
+    commit-message:
+      prefix: "ci(deps)"
+    groups:
+      actions:
+        patterns: ["*"]
