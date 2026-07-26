@@ -100,13 +100,17 @@ describe("rate limit de login", () => {
     it("no limita cuando no hay intentos registrados", async () => {
       state.rows = [];
 
-      expect(await isRateLimited("juan@example.com", "203.0.113.7")).toBe(false);
+      expect(await isRateLimited("juan@example.com", "203.0.113.7")).toBe(
+        false,
+      );
     });
 
     it("no limita con un intento menos que el techo de email", async () => {
       state.rows = [{ kind: "email", total: MAX_ATTEMPTS.email - 1 }];
 
-      expect(await isRateLimited("juan@example.com", "203.0.113.7")).toBe(false);
+      expect(await isRateLimited("juan@example.com", "203.0.113.7")).toBe(
+        false,
+      );
     });
 
     // El corte es `>=`, no `>`: con el techo exacto ya hay que bloquear. Un
@@ -121,7 +125,9 @@ describe("rate limit de login", () => {
     it("no limita con un intento menos que el techo de IP", async () => {
       state.rows = [{ kind: "ip", total: MAX_ATTEMPTS.ip - 1 }];
 
-      expect(await isRateLimited("juan@example.com", "203.0.113.7")).toBe(false);
+      expect(await isRateLimited("juan@example.com", "203.0.113.7")).toBe(
+        false,
+      );
     });
 
     it("limita al alcanzar exactamente el techo de IP", async () => {
@@ -136,7 +142,9 @@ describe("rate limit de login", () => {
     it("mide cada kind contra su propio techo", async () => {
       state.rows = [{ kind: "ip", total: MAX_ATTEMPTS.email + 1 }];
 
-      expect(await isRateLimited("juan@example.com", "203.0.113.7")).toBe(false);
+      expect(await isRateLimited("juan@example.com", "203.0.113.7")).toBe(
+        false,
+      );
     });
 
     it("limita si cualquiera de los dos discriminadores agotó su cupo", async () => {
