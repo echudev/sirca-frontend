@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { ZodError } from "zod";
 
 // Mock de la capa repository: evita importar @/db/influx y pegarle a InfluxDB.
 vi.mock("@/lib/descargas/repository", () => ({
@@ -68,13 +69,35 @@ describe("DatosService.getDatosPorEstacion", () => {
     expect(result.meta.integration).toBe("hour");
   });
 
+  // El servicio propaga el ZodError con su tipo intacto en vez de reempaquetarlo
+  // en un Error genérico: es lo que permite a la route devolver 400 con detalle
+  // de validación y 500 genérico para todo lo demás, sin filtrar el mensaje del
+  // driver de InfluxDB al cliente.
   it.each([
     ["location vacío", { ...validRawParams, location: "" }],
+    ["location fuera del enum", { ...validRawParams, location: "otra-cosa" }],
     ["integration vacío", { ...validRawParams, integration: "" }],
     ["fecha inválida", { ...validRawParams, startDate: "no-es-fecha" }],
-  ])("lanza un error envuelto con %s", async (_caso, params) => {
+    [
+      "startDate posterior a endDate",
+      {
+        ...validRawParams,
+        startDate: "2025-07-30T00:00:00Z",
+        endDate: "2025-07-29T00:00:00Z",
+      },
+    ],
+    [
+      "rango que excede el tope de la integración",
+      {
+        ...validRawParams,
+        integration: "minute",
+        startDate: "2024-01-01T00:00:00Z",
+        endDate: "2025-01-01T00:00:00Z",
+      },
+    ],
+  ])("propaga un ZodError con %s", async (_caso, params) => {
     await expect(datosService.getDatosPorEstacion(params)).rejects.toThrow(
-      /Error al procesar la consulta/,
+      ZodError,
     );
     expect(fetchDatosPorEstacion).not.toHaveBeenCalled();
   });

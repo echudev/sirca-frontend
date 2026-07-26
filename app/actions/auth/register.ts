@@ -9,10 +9,9 @@ import { registerUser } from "@/lib/auth/service";
 import { getSession } from "@/lib/auth-session";
 
 export async function register(_state: RegisterFormState, formData: FormData) {
-  // 0. Autorizo. Esta acción es un endpoint HTTP público: que app/admin/page.tsx
-  // esconda el formulario a los no-ADMIN no impide invocarla directamente, y el
-  // campo "role" viene del cliente, así que sin este chequeo cualquiera se daba
-  // de alta como ADMIN.
+  // 0. Autorizo. Toda Server Action es un endpoint HTTP invocable de forma directa:
+  // que app/admin/page.tsx sólo muestre el formulario a un ADMIN no autoriza nada,
+  // y el campo "role" llega del cliente. La autorización va acá, no en la UI.
   const session = await getSession();
   if (session?.role !== "ADMIN") {
     return { success: false, message: "No autorizado" };

@@ -1,6 +1,12 @@
 import bcrypt from "bcryptjs";
 import type { UserInsert, UserSelect } from "@/db/schema/user";
 import { createSession } from "@/lib/auth-session";
+import {
+  clearAttempts,
+  isRateLimited,
+  recordFailedAttempt,
+  WINDOW_MINUTES,
+} from "./rate-limit";
 import { getUserByEmail, insertUser } from "./repository";
 
 export interface AuthResponse {
@@ -13,18 +19,46 @@ export interface AuthResponse {
   message?: string;
 }
 
-export async function loginUser(data: UserSelect): Promise<AuthResponse> {
+// Un único mensaje para las dos causas de fallo. Distinguir "Usuario no encontrado"
+// de "Contraseña incorrecta" convierte al login en un oráculo para enumerar qué
+// correos están registrados.
+const CREDENCIALES_INVALIDAS = "Correo o contraseña incorrectos";
+
+// Hash real (cost 10) contra el que se compara cuando el usuario no existe, para
+// que esa rama cueste lo mismo que la de un usuario válido. Sin esto, responder
+// antes de llegar a bcrypt filtra la misma información por tiempo de respuesta.
+// No es la contraseña de nadie: ningún login puede coincidir contra este hash.
+const DUMMY_HASH =
+  "$2b$10$XnGxgMipSN.F3oGykrqsUeqRYXsnJJL0gcaQ/SPty6pAg2d.vOV2i";
+
+const DEMASIADOS_INTENTOS = `Demasiados intentos fallidos. Esperá ${WINDOW_MINUTES} minutos e intentá de nuevo.`;
+
+export async function loginUser(
+  data: UserSelect,
+  ip: string | null = null,
+): Promise<AuthResponse> {
+  // El cupo se consulta antes que nada: un atacante que ya lo agotó no llega a
+  // hacer trabajar a bcrypt, que es la parte cara del login.
+  if (await isRateLimited(data.email, ip)) {
+    return { success: false, message: DEMASIADOS_INTENTOS };
+  }
+
   // Obtener el usuario desde la base de datos
   const usuario = await getUserByEmail(data.email);
   if (!usuario) {
-    return { success: false, message: "Usuario no encontrado" };
+    await bcrypt.compare(data.password, DUMMY_HASH);
+    await recordFailedAttempt(data.email, ip);
+    return { success: false, message: CREDENCIALES_INVALIDAS };
   }
 
   // Validar la contraseña
   const isPasswordValid = await bcrypt.compare(data.password, usuario.password);
   if (!isPasswordValid) {
-    return { success: false, message: "Contraseña incorrecta" };
+    await recordFailedAttempt(data.email, ip);
+    return { success: false, message: CREDENCIALES_INVALIDAS };
   }
+
+  await clearAttempts(usuario.email);
 
   // Crear la sesión del usuario
   await createSession(

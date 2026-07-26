@@ -64,6 +64,43 @@ export const QueryParamsSchema = z.object({
 });
 export type QueryParams = z.infer<typeof QueryParamsSchema>;
 
+// Tope de ventana por intervalo, en días. Las tablas son minutales: sin límite,
+// un solo request puede pedir años de datos y agotar la cuota de InfluxDB.
+// El techo acompaña la granularidad — a menor resolución, más rango razonable.
+export const MAX_RANGE_DAYS: Record<Interval, number> = {
+  minute: 31,
+  hour: 366,
+  day: 1830, // ~5 años
+};
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+export const BoundedQueryParamsSchema = QueryParamsSchema.superRefine(
+  (p, ctx) => {
+    const start = Date.parse(p.startDate);
+    const end = Date.parse(p.endDate);
+
+    if (start > end) {
+      ctx.addIssue({
+        code: "custom",
+        message:
+          'La fecha "desde" debe ser anterior o igual a la fecha "hasta".',
+        path: ["startDate"],
+      });
+      return;
+    }
+
+    const maxDays = MAX_RANGE_DAYS[p.interval];
+    if (end - start > maxDays * DAY_MS) {
+      ctx.addIssue({
+        code: "custom",
+        message: `El rango máximo para el intervalo "${p.interval}" es de ${maxDays} días.`,
+        path: ["endDate"],
+      });
+    }
+  },
+);
+
 // ============================================================================
 // SCHEMAS DE DATOS
 // ============================================================================

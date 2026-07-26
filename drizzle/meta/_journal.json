@@ -43,6 +43,13 @@
       "when": 1737233021529,
       "tag": "0005_special_harry_osborn",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1785085968898,
+      "tag": "0006_good_sheva_callister",
+      "breakpoints": true
     }
   ]
 }

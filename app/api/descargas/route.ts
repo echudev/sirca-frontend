@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { ZodError } from "zod";
 import { getSession } from "@/lib/auth-session";
 import { datosService } from "@/lib/descargas/service";
 import { extractQueryParams } from "@/lib/descargas/utils";
@@ -18,21 +19,22 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Error fetching data:", error);
-
-    // Manejar errores de validación y otros
-    if (error instanceof Error) {
-      const message = error.message;
-
-      // Errores de validación de Zod
-      if (message.includes("Invalid") || message.includes("Required")) {
-        return NextResponse.json({ error: message }, { status: 400 });
-      }
-
-      // Otros errores de negocio
-      return NextResponse.json({ error: message }, { status: 400 });
+    // Ver la nota en app/api/datos/route.ts: sólo el error de validación lleva
+    // detalle, porque describe el input del propio cliente.
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        {
+          error: "Parámetros de consulta inválidos",
+          details: error.issues.map((issue) => ({
+            field: issue.path.join(".") || "(raíz)",
+            message: issue.message,
+          })),
+        },
+        { status: 400 },
+      );
     }
 
+    console.error("Error fetching data:", error);
     return NextResponse.json(
       { error: "Error interno al obtener los datos" },
       { status: 500 },

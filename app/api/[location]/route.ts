@@ -17,8 +17,8 @@ export async function GET(
 
   const { location: rawLocation } = await context.params;
 
-  // El repositorio interpola este valor en SQL crudo: sin el enum, cualquier
-  // string de la URL termina dentro del WHERE.
+  // El segmento de ruta se valida contra el enum antes de bajar al repositorio,
+  // que lo interpola en SQL. Es la frontera entre input de la URL y la query.
   const parsed = LocationEnum.safeParse(rawLocation);
   if (!parsed.success) {
     return NextResponse.json({ error: "Estación inválida" }, { status: 404 });

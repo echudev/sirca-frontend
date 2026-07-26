@@ -65,6 +65,42 @@ export const QueryParamsSchema = z.object({
 });
 export type QueryParams = z.infer<typeof QueryParamsSchema>;
 
+// Tope de ventana por integración, en días. Ver la nota equivalente en
+// lib/datos/models.ts: las tablas son minutales y sin límite un solo request
+// puede pedir años de datos.
+export const MAX_RANGE_DAYS: Record<Integration, number> = {
+  minute: 31,
+  hour: 366,
+};
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+export const BoundedQueryParamsSchema = QueryParamsSchema.superRefine(
+  (p, ctx) => {
+    const start = Date.parse(p.startDate);
+    const end = Date.parse(p.endDate);
+
+    if (start > end) {
+      ctx.addIssue({
+        code: "custom",
+        message:
+          'La fecha "desde" debe ser anterior o igual a la fecha "hasta".',
+        path: ["startDate"],
+      });
+      return;
+    }
+
+    const maxDays = MAX_RANGE_DAYS[p.integration];
+    if (end - start > maxDays * DAY_MS) {
+      ctx.addIssue({
+        code: "custom",
+        message: `El rango máximo para la integración "${p.integration}" es de ${maxDays} días.`,
+        path: ["endDate"],
+      });
+    }
+  },
+);
+
 // ============================================================================
 // SCHEMAS DE DATOS
 // ============================================================================

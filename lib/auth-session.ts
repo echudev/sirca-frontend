@@ -1,8 +1,7 @@
-// NO usar "use server" acá: esa directiva convierte TODOS los exports del archivo en
-// Server Actions, o sea endpoints HTTP públicos. Con ella, `createSession` y `encrypt`
-// quedaban invocables por cualquiera, permitiendo emitir una sesión ADMIN arbitraria.
-// `server-only` da la garantía que buscábamos —falla el build si esto se importa desde
-// un componente cliente— sin exponer nada.
+// Este módulo debe marcarse con `server-only`, nunca con "use server": esa directiva
+// convierte todos los exports del archivo en Server Actions, es decir endpoints HTTP
+// públicos, y acá eso incluiría a `createSession`. `server-only` no expone nada; sólo
+// hace fallar el build si el módulo se importa desde un componente cliente.
 import "server-only";
 
 import { jwtVerify, SignJWT } from "jose";
@@ -22,8 +21,8 @@ export type SessionPayload = {
 };
 
 const secretKey = process.env.SESSION_SECRET;
-// Sin esta guarda, `TextEncoder().encode(undefined)` devuelve un Uint8Array vacío y jose
-// firma/verifica con clave nula: cualquiera podría forjar un JWT con role "ADMIN".
+// La guarda es obligatoria: `TextEncoder().encode(undefined)` devuelve un Uint8Array
+// vacío, con lo cual jose firmaría y verificaría contra una clave nula en vez de fallar.
 if (!secretKey) {
   throw new Error(
     "SESSION_SECRET no está definida en las variables de entorno.",

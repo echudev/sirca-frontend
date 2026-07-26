@@ -22,6 +22,11 @@ vi.mock("next/navigation", () => ({
   redirect: vi.fn(),
 }));
 
+// login() lee x-forwarded-for para pasarle la IP al rate limiter.
+vi.mock("next/headers", () => ({
+  headers: vi.fn(async () => new Headers({ "x-forwarded-for": "203.0.113.7" })),
+}));
+
 describe("actions.ts", () => {
   beforeEach(() => {
     vi.resetAllMocks();
@@ -58,10 +63,14 @@ describe("actions.ts", () => {
       const state = {};
       await login(state, formData);
 
-      expect(loginUser).toHaveBeenCalledWith({
-        email: "testuser",
-        password: "password123",
-      });
+      // El segundo argumento es la IP del cliente, que va al rate limiter.
+      expect(loginUser).toHaveBeenCalledWith(
+        {
+          email: "testuser",
+          password: "password123",
+        },
+        "203.0.113.7",
+      );
       expect(redirect).toHaveBeenCalledWith("/estaciones/centenario");
     });
 
@@ -83,10 +92,13 @@ describe("actions.ts", () => {
       const state = {};
       const result = await login(state, formData);
 
-      expect(loginUser).toHaveBeenCalledWith({
-        email: "testuser",
-        password: "password123",
-      });
+      expect(loginUser).toHaveBeenCalledWith(
+        {
+          email: "testuser",
+          password: "password123",
+        },
+        "203.0.113.7",
+      );
       expect(result).toMatchObject({
         success: false,
         message: "Invalid credentials",

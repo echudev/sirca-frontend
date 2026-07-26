@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { ZodError } from "zod";
 
 // Mock de la capa repository: evita importar @/db/influx y pegarle a InfluxDB.
 vi.mock("@/lib/datos/repository", () => ({
@@ -98,13 +99,17 @@ describe("DatosService.getDatosPorContaminante", () => {
     expect(result.meta.count).toBe(0);
   });
 
-  it("lanza un error envuelto y no llama al repo si los params son inválidos", async () => {
+  // El servicio propaga el ZodError con su tipo intacto en vez de reempaquetarlo
+  // en un Error genérico: es lo que permite a la route devolver 400 con detalle
+  // de validación y 500 genérico para todo lo demás, sin filtrar el mensaje del
+  // driver de InfluxDB al cliente.
+  it("propaga un ZodError y no llama al repo si los params son inválidos", async () => {
     await expect(
       datosService.getDatosPorContaminante({
         ...validRawParams,
         startDate: "no-es-fecha",
       }),
-    ).rejects.toThrow(/Error al procesar la consulta/);
+    ).rejects.toThrow(ZodError);
 
     expect(fetchDatosPorContaminante).not.toHaveBeenCalled();
   });

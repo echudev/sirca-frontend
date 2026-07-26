@@ -1,8 +1,8 @@
 import {
+  BoundedQueryParamsSchema,
   type Contaminant,
   type Interval,
   type QueryParams,
-  QueryParamsSchema,
   type QueryResult,
 } from "./models";
 import { fetchDatosPorContaminante } from "./repository";
@@ -15,44 +15,41 @@ export class DatosService {
    * Valida y procesa los parámetros de consulta
    */
   private validateQueryParams(params: unknown): QueryParams {
-    return QueryParamsSchema.parse(params);
+    return BoundedQueryParamsSchema.parse(params);
   }
 
   /**
    * Obtiene datos de contaminantes con validación y procesamiento
    */
+  // Sin try/catch a propósito: los errores deben subir con su tipo intacto para que
+  // la route distinga un ZodError (400, con detalle) de un fallo de InfluxDB (500,
+  // genérico). Envolverlos en un Error nuevo borra esa distinción y arrastra el
+  // mensaje del driver —que incluye SQL y nombres de tabla— hasta la respuesta.
   async getDatosPorContaminante(rawParams: unknown): Promise<QueryResult> {
-    try {
-      // Validar parámetros
-      const validatedParams = this.validateQueryParams(rawParams);
+    // Validar parámetros
+    const validatedParams = this.validateQueryParams(rawParams);
 
-      // Obtener datos del repositorio
-      const result = await fetchDatosPorContaminante(validatedParams);
+    // Obtener datos del repositorio
+    const result = await fetchDatosPorContaminante(validatedParams);
 
-      // Ensure data conforms to DataPointSchema (formato original)
-      const formattedData = result.data.map(
-        (row: Record<string, string | number>) => ({
-          time: String(row.time || ""),
-          ...row,
-        }),
-      );
+    // Ensure data conforms to DataPointSchema (formato original)
+    const formattedData = result.data.map(
+      (row: Record<string, string | number>) => ({
+        time: String(row.time || ""),
+        ...row,
+      }),
+    );
 
-      // Retornar en formato estandarizado con conteo de registros
-      return {
-        data: formattedData,
-        meta: {
-          ...result.meta,
-          contaminant: result.meta.contaminant as Contaminant,
-          interval: result.meta.interval as Interval,
-          count: result.data.length,
-        },
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Error al procesar la consulta: ${error.message}`);
-      }
-      throw new Error("Error desconocido al procesar la consulta");
-    }
+    // Retornar en formato estandarizado con conteo de registros
+    return {
+      data: formattedData,
+      meta: {
+        ...result.meta,
+        contaminant: result.meta.contaminant as Contaminant,
+        interval: result.meta.interval as Interval,
+        count: result.data.length,
+      },
+    };
   }
 
   /**
