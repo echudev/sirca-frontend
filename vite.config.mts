@@ -61,14 +61,22 @@ export default defineConfig({
       // de lo medido hoy en lib/** (statements 88.0 / branches 80.6 /
       // functions 91.1 / lines 87.7): el CI avisa si la cobertura BAJA. Al
       // sumar tests, subir estos números en el mismo PR para fijar el piso.
-      // Lo que queda sin cubrir en lib/ son ramas de error sueltas; el próximo
-      // salto real está en los route handlers de app/api/.
+      // Lo que queda sin cubrir en lib/ son ramas de error sueltas.
       thresholds: {
         "lib/**": {
           statements: 88,
           branches: 80,
           functions: 91,
           lines: 87,
+        },
+        // Los route handlers son la frontera pública: cada uno decide un 401,
+        // un 400 y un 500 genérico. Piso propio para que una ruta nueva sin
+        // tests baje el promedio y frene el CI.
+        "app/api/**": {
+          statements: 100,
+          branches: 100,
+          functions: 100,
+          lines: 100,
         },
       },
     },
