@@ -6,7 +6,7 @@ import {
   RegisterFormSchema,
 } from "@/lib/auth/form-validations";
 import { loginUser, registerUser } from "@/lib/auth/service";
-import { deleteSession } from "@/lib/auth-session";
+import { deleteSession, getSession } from "@/lib/auth-session";
 
 vi.mock("@/lib/auth/service", () => ({
   loginUser: vi.fn(),
@@ -15,6 +15,7 @@ vi.mock("@/lib/auth/service", () => ({
 
 vi.mock("@/lib/auth-session", () => ({
   deleteSession: vi.fn(),
+  getSession: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({
@@ -104,6 +105,60 @@ describe("actions.ts", () => {
   });
 
   describe("register", () => {
+    // register() es un endpoint HTTP público: exige sesión ADMIN antes de nada.
+    // El resto de los casos asume esa sesión para poder llegar a la lógica.
+    const adminSession = {
+      userId: "1",
+      userName: "admin",
+      email: "admin@example.com",
+      role: "ADMIN",
+    };
+
+    beforeEach(() => {
+      vi.mocked(getSession).mockResolvedValue(adminSession);
+    });
+
+    it("should reject an unauthenticated caller without touching registerUser", async () => {
+      vi.mocked(getSession).mockResolvedValue(null);
+
+      const formData = new FormData();
+      formData.set("name", "attacker");
+      formData.set("lastName", "attacker");
+      formData.set("email", "attacker@example.com");
+      formData.set("password", "password123!");
+      formData.set("role", "ADMIN");
+
+      const result = await register({}, formData);
+
+      expect(result).toMatchObject({
+        success: false,
+        message: "No autorizado",
+      });
+      expect(registerUser).not.toHaveBeenCalled();
+    });
+
+    it("should reject a non-ADMIN caller trying to self-assign ADMIN", async () => {
+      vi.mocked(getSession).mockResolvedValue({
+        ...adminSession,
+        role: "VIEWER",
+      });
+
+      const formData = new FormData();
+      formData.set("name", "viewer");
+      formData.set("lastName", "viewer");
+      formData.set("email", "viewer@example.com");
+      formData.set("password", "password123!");
+      formData.set("role", "ADMIN");
+
+      const result = await register({}, formData);
+
+      expect(result).toMatchObject({
+        success: false,
+        message: "No autorizado",
+      });
+      expect(registerUser).not.toHaveBeenCalled();
+    });
+
     it("should return validation errors if form data is invalid", async () => {
       const formData = new FormData();
       formData.set("name", ""); // Invalid data

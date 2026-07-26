@@ -1,30 +1,26 @@
-import { z } from "zod";
-import { DataPointSchema, type QueryResult, QueryResultSchema } from "./models";
+import {
+  DataPointSchema,
+  type QueryParams,
+  QueryParamsSchema,
+  type QueryResult,
+  QueryResultSchema,
+} from "./models";
 import { fetchDatosPorEstacion } from "./repository";
-
-// Schema for validation of query parameters
-const EstacionQueryParamsSchema = z.object({
-  location: z.string().min(1, "Location is required"),
-  startDate: z.string().refine((s) => !Number.isNaN(Date.parse(s)), {
-    message: "Invalid startDate",
-  }),
-  endDate: z.string().refine((s) => !Number.isNaN(Date.parse(s)), {
-    message: "Invalid endDate",
-  }),
-  integration: z.string().min(1, "Integration is required"),
-});
-
-type EstacionQueryParams = z.infer<typeof EstacionQueryParamsSchema>;
 
 /**
  * Servicio para manejar la lógica de negocio de datos de contaminantes
  */
 export class DatosService {
   /**
-   * Valida y procesa los parámetros de consulta
+   * Valida y procesa los parámetros de consulta.
+   *
+   * Usa el QueryParamsSchema de models.ts a propósito: define `location` como
+   * LocationEnum e `integration` como IntegrationEnum. Antes había acá un schema
+   * propio con `z.string().min(1)`, y como el repositorio interpola esos valores
+   * en SQL crudo, cualquier string del query param entraba al WHERE.
    */
-  private validateQueryParams(params: unknown): EstacionQueryParams {
-    return EstacionQueryParamsSchema.parse(params);
+  private validateQueryParams(params: unknown): QueryParams {
+    return QueryParamsSchema.parse(params);
   }
 
   /**

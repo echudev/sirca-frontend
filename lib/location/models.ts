@@ -33,6 +33,17 @@ const timeField = z
 const locationField = z.string();
 const statusField = z.string().nullable().optional();
 
+// Estaciones válidas. Las queries a InfluxDB se arman por interpolación de string,
+// así que este enum es la barrera contra inyección: nunca pasar un location que no
+// haya salido de acá al repositorio.
+export const LocationEnum = z.enum([
+  "centenario",
+  "cordoba",
+  "catalinas",
+  "cifa",
+]);
+export type Location = z.infer<typeof LocationEnum>;
+
 // Esquemas individuales
 export const CoRowSchema = z.object({
   time: timeField,

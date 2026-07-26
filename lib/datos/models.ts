@@ -41,10 +41,12 @@ export type Location = z.infer<typeof LocationEnum>;
 
 export const QueryParamsSchema = z.object({
   contaminant: ContaminantEnum.default("co"),
+  // LocationEnum, no z.string(): el repositorio interpola cada valor en SQL crudo,
+  // dos veces (dentro del WHERE y como alias de columna entre comillas dobles).
   locations: z
     .string()
     .transform((val) => val.split(",").map((loc) => loc.trim()))
-    .pipe(z.array(z.string()))
+    .pipe(z.array(LocationEnum).nonempty())
     .default(["centenario", "cordoba", "catalinas", "cifa"]),
   startDate: z
     .string()

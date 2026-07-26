@@ -1,8 +1,14 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/auth-session";
 import { datosService } from "@/lib/datos/service";
 import { extractQueryParams } from "@/lib/datos/utils";
 
 export async function GET(request: NextRequest) {
+  // El matcher de proxy.ts excluye /api, así que la sesión se verifica acá.
+  if (!(await getSession())) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+
   try {
     // Extraer y procesar parámetros usando utilidades
     const params = extractQueryParams(request);

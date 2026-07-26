@@ -1,4 +1,9 @@
-"use server";
+// NO usar "use server" acá: esa directiva convierte TODOS los exports del archivo en
+// Server Actions, o sea endpoints HTTP públicos. Con ella, `createSession` y `encrypt`
+// quedaban invocables por cualquiera, permitiendo emitir una sesión ADMIN arbitraria.
+// `server-only` da la garantía que buscábamos —falla el build si esto se importa desde
+// un componente cliente— sin exponer nada.
+import "server-only";
 
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
@@ -17,6 +22,13 @@ export type SessionPayload = {
 };
 
 const secretKey = process.env.SESSION_SECRET;
+// Sin esta guarda, `TextEncoder().encode(undefined)` devuelve un Uint8Array vacío y jose
+// firma/verifica con clave nula: cualquiera podría forjar un JWT con role "ADMIN".
+if (!secretKey) {
+  throw new Error(
+    "SESSION_SECRET no está definida en las variables de entorno.",
+  );
+}
 const encodedKey = new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload: SessionPayload) {
@@ -89,6 +101,24 @@ export async function deleteSession() {
   const cookieStore = await cookies();
   cookieStore.delete("session");
 }
+
+// Variante sin redirect, para route handlers: un 307 hacia "/" es inútil para un
+// fetch() o un EventSource, que necesitan un 401 explícito.
+export const getSession = cache(async () => {
+  const cookie = (await cookies()).get("session")?.value;
+  const session = await decrypt(cookie);
+
+  if (!session?.userId) {
+    return null;
+  }
+
+  return {
+    userId: session.userId as string,
+    userName: session.userName as string,
+    email: session.email as string,
+    role: session.role as string,
+  };
+});
 
 export const verifySession = cache(async () => {
   const cookie = (await cookies()).get("session")?.value;

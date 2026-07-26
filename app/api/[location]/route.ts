@@ -1,4 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/auth-session";
+import { LocationEnum } from "@/lib/location/models";
 import { fetchLastMinuteByLocation } from "@/lib/location/repository";
 import { applyFreshnessCheck } from "@/lib/location/service";
 
@@ -8,7 +10,20 @@ export async function GET(
   request: NextRequest,
   context: { params: Promise<{ location: string }> },
 ) {
-  const { location } = await context.params;
+  // El matcher de proxy.ts excluye /api, así que la sesión se verifica acá.
+  if (!(await getSession())) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+
+  const { location: rawLocation } = await context.params;
+
+  // El repositorio interpola este valor en SQL crudo: sin el enum, cualquier
+  // string de la URL termina dentro del WHERE.
+  const parsed = LocationEnum.safeParse(rawLocation);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Estación inválida" }, { status: 404 });
+  }
+  const location = parsed.data;
 
   const encoder = new TextEncoder();
 
