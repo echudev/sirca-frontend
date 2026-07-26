@@ -49,21 +49,26 @@ export default defineConfig({
         "db/schema/**",
         "**/layout.tsx",
         "**/*.d.ts",
-        "**/models.ts",
         "**/types.ts",
         "**/config.ts",
+        // OJO: models.ts NO va acá. Parece declarativo por el nombre, pero es
+        // donde viven los schemas de Zod: whitelist de estaciones, topes de
+        // rango y refinamientos de fecha. Es la capa que impide que llegue
+        // texto arbitrario al SQL interpolado del repositorio, así que su
+        // cobertura tiene que verse.
       ],
       // Pisos anti-retroceso ("ratchet"), NO objetivos. Están apenas por debajo
-      // de lo medido hoy en lib/** (statements 15.4 / branches 5.8 /
-      // functions 23.8 / lines 15.5): el CI avisa si la cobertura BAJA, que es
-      // lo único que se puede exigir hoy. Al sumar tests, subir estos números
-      // en el mismo PR para que el piso quede fijado.
+      // de lo medido hoy en lib/** (statements 42.3 / branches 24.7 /
+      // functions 56.6 / lines 42.0): el CI avisa si la cobertura BAJA. Al
+      // sumar tests, subir estos números en el mismo PR para fijar el piso.
+      // Lo que todavía tira el promedio abajo: lib/location y
+      // lib/descargas/file-download.ts, ambos sin tests.
       thresholds: {
         "lib/**": {
-          statements: 15,
-          branches: 5,
-          functions: 23,
-          lines: 15,
+          statements: 42,
+          branches: 24,
+          functions: 56,
+          lines: 42,
         },
       },
     },
