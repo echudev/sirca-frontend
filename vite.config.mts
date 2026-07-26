@@ -54,16 +54,16 @@ export default defineConfig({
         "**/config.ts",
       ],
       // Pisos anti-retroceso ("ratchet"), NO objetivos. Están apenas por debajo
-      // de lo medido hoy en lib/** (statements 12.4 / branches 4.4 /
-      // functions 16.6 / lines 12.7): el CI avisa si la cobertura BAJA, que es
+      // de lo medido hoy en lib/** (statements 15.4 / branches 5.8 /
+      // functions 23.8 / lines 15.5): el CI avisa si la cobertura BAJA, que es
       // lo único que se puede exigir hoy. Al sumar tests, subir estos números
       // en el mismo PR para que el piso quede fijado.
       thresholds: {
         "lib/**": {
-          statements: 10,
-          branches: 4,
-          functions: 14,
-          lines: 10,
+          statements: 15,
+          branches: 5,
+          functions: 23,
+          lines: 15,
         },
       },
     },
