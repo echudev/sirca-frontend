@@ -58,17 +58,17 @@ export default defineConfig({
         // cobertura tiene que verse.
       ],
       // Pisos anti-retroceso ("ratchet"), NO objetivos. Están apenas por debajo
-      // de lo medido hoy en lib/** (statements 61.9 / branches 57.2 /
-      // functions 66.3 / lines 61.6): el CI avisa si la cobertura BAJA. Al
+      // de lo medido hoy en lib/** (statements 84.3 / branches 77.7 /
+      // functions 86.7 / lines 84.0): el CI avisa si la cobertura BAJA. Al
       // sumar tests, subir estos números en el mismo PR para fijar el piso.
-      // Lo que todavía tira el promedio abajo: lib/descargas/file-download.ts
-      // (380 líneas sin tests) y los huecos de lib/auth-session.ts.
+      // Lo que queda sin cubrir: los huecos de lib/auth-session.ts
+      // (getSession/verifySession) y lib/auth/repository.ts.
       thresholds: {
         "lib/**": {
-          statements: 61,
-          branches: 57,
-          functions: 66,
-          lines: 61,
+          statements: 84,
+          branches: 77,
+          functions: 86,
+          lines: 84,
         },
       },
     },
