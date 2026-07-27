@@ -34,7 +34,6 @@
     "@tailwindcss/postcss": "^4.3.3",
     "@tanstack/react-table": "^8.21.3",
     "@types/luxon": "^3.7.2",
-    "@types/mapbox-gl": "^3.5.0",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "chart.js": "^4.5.1",
