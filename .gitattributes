@@ -1,0 +1,20 @@
+# Biome formatea con line endings LF. En Windows, core.autocrlf=true hace que
+# los archivos que git vuelve a escribir en el working tree (merges de
+# dependabot, PRs mergeados en la web, checkouts de rama) queden con CRLF, y
+# `biome check` los marca como errores de formato. `eol=lf` pisa a
+# core.autocrlf y garantiza LF en el working tree en todas las plataformas.
+* text=auto eol=lf
+
+# Binarios: sin conversión de line endings.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pdf binary
+*.xlsx binary
