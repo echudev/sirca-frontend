@@ -48,7 +48,7 @@
     "esbuild": "^0.28.1",
     "exceljs": "^4.4.0",
     "jose": "^6.2.4",
-    "lightningcss": "^1.29.2",
+    "lightningcss": "^1.33.0",
     "lucide-react": "^1.27.0",
     "luxon": "^3.7.2",
     "mapbox-gl": "^3.27.0",
