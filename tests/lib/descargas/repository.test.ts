@@ -157,6 +157,58 @@ describe("fetchDatosPorEstacion", () => {
     ).rejects.toThrow("Invalid integration");
   });
 
+  describe("pm10 del BAM1020", () => {
+    // El BAM entrega un único promedio por hora, repetido en cada minuto: la
+    // mediana recupera ese valor sin que los minutos de transición entre una
+    // hora y la siguiente muevan el resultado, como pasaría con el promedio.
+    it("agrega el pm10 con la mediana en las estaciones con BAM1020", async () => {
+      await fetchDatosPorEstacion({ ...PARAMS_BASE, location: "cordoba" });
+
+      const pm10 = queryDe("pm10_minutales");
+      expect(pm10).toContain("MEDIAN(pm10_mean) AS pm10_raw");
+      expect(pm10).toContain(
+        "MEDIAN(CASE WHEN status = 'k' THEN pm10_mean END) AS pm10",
+      );
+      expect(pm10).not.toContain("AVG(pm10_mean)");
+    });
+
+    it("mantiene el promedio de pm10 en las estaciones sin BAM1020", async () => {
+      await fetchDatosPorEstacion(PARAMS_BASE);
+
+      const pm10 = queryDe("pm10_minutales");
+      expect(pm10).toContain("AVG(pm10_mean) AS pm10_raw");
+      expect(pm10).not.toContain("MEDIAN");
+    });
+
+    // Con una sola medición real por hora, contar minutos con status k no
+    // dice nada del respaldo del dato y dispararía el resaltado del 75%.
+    it("no expone el conteo de minutos k en las estaciones con BAM1020", async () => {
+      await fetchDatosPorEstacion({ ...PARAMS_BASE, location: "cordoba" });
+
+      const pm10 = queryDe("pm10_minutales");
+      expect(pm10).not.toContain("pm10_k_status");
+      expect(pm10).toContain("AS pm10_status");
+    });
+
+    it("mantiene el conteo de minutos k en las estaciones sin BAM1020", async () => {
+      await fetchDatosPorEstacion(PARAMS_BASE);
+
+      expect(queryDe("pm10_minutales")).toContain("AS pm10_k_status");
+    });
+
+    it("no cambia la descarga minutal, que entrega lo que hay en la base", async () => {
+      await fetchDatosPorEstacion({
+        ...PARAMS_BASE,
+        location: "cordoba",
+        integration: "minute",
+      });
+
+      const pm10 = queryDe("pm10_minutales");
+      expect(pm10).toContain("pm10_mean AS pm10");
+      expect(pm10).not.toContain("MEDIAN");
+    });
+  });
+
   describe("corrimiento del BAM1020 en pm10", () => {
     // El equipo mide durante una hora y publica el resultado en la hora
     // siguiente, así que el valor hay que devolverlo a la hora que midió. Sólo

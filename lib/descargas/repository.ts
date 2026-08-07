@@ -3,7 +3,7 @@
  * @description Maneja las consultas dinámicas a InfluxDB3 para diferentes contaminantes y meteorología,
  * realizando la unificación de datos basada en el tiempo y ajustes específicos de sensores.
  * @author Ezequiel Maranda
- * @version 1.3.0
+ * @version 1.4.0
  * @since 2026-03-11
  */
 
@@ -23,6 +23,11 @@ async function collectRows<T>(iterable: AsyncIterable<T>): Promise<Array<T>> {
   }
   return rows;
 }
+
+// Estaciones donde el pm10 se mide con un MetOne BAM1020. El equipo mide una
+// hora completa y publica ese único promedio, repetido minuto a minuto,
+// durante la hora siguiente.
+const BAM1020_LOCATIONS = new Set(["cordoba", "catalinas", "centenario"]);
 
 const HOUR_MS = 60 * 60 * 1000;
 
@@ -97,7 +102,9 @@ function deriveHourlyRain(rows: Array<Record<string, string | number | null>>) {
  * los status observados en `{tabla}_status`) y la validada (`{metrica}`,
  * promedio sólo de los minutos con status 'k', con el conteo de minutos
  * válidos en `{tabla}_k_status`). La lluvia horaria no es un promedio: se
- * deriva del acumulador diario del pluviómetro (ver deriveHourlyRain).
+ * deriva del acumulador diario del pluviómetro (ver deriveHourlyRain). El
+ * pm10 medido con BAM1020 se agrega con la mediana y no expone conteo de
+ * minutos k, porque el equipo entrega una única medición por hora.
  *
  * @returns Objeto con los datos unificados y ordenados cronológicamente.
  */
@@ -116,28 +123,44 @@ export async function fetchDatosPorEstacion(params: {
 
     let query: string;
     if (integration === "hour") {
-      // Serie cruda: promedio horario de todos los minutos, sin importar el status.
+      // El pm10 del BAM1020 no es minutal: los minutos repiten el único
+      // promedio horario del equipo. La mediana recupera ese valor repetido
+      // sin que los minutos de transición entre horas lo muevan, cosa que el
+      // promedio sí haría.
+      const isBamPm10 = key === "pm10" && BAM1020_LOCATIONS.has(location);
+
       // La lluvia no se promedia: el pluviómetro informa un acumulador diario,
       // así que el MAX es "lo acumulado al cierre de la hora" y después
       // deriveHourlyRain lo convierte en lluvia caída por hora.
+      const aggregatorFor = (metric: string) => {
+        if (metric === "lluvia_mean") return "MAX";
+        if (isBamPm10) return "MEDIAN";
+        return "AVG";
+      };
+
+      // Serie cruda: agregado horario de todos los minutos, sin importar el status.
       const rawSelect = metrics
         .map((metric) => {
           const name = metric.replace("_mean", "");
-          return metric === "lluvia_mean"
-            ? `MAX(${metric}) AS ${name}_raw`
-            : `AVG(${metric}) AS ${name}_raw`;
+          return `${aggregatorFor(metric)}(${metric}) AS ${name}_raw`;
         })
         .join(", ");
 
-      // Serie validada: al promedio sólo entran los minutos con status 'k'.
+      // Serie validada: sólo entran los minutos con status 'k'.
       const validatedSelect = metrics
         .map((metric) => {
           const name = metric.replace("_mean", "");
-          return metric === "lluvia_mean"
-            ? `MAX(CASE WHEN status = 'k' THEN ${metric} END) AS ${name}`
-            : `AVG(CASE WHEN status = 'k' THEN ${metric} END) AS ${name}`;
+          return `${aggregatorFor(metric)}(CASE WHEN status = 'k' THEN ${metric} END) AS ${name}`;
         })
         .join(", ");
+
+      // El conteo de minutos k no aplica al BAM1020: con una sola medición
+      // real por hora no dice nada del respaldo del dato, y dispararía el
+      // resaltado del 75% en la hoja de validados.
+      const kCountSelect = isBamPm10
+        ? ""
+        : `,
+        COUNT(CASE WHEN status = 'k' THEN 1 END) AS ${key}_k_status`;
 
       query = `
       SELECT
@@ -145,8 +168,7 @@ export async function fetchDatosPorEstacion(params: {
         location,
         ${validatedSelect},
         ${rawSelect},
-        array_to_string(array_agg(DISTINCT status), ',') AS ${key}_status,
-        COUNT(CASE WHEN status = 'k' THEN 1 END) AS ${key}_k_status
+        array_to_string(array_agg(DISTINCT status), ',') AS ${key}_status${kCountSelect}
       FROM ${table}
       WHERE location = '${location}'
         AND (time - INTERVAL '1 minute') >= '${startDate}'
@@ -218,16 +240,11 @@ export async function fetchDatosPorEstacion(params: {
             timeMs = new Date(String(row.time || "")).getTime();
           }
 
-          // Restamos 1 hora (3600000 ms) para pm10 en Córdoba o Catalinas
-          // Esto se hace solo cuando el pm10 se mide con el equipo MetOne Bam1020
-          // El bam1020 primero mide durante una hora, y muestra el resultado durante la hora siguiente
-          if (
-            key === "pm10" &&
-            (location === "cordoba" ||
-              location === "catalinas" ||
-              location === "centenario")
-          ) {
-            timeMs -= 60 * 60 * 1000;
+          // Restamos 1 hora para el pm10 medido con BAM1020: el equipo mide
+          // durante una hora y muestra el resultado durante la hora siguiente,
+          // así que el valor hay que devolverlo a la hora que midió.
+          if (key === "pm10" && BAM1020_LOCATIONS.has(location)) {
+            timeMs -= HOUR_MS;
           }
 
           // Si después del ajuste el registro cae antes del startDate pedido, lo descartamos.
