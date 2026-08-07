@@ -270,14 +270,26 @@ export async function fetchDatosPorEstacion(params: {
       return timeA - timeB;
     });
 
+    // Sólo horas cerradas: a las 14:35 el bin 14:00 (cubre 14:01-15:00) se
+    // sigue midiendo y su promedio cambiaría con cada minuto. Se filtra acá y
+    // no en el WHERE de la query porque el corrimiento del BAM1020 ya ubicó el
+    // pm10 de la hora en curso en la hora anterior, que sí está cerrada.
+    const completedRows =
+      integration === "hour"
+        ? sortedRows.filter(
+            (row) =>
+              new Date(String(row.time)).getTime() + HOUR_MS <= Date.now(),
+          )
+        : sortedRows;
+
     // La lluvia horaria se deriva recién acá porque necesita la serie completa
     // ordenada: el cálculo compara cada hora con la anterior contigua.
     if (integration === "hour") {
-      deriveHourlyRain(sortedRows);
+      deriveHourlyRain(completedRows);
     }
 
     return {
-      data: sortedRows,
+      data: completedRows,
       meta: {
         location,
         startDate,

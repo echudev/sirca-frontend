@@ -288,6 +288,38 @@ function formatCSVValue(value: string | number | null | undefined): string {
 }
 
 /**
+ * Formatea la fecha de un bin horario con el rango que cubre: la fila "14:00"
+ * contiene los minutos de 14:01 a 15:00, así que mostrar el rango completo
+ * evita leerla como una medición puntual de las 14:00.
+ *
+ * @param dateString Fecha del bin en formato string ISO.
+ * @returns Fecha y rango horario formateados (DD/MM/AAAA, HH:mm a HH:mm hs).
+ */
+function formatHourRangeDate(dateString: string): string {
+  try {
+    const start = new Date(dateString);
+    const end = new Date(start.getTime() + 60 * 60 * 1000);
+    const timeZone = "America/Argentina/Buenos_Aires";
+    const fecha = new Intl.DateTimeFormat("es-AR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone,
+    }).format(start);
+    const hora = new Intl.DateTimeFormat("es-AR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      // Fijo en 24 hs: sin esto, el formato depende del ICU del navegador
+      hourCycle: "h23",
+      timeZone,
+    });
+    return `${fecha}, ${hora.format(start)} a ${hora.format(end)} hs`;
+  } catch {
+    return dateString;
+  }
+}
+
+/**
  * Formatea una fecha ISO a un formato local legible (es-AR).
  *
  * @param dateString Fecha en formato string ISO.
@@ -302,6 +334,8 @@ function formatDate(dateString: string): string {
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
+      // Fijo en 24 hs: sin esto, el formato depende del ICU del navegador
+      hourCycle: "h23",
       timeZone: "America/Argentina/Buenos_Aires",
     }).format(date);
   } catch {
@@ -424,6 +458,8 @@ interface LegendLine {
 interface WorksheetOptions {
   /** Notas aclaratorias que van arriba de la grilla. */
   legend?: LegendLine[];
+  /** Muestra la fecha como rango horario ("14:00 a 15:00 hs"). */
+  hourRangeLabels?: boolean;
   /** Muestra las columnas _raw con el nombre base de su métrica (hoja crudos). */
   stripRawSuffix?: boolean;
   /** Resalta la celda cuando el predicado da true (hoja validados). */
@@ -503,7 +539,9 @@ function addDataToWorksheet(
   let dayParity = 0;
   data.forEach((row) => {
     const values: (string | number)[] = [
-      formatDate(row.time),
+      options.hourRangeLabels
+        ? formatHourRangeDate(row.time)
+        : formatDate(row.time),
       ...columns.map((col) => {
         const value = row[col];
         if (value === null || value === undefined) {
@@ -565,8 +603,8 @@ function addDataToWorksheet(
   // atraviesa las notas fusionadas de arriba.
   worksheet.views = [{ state: "frozen", ySplit: headerRow.number }];
 
-  // Ajustar ancho de columnas
-  worksheet.getColumn(1).width = 20; // Fecha y Hora / time
+  // Ajustar ancho de columnas (el rango horario es más largo que la hora puntual)
+  worksheet.getColumn(1).width = options.hourRangeLabels ? 28 : 20;
   columns.forEach((_, index) => {
     worksheet.getColumn(index + 2).width = 15;
   });
@@ -640,6 +678,7 @@ export async function downloadAsExcel(
   const crudosWorksheet = workbook.addWorksheet("crudos");
   addDataToWorksheet(crudosWorksheet, data, crudosColumns, {
     legend: crudosLegend,
+    hourRangeLabels: isHour,
     stripRawSuffix: true,
   });
 
@@ -652,6 +691,7 @@ export async function downloadAsExcel(
   const validadosWorksheet = workbook.addWorksheet("validados");
   addDataToWorksheet(validadosWorksheet, data, validadosColumns, {
     legend: validadosLegend,
+    hourRangeLabels: isHour,
     highlightCell: isHour ? hasLowKCoverage : undefined,
   });
 

@@ -5,7 +5,7 @@
 // Acá hay además dos comportamientos que sólo se ven en el resultado y no en
 // la query: el corrimiento del BAM1020 —que depende de la estación— y la
 // tolerancia a que una tabla falle sin arrastrar a las demás.
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 type Fila = Record<string, string | number>;
 
@@ -203,6 +203,85 @@ describe("fetchDatosPorEstacion", () => {
       });
 
       expect(data).toHaveLength(0);
+    });
+  });
+
+  describe("horas incompletas", () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    /** Fija el "ahora" del repositorio en un instante conocido. */
+    function ahoraEs(iso: string) {
+      vi.spyOn(Date, "now").mockReturnValue(new Date(iso).getTime());
+    }
+
+    // A las 14:35 el bin 14:00 (cubre 14:01-15:00) se sigue midiendo: su
+    // promedio es provisorio y cambiaría con cada minuto que pasa.
+    it("descarta el bin de la hora en curso", async () => {
+      ahoraEs("2026-01-01T14:35:00Z");
+      state.responder = (sql) =>
+        sql.includes("co_minutales")
+          ? [
+              { time: "2026-01-01T13:00:00Z", co: 1 },
+              { time: "2026-01-01T14:00:00Z", co: 2 },
+            ]
+          : [];
+
+      const { data } = await fetchDatosPorEstacion(PARAMS_BASE);
+
+      expect(data.map((f) => f.time)).toEqual(["2026-01-01T13:00:00.000Z"]);
+    });
+
+    it("conserva el bin que cierra exactamente ahora", async () => {
+      // A las 15:00 en punto el bin 14:00 ya recibió su último minuto.
+      ahoraEs("2026-01-01T15:00:00Z");
+      state.responder = (sql) =>
+        sql.includes("co_minutales")
+          ? [{ time: "2026-01-01T14:00:00Z", co: 2 }]
+          : [];
+
+      const { data } = await fetchDatosPorEstacion(PARAMS_BASE);
+
+      expect(data).toHaveLength(1);
+    });
+
+    // El BAM1020 publica durante la hora en curso lo que midió en la hora
+    // anterior: tras el corrimiento ese dato pertenece a una hora ya cerrada,
+    // y filtrarlo en la query lo haría desaparecer del archivo.
+    it("no descarta el pm10 corrido del BAM1020", async () => {
+      ahoraEs("2026-01-01T14:35:00Z");
+      state.responder = (sql) =>
+        sql.includes("pm10_minutales")
+          ? [{ time: "2026-01-01T14:00:00Z", pm10: 42 }]
+          : [];
+
+      const { data } = await fetchDatosPorEstacion({
+        ...PARAMS_BASE,
+        location: "cordoba",
+      });
+
+      expect(data).toHaveLength(1);
+      expect(data[0]).toMatchObject({
+        time: "2026-01-01T13:00:00.000Z",
+        pm10: 42,
+      });
+    });
+
+    it("no filtra la integración minutal", async () => {
+      // El minuto ya registrado está completo por definición.
+      ahoraEs("2026-01-01T14:35:00Z");
+      state.responder = (sql) =>
+        sql.includes("co_minutales")
+          ? [{ time: "2026-01-01T14:34:00Z", co: 1 }]
+          : [];
+
+      const { data } = await fetchDatosPorEstacion({
+        ...PARAMS_BASE,
+        integration: "minute",
+      });
+
+      expect(data).toHaveLength(1);
     });
   });
 

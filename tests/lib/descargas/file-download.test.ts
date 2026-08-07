@@ -499,6 +499,30 @@ describe("downloadAsExcel", () => {
     });
   });
 
+  describe("rango horario en la columna de fecha", () => {
+    // La fila "14:00" contiene los minutos de 14:01 a 15:00: mostrar el rango
+    // completo evita leerla como una medición puntual de las 14:00.
+    it("muestra la hora como rango en la integración horaria", async () => {
+      await downloadAsExcel([FILA], "x.xlsx", "hour");
+
+      const hoja = hojaDe(await excelDescargado(), "crudos");
+      const celdaFecha = hoja.getRow(filaEncabezados(hoja) + 1).getCell(1);
+      expect(celdaFecha.value).toBe("15/01/2026, 11:30 a 12:30 hs");
+    });
+
+    it("mantiene la hora puntual en la integración minutal", async () => {
+      await downloadAsExcel(
+        [{ time: FILA.time, co: 1, co_status: "k" }],
+        "x.xlsx",
+        "minute",
+      );
+
+      const hoja = hojaDe(await excelDescargado(), "crudos");
+      const celdaFecha = hoja.getRow(filaEncabezados(hoja) + 1).getCell(1);
+      expect(celdaFecha.value).toBe("15/01/2026, 11:30");
+    });
+  });
+
   describe("legibilidad de la grilla", () => {
     // Las descargas abarcan varios días: el borde medio al cambiar de día es
     // lo que permite recorrer la planilla sin perderse entre las horas.
