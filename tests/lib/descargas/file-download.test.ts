@@ -550,12 +550,15 @@ describe("downloadAsExcel", () => {
       await downloadAsExcel([FILA], "x.xlsx", "hour");
 
       const hoja = hojaDe(await excelDescargado(), "crudos");
-      expect(hoja.views[0]).toMatchObject({
-        state: "frozen",
-        ySplit: filaEncabezados(hoja),
-      });
+      // WorksheetView es una unión discriminada por state: xSplit sólo existe
+      // en las variantes frozen/split, así que hay que narrowear antes.
+      const vista = hoja.views[0];
+      if (vista?.state !== "frozen") {
+        throw new Error("La hoja no tiene panel congelado");
+      }
+      expect(vista.ySplit).toBe(filaEncabezados(hoja));
       // Sin panel vertical: su línea divisoria cruzaría las notas de arriba
-      expect(hoja.views[0]?.xSplit ?? 0).toBe(0);
+      expect(vista.xSplit ?? 0).toBe(0);
     });
   });
 
