@@ -70,20 +70,42 @@ function hojaDe(workbook: ExcelJS.Workbook, nombre: string): ExcelJS.Worksheet {
   return hoja;
 }
 
+/** Número de la fila de encabezados: la que empieza con "Fecha y Hora". */
+function filaEncabezados(hoja: ExcelJS.Worksheet): number {
+  for (let i = 1; i <= hoja.rowCount; i++) {
+    if (hoja.getRow(i).getCell(1).value === "Fecha y Hora") return i;
+  }
+  throw new Error("La hoja no tiene fila de encabezados");
+}
+
 /** Encabezados no vacíos de una hoja. */
 function encabezadosDe(hoja: ExcelJS.Worksheet): string[] {
-  return (hoja.getRow(1).values as string[]).filter(Boolean);
+  return (hoja.getRow(filaEncabezados(hoja)).values as string[]).filter(
+    Boolean,
+  );
+}
+
+/** Texto completo de las notas que están arriba de los encabezados. */
+function notasDe(hoja: ExcelJS.Worksheet): string {
+  const textos: string[] = [];
+  for (let i = 1; i < filaEncabezados(hoja); i++) {
+    hoja.getRow(i).eachCell((celda) => {
+      if (typeof celda.value === "string") textos.push(celda.value);
+    });
+  }
+  return textos.join(" ");
 }
 
 /** Celda de la primera fila de datos bajo el encabezado dado. */
 function celdaDe(hoja: ExcelJS.Worksheet, encabezado: string): ExcelJS.Cell {
-  const indice = (hoja.getRow(1).values as string[]).findIndex(
+  const fila = filaEncabezados(hoja);
+  const indice = (hoja.getRow(fila).values as string[]).findIndex(
     (h) => h?.toLowerCase() === encabezado.toLowerCase(),
   );
   if (indice === -1) {
     throw new Error(`La hoja no tiene la columna "${encabezado}"`);
   }
-  return hoja.getRow(2).getCell(indice);
+  return hoja.getRow(fila + 1).getCell(indice);
 }
 
 /** Color de fondo de una celda, si tiene un relleno sólido. */
@@ -417,6 +439,99 @@ describe("downloadAsExcel", () => {
 
       const hoja = hojaDe(await excelDescargado(), "crudos");
       expect(colorDeFondo(celdaDe(hoja, "co"))).toBeUndefined();
+    });
+  });
+
+  describe("notas aclaratorias", () => {
+    // El archivo lo abre gente ajena a la red: sin la leyenda, los códigos de
+    // status (K, I, Z, S...) y el resaltado amarillo son inentendibles.
+    it("explica el significado de cada status en la hoja crudos", async () => {
+      await downloadAsExcel([FILA], "x.xlsx", "hour");
+
+      const notas = notasDe(hojaDe(await excelDescargado(), "crudos"));
+      expect(notas).toContain("K = OK");
+      expect(notas).toContain("M = Mantenimiento");
+      expect(notas).toContain("Z = Zero cal");
+    });
+
+    // La leyenda completa de status vive en crudos: en validados no hay
+    // columnas de status, así que repetirla ahí es sólo ruido.
+    it("no repite la leyenda de status en validados", async () => {
+      await downloadAsExcel([FILA], "x.xlsx", "hour");
+
+      const notas = notasDe(hojaDe(await excelDescargado(), "validados"));
+      expect(notas).not.toContain("Zero cal");
+    });
+
+    it("explica en validados qué significa el resaltado amarillo", async () => {
+      await downloadAsExcel([FILA], "x.xlsx", "hour");
+
+      const notas = notasDe(hojaDe(await excelDescargado(), "validados"));
+      expect(notas).toContain("amarillo");
+      expect(notas).toContain("45 minutos válidos");
+    });
+
+    // La nota arranca en la primera columna y lleva el fondo amarillo que
+    // explica: la línea entera funciona como muestra del color.
+    it("pinta de amarillo la nota del resaltado", async () => {
+      await downloadAsExcel([FILA], "x.xlsx", "hour");
+
+      const hoja = hojaDe(await excelDescargado(), "validados");
+      let filaNota = 0;
+      for (let i = 1; i < filaEncabezados(hoja); i++) {
+        const valor = hoja.getRow(i).getCell(1).value;
+        if (typeof valor === "string" && valor.includes("amarillo")) {
+          filaNota = i;
+        }
+      }
+      expect(filaNota).toBeGreaterThan(0);
+      expect(colorDeFondo(hoja.getRow(filaNota).getCell(1))).toBe("FFFFEB9C");
+    });
+
+    it("aclara qué serie contiene cada hoja", async () => {
+      await downloadAsExcel([FILA], "x.xlsx", "hour");
+
+      const workbook = await excelDescargado();
+      expect(notasDe(hojaDe(workbook, "crudos"))).toContain(
+        "sin importar su status",
+      );
+      expect(notasDe(hojaDe(workbook, "validados"))).toContain("status K");
+    });
+  });
+
+  describe("legibilidad de la grilla", () => {
+    // Las descargas abarcan varios días: el borde medio al cambiar de día es
+    // lo que permite recorrer la planilla sin perderse entre las horas.
+    it("separa el cambio de día con un borde superior medio", async () => {
+      await downloadAsExcel(
+        [
+          { time: "2026-01-15T20:30:00Z", co: 1 },
+          { time: "2026-01-16T20:30:00Z", co: 2 },
+        ],
+        "x.xlsx",
+        "hour",
+      );
+
+      const hoja = hojaDe(await excelDescargado(), "validados");
+      const fila = filaEncabezados(hoja);
+      expect(hoja.getRow(fila + 1).getCell(1).border?.top?.style).not.toBe(
+        "medium",
+      );
+      expect(hoja.getRow(fila + 2).getCell(1).border?.top?.style).toBe(
+        "medium",
+      );
+    });
+
+    it("congela las notas y los encabezados", async () => {
+      await downloadAsExcel([FILA], "x.xlsx", "hour");
+
+      const hoja = hojaDe(await excelDescargado(), "crudos");
+      expect(hoja.views[0]).toMatchObject({
+        state: "frozen",
+        ySplit: filaEncabezados(hoja),
+      });
+      // Sin panel vertical: su línea divisoria cruzaría las notas de arriba
+      expect(hoja.views[0]?.xSplit ?? 0).toBe(0);
     });
   });
 

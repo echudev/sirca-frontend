@@ -3,7 +3,7 @@
  * @description Proporciona funciones para formatear datos crudos de la base de datos
  * en archivos descargables, aplicando reglas de negocio sobre columnas y decimales.
  * @author Ezequiel Maranda
- * @version 1.3.0
+ * @version 1.4.0
  * @since 2026-03-11
  */
 
@@ -52,6 +52,53 @@ const LOW_COVERAGE_FILL: ExcelJS.Fill = {
   pattern: "solid",
   fgColor: { argb: "FFFFEB9C" },
 };
+
+// Bordes de la grilla: finos para las celdas, medios para separar grupos de
+// columnas (una tabla de InfluxDB por grupo) y el cambio de día.
+const THIN_BORDER: ExcelJS.Border = {
+  style: "thin",
+  color: { argb: "FFD0D0D0" },
+};
+const GROUP_BORDER: ExcelJS.Border = {
+  style: "medium",
+  color: { argb: "FFA0A0A0" },
+};
+const DAY_BORDER: ExcelJS.Border = {
+  style: "medium",
+  color: { argb: "FF808080" },
+};
+
+// Banda de fondo que alterna día por medio para distinguirlos de un vistazo.
+const DAY_BAND_FILL: ExcelJS.Fill = {
+  type: "pattern",
+  pattern: "solid",
+  fgColor: { argb: "FFF3F4F6" },
+};
+
+const HEADER_FILL: ExcelJS.Fill = {
+  type: "pattern",
+  pattern: "solid",
+  fgColor: { argb: "FFE0E0E0" },
+};
+
+const LEGEND_FONT: Partial<ExcelJS.Font> = {
+  italic: true,
+  size: 10,
+  color: { argb: "FF595959" },
+};
+
+// Tipografía de la nota con fondo amarillo (mismo criterio que el estilo
+// "neutral" de Excel: texto ocre sobre FFEB9C).
+const LOW_COVERAGE_LEGEND_FONT: Partial<ExcelJS.Font> = {
+  italic: true,
+  size: 10,
+  color: { argb: "FF9C6500" },
+};
+
+// Significado de cada status según la convención de la red.
+const STATUS_LEGEND =
+  "Status: K = OK (dato válido) · A = Alarma equipo · V = Valor negativo/fuera de rango · " +
+  "M = Mantenimiento · Z = Zero cal · S = Span cal · s/d = sin dato";
 
 // Mapa métrica -> tabla de origen, para ubicar el conteo de minutos válidos.
 const METRIC_TO_TABLE = new Map<string, string>();
@@ -348,7 +395,35 @@ function hasLowKCoverage(row: DataRow, column: string): boolean {
   );
 }
 
+/** Grupo visual al que pertenece una columna: su tabla de origen en InfluxDB. */
+function groupKeyOf(col: string): string {
+  const base = baseColumnName(col);
+  const fromMetric = METRIC_TO_TABLE.get(base);
+  if (fromMetric) return fromMetric;
+  if (col.endsWith("_k_status")) return col.slice(0, -"_k_status".length);
+  if (col.endsWith("_status")) return col.slice(0, -"_status".length);
+  return "extra";
+}
+
+/** Formato numérico según la precisión del instrumento de la métrica. */
+function numFmtFor(baseCol: string): string | undefined {
+  if (THREE_DECIMAL_COLUMNS.has(baseCol)) return "0.000";
+  if (TWO_DECIMAL_COLUMNS.has(baseCol)) return "0.00";
+  if (ONE_DECIMAL_COLUMNS.has(baseCol)) return "0.0";
+  return undefined;
+}
+
+interface LegendLine {
+  text: string;
+  /** Fondo de la línea completa (sirve de muestra del color que explica). */
+  fill?: ExcelJS.Fill;
+  /** Tipografía de la línea; por defecto usa LEGEND_FONT. */
+  font?: Partial<ExcelJS.Font>;
+}
+
 interface WorksheetOptions {
+  /** Notas aclaratorias que van arriba de la grilla. */
+  legend?: LegendLine[];
   /** Muestra las columnas _raw con el nombre base de su métrica (hoja crudos). */
   stripRawSuffix?: boolean;
   /** Resalta la celda cuando el predicado da true (hoja validados). */
@@ -356,12 +431,15 @@ interface WorksheetOptions {
 }
 
 /**
- * Helper interno para volcar datos y aplicar estilos básicos a una hoja de ExcelJS.
+ * Helper interno para volcar datos y aplicar estilos a una hoja de ExcelJS:
+ * notas aclaratorias arriba, encabezados congelados, bordes que separan los
+ * grupos de columnas y el cambio de día (banda alternada día por medio), y
+ * formato numérico según la precisión de cada instrumento.
  *
  * @param worksheet Instancia de la hoja de Excel.
  * @param data Datos a insertar.
  * @param columns Lista de columnas a incluir en esta hoja.
- * @param options Ajustes de encabezados y resaltado propios de cada hoja.
+ * @param options Ajustes de leyenda, encabezados y resaltado propios de cada hoja.
  */
 function addDataToWorksheet(
   worksheet: ExcelJS.Worksheet,
@@ -369,6 +447,39 @@ function addDataToWorksheet(
   columns: string[],
   options: WorksheetOptions = {},
 ) {
+  const totalColumns = columns.length + 1; // +1 por "Fecha y Hora"
+
+  // Notas aclaratorias arriba de la grilla, cada una fusionada a lo ancho y
+  // arrancando en la primera columna, sin bordes que corten el texto
+  const legend = options.legend ?? [];
+  legend.forEach((line) => {
+    const legendRow = worksheet.addRow([]);
+    worksheet.mergeCells(legendRow.number, 1, legendRow.number, totalColumns);
+    const cell = legendRow.getCell(1);
+    cell.value = line.text;
+    cell.font = line.font ?? LEGEND_FONT;
+    if (line.fill) {
+      cell.fill = line.fill;
+    }
+  });
+  if (legend.length > 0) {
+    worksheet.addRow([]); // fila en blanco entre las notas y el encabezado
+  }
+
+  // Columnas donde empieza un grupo nuevo (índice dentro de `columns`)
+  const startsGroup = columns.map(
+    (col, index) =>
+      index === 0 || groupKeyOf(col) !== groupKeyOf(columns[index - 1]),
+  );
+
+  const borderFor = (cellIndex: number, top: ExcelJS.Border) => ({
+    top,
+    bottom: THIN_BORDER,
+    left:
+      cellIndex >= 2 && startsGroup[cellIndex - 2] ? GROUP_BORDER : THIN_BORDER,
+    right: THIN_BORDER,
+  });
+
   // Agregar encabezados
   const headers = [
     "Fecha y Hora",
@@ -378,17 +489,18 @@ function addDataToWorksheet(
       return name.charAt(0).toUpperCase() + name.slice(1);
     }),
   ];
-  worksheet.addRow(headers);
-
-  // Estilizar encabezados
-  worksheet.getRow(1).font = { bold: true };
-  worksheet.getRow(1).fill = {
-    type: "pattern",
-    pattern: "solid",
-    fgColor: { argb: "FFE0E0E0" },
-  };
+  const headerRow = worksheet.addRow(headers);
+  headerRow.font = { bold: true };
+  for (let cellIndex = 1; cellIndex <= totalColumns; cellIndex++) {
+    const cell = headerRow.getCell(cellIndex);
+    cell.fill = HEADER_FILL;
+    // Borde inferior medio: separa el encabezado del primer día de datos
+    cell.border = { ...borderFor(cellIndex, THIN_BORDER), bottom: DAY_BORDER };
+  }
 
   // Agregar filas de datos
+  let previousDay: string | null = null;
+  let dayParity = 0;
   data.forEach((row) => {
     const values: (string | number)[] = [
       formatDate(row.time),
@@ -418,14 +530,40 @@ function addDataToWorksheet(
     ];
     const excelRow = worksheet.addRow(values);
 
-    if (options.highlightCell) {
-      columns.forEach((col, index) => {
-        if (options.highlightCell?.(row, col)) {
-          excelRow.getCell(index + 2).fill = LOW_COVERAGE_FILL;
+    // El día se compara en hora argentina, igual que la fecha mostrada
+    const day = formatDate(row.time).split(",")[0];
+    const isNewDay = previousDay !== null && day !== previousDay;
+    if (isNewDay) {
+      dayParity = 1 - dayParity;
+    }
+    previousDay = day;
+
+    for (let cellIndex = 1; cellIndex <= totalColumns; cellIndex++) {
+      const cell = excelRow.getCell(cellIndex);
+      cell.border = borderFor(cellIndex, isNewDay ? DAY_BORDER : THIN_BORDER);
+      if (dayParity === 1) {
+        cell.fill = DAY_BAND_FILL;
+      }
+
+      const col = cellIndex >= 2 ? columns[cellIndex - 2] : null;
+      if (col) {
+        if (typeof row[col] === "number") {
+          const fmt = numFmtFor(baseColumnName(col));
+          if (fmt) {
+            cell.numFmt = fmt;
+          }
         }
-      });
+        if (options.highlightCell?.(row, col)) {
+          cell.fill = LOW_COVERAGE_FILL;
+        }
+      }
     }
   });
+
+  // Congelar las notas y los encabezados. Sin xSplit a propósito: la línea
+  // divisoria del panel vertical se dibuja a lo alto de toda la hoja y
+  // atraviesa las notas fusionadas de arriba.
+  worksheet.views = [{ state: "frozen", ySplit: headerRow.number }];
 
   // Ajustar ancho de columnas
   worksheet.getColumn(1).width = 20; // Fecha y Hora / time
@@ -439,6 +577,8 @@ function addDataToWorksheet(
  * Crea dos hojas: "crudos" (promedio de todos los minutos más los status
  * observados) y "validados" (promedio sólo de minutos con status k; en la
  * integración horaria se resaltan las horas con menos de 45 minutos válidos).
+ * Cada hoja abre con notas: crudos explica qué contiene y el significado de
+ * cada status; validados, qué contiene y qué indica el resaltado amarillo.
  *
  * @param data Array de objetos con las filas de datos.
  * @param filename Nombre que tendrá el archivo descargado.
@@ -454,6 +594,41 @@ export async function downloadAsExcel(
   }
 
   const resolvedIntegration = resolveIntegration(data, integration);
+  const isHour = resolvedIntegration === "hour";
+
+  const crudosLegend: LegendLine[] = [
+    {
+      text: isHour
+        ? "Hoja CRUDOS: promedio horario de todos los minutos registrados, sin importar su status."
+        : "Hoja CRUDOS: valores minutales con el status reportado por cada equipo.",
+    },
+    { text: STATUS_LEGEND },
+    ...(isHour
+      ? [
+          {
+            text: "Las columnas *_status listan los status observados en cada hora; las *_k_status cuentan los minutos en status K (sobre 60).",
+          },
+        ]
+      : []),
+  ];
+
+  // Sin la leyenda de status: vive en crudos, que es donde aparecen los códigos.
+  const validadosLegend: LegendLine[] = isHour
+    ? [
+        {
+          text: "Hoja VALIDADOS: promedio horario construido únicamente con los minutos en status K (OK).",
+        },
+        {
+          text: `Valor resaltado en amarillo: la hora se promedió con menos de ${MIN_K_MINUTES_PER_HOUR} minutos válidos (75% de la hora), por lo que es menos representativa.`,
+          fill: LOW_COVERAGE_FILL,
+          font: LOW_COVERAGE_LEGEND_FONT,
+        },
+      ]
+    : [
+        {
+          text: "Hoja VALIDADOS: valores minutales sin las columnas de status.",
+        },
+      ];
 
   // Crear workbook
   const workbook = new ExcelJS.Workbook();
@@ -464,6 +639,7 @@ export async function downloadAsExcel(
   const crudosColumns = getOrderedColumns(data, resolvedIntegration, "crudos");
   const crudosWorksheet = workbook.addWorksheet("crudos");
   addDataToWorksheet(crudosWorksheet, data, crudosColumns, {
+    legend: crudosLegend,
     stripRawSuffix: true,
   });
 
@@ -475,7 +651,8 @@ export async function downloadAsExcel(
   );
   const validadosWorksheet = workbook.addWorksheet("validados");
   addDataToWorksheet(validadosWorksheet, data, validadosColumns, {
-    highlightCell: resolvedIntegration === "hour" ? hasLowKCoverage : undefined,
+    legend: validadosLegend,
+    highlightCell: isHour ? hasLowKCoverage : undefined,
   });
 
   // Generar buffer y descargar
