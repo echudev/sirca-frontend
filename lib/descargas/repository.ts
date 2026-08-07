@@ -3,7 +3,7 @@
  * @description Maneja las consultas dinámicas a InfluxDB3 para diferentes contaminantes y meteorología,
  * realizando la unificación de datos basada en el tiempo y ajustes específicos de sensores.
  * @author Ezequiel Maranda
- * @version 1.1.0
+ * @version 1.2.0
  * @since 2026-03-11
  */
 
@@ -33,6 +33,12 @@ async function collectRows<T>(iterable: AsyncIterable<T>): Promise<Array<T>> {
  * - endDate: Fecha de fin (ISO).
  * - integration: Tipo de promedio ("hour" o "minute").
  *
+ * Para la integración horaria cada tabla aporta dos series: la cruda
+ * (`{metrica}_raw`, promedio de todos los minutos sin importar el status, con
+ * los status observados en `{tabla}_status`) y la validada (`{metrica}`,
+ * promedio sólo de los minutos con status 'k', con el conteo de minutos
+ * válidos en `{tabla}_k_status`).
+ *
  * @returns Objeto con los datos unificados y ordenados cronológicamente.
  */
 export async function fetchDatosPorEstacion(params: {
@@ -47,25 +53,40 @@ export async function fetchDatosPorEstacion(params: {
   // Build queries for each table
   const queries = Object.entries(TABLE_CONFIG).map(([key, config]) => {
     const { table, metrics } = config;
-    const metricsSelect = metrics
-      .map((metric) =>
-        metric === "lluvia_mean"
-          ? `MAX(${metric}) AS ${metric.replace("_mean", "")}`
-          : `AVG(${metric}) AS ${metric.replace("_mean", "")}`,
-      )
-      .join(", ");
 
     let query: string;
     if (integration === "hour") {
+      // Serie cruda: promedio horario de todos los minutos, sin importar el status.
+      // La lluvia es acumulada, así que se toma el MAX en lugar del promedio.
+      const rawSelect = metrics
+        .map((metric) => {
+          const name = metric.replace("_mean", "");
+          return metric === "lluvia_mean"
+            ? `MAX(${metric}) AS ${name}_raw`
+            : `AVG(${metric}) AS ${name}_raw`;
+        })
+        .join(", ");
+
+      // Serie validada: al promedio sólo entran los minutos con status 'k'.
+      const validatedSelect = metrics
+        .map((metric) => {
+          const name = metric.replace("_mean", "");
+          return metric === "lluvia_mean"
+            ? `MAX(CASE WHEN status = 'k' THEN ${metric} END) AS ${name}`
+            : `AVG(CASE WHEN status = 'k' THEN ${metric} END) AS ${name}`;
+        })
+        .join(", ");
+
       query = `
       SELECT
         DATE_BIN('1 hour', time - INTERVAL '1 minute', '1970-01-01') AS time,
         location,
-        ${metricsSelect},
-        COUNT(*) AS ${key}_k_status
+        ${validatedSelect},
+        ${rawSelect},
+        array_to_string(array_agg(DISTINCT status), ',') AS ${key}_status,
+        COUNT(CASE WHEN status = 'k' THEN 1 END) AS ${key}_k_status
       FROM ${table}
       WHERE location = '${location}'
-        AND status = 'k'
         AND (time - INTERVAL '1 minute') >= '${startDate}'
         AND (time - INTERVAL '1 minute') < '${endDate}'
       GROUP BY DATE_BIN('1 hour', time - INTERVAL '1 minute', '1970-01-01'), location

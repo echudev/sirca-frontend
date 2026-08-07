@@ -3,7 +3,7 @@
  * @description Proporciona funciones para formatear datos crudos de la base de datos
  * en archivos descargables, aplicando reglas de negocio sobre columnas y decimales.
  * @author Ezequiel Maranda
- * @version 1.2.0
+ * @version 1.3.0
  * @since 2026-03-11
  */
 
@@ -43,14 +43,62 @@ const TWO_DECIMAL_COLUMNS = new Set<string>([
 // CO con 3 decimales
 const THREE_DECIMAL_COLUMNS = new Set<string>(["co"]);
 
+// Umbral de respaldo horario: 45 minutos válidos = 75% de la hora.
+const MIN_K_MINUTES_PER_HOUR = 45;
+
+// Relleno para resaltar promedios validados con respaldo insuficiente.
+const LOW_COVERAGE_FILL: ExcelJS.Fill = {
+  type: "pattern",
+  pattern: "solid",
+  fgColor: { argb: "FFFFEB9C" },
+};
+
+// Mapa métrica -> tabla de origen, para ubicar el conteo de minutos válidos.
+const METRIC_TO_TABLE = new Map<string, string>();
+Object.entries(TABLE_CONFIG).forEach(([tableKey, config]) => {
+  config.metrics.forEach((metric) => {
+    METRIC_TO_TABLE.set(metric.replace("_mean", ""), tableKey);
+  });
+});
+
+/**
+ * Determina la integración: usa la recibida o la infiere de los campos presentes.
+ * La consulta horaria trae series `_raw` y conteos `_k_status`; la minutal sólo `_status`.
+ */
+function resolveIntegration(data: DataRow[], integration?: string): string {
+  if (integration) return integration;
+
+  const fields = new Set<string>();
+  data?.forEach((row) => {
+    Object.keys(row).forEach((key) => {
+      fields.add(key);
+    });
+  });
+
+  const fieldList = Array.from(fields);
+  if (fieldList.some((f) => f.endsWith("_k_status") || f.endsWith("_raw"))) {
+    return "hour";
+  }
+  return fieldList.some((f) => f.endsWith("_status")) ? "minute" : "hour";
+}
+
+// Hoja de destino de las columnas: "crudos" lleva las series _raw, "validados"
+// las series validadas (sólo minutos k) y "all" ambas (CSV).
+type SheetVariant = "all" | "crudos" | "validados";
+
 /**
  * Genera el listado de columnas ordenadas basándose en la configuración global (TABLE_CONFIG).
  *
  * @param data Los datos crudos obtenidos de la consulta.
  * @param integration Opcional. Tipo de promedio para determinar los sufijos de las columnas de estado.
+ * @param variant Hoja de destino de las columnas.
  * @returns Array de strings con los nombres de las columnas en el orden correcto.
  */
-function getOrderedColumns(data: DataRow[], integration?: string): string[] {
+function getOrderedColumns(
+  data: DataRow[],
+  integration?: string,
+  variant: SheetVariant = "all",
+): string[] {
   const allFields = new Set<string>();
 
   // Collect all fields from data first
@@ -64,48 +112,64 @@ function getOrderedColumns(data: DataRow[], integration?: string): string[] {
     });
   }
 
-  // Si no pasaron integración, intentar inferirla basándonos en si ya hay alguna columna "_status" en los datos
-  let inferIntegration = integration;
-  // Este código se ejecuta solamente si no se pasó el string integration como argument en getOrderedColumns
-  if (!inferIntegration) {
-    const hasMinutalStatus = Array.from(allFields).some(
-      (f) => f.endsWith("_status") && !f.endsWith("_k_status"),
-    );
-    inferIntegration = hasMinutalStatus ? "minute" : "hour";
-  }
+  const inferIntegration = resolveIntegration(data, integration);
 
   // Generar orden de columnas basado en TABLE_CONFIG
   const orderedFields: string[] = [];
   const seen = new Set<string>();
+  // Campos que pertenecen a TABLE_CONFIG aunque no vayan en esta hoja: evita
+  // que el arrastre final los agregue como "extras" en la hoja equivocada.
+  const known = new Set<string>();
+
+  const push = (field: string) => {
+    if (!seen.has(field)) {
+      orderedFields.push(field);
+      seen.add(field);
+    }
+  };
 
   Object.entries(TABLE_CONFIG).forEach(([tableKey, config]) => {
     // Agregar métricas de cada tabla
     config.metrics.forEach((metric) => {
       const fieldName = metric.replace("_mean", "");
-      if (!seen.has(fieldName)) {
-        orderedFields.push(fieldName);
-        seen.add(fieldName);
+      const rawField = `${fieldName}_raw`;
+      known.add(fieldName);
+      known.add(rawField);
+
+      if (inferIntegration === "hour") {
+        if (variant !== "crudos") push(fieldName);
+        if (variant !== "validados") push(rawField);
+      } else {
+        push(fieldName);
       }
     });
 
-    // Agregar campo de status de cada tabla según el tipo de integración de la consulta
-    const statusField =
-      inferIntegration === "minute"
-        ? `${tableKey}_status`
-        : `${tableKey}_k_status`;
+    // Agregar campos de estado de cada tabla según el tipo de integración:
+    // la horaria trae los status observados y el conteo de minutos k; la
+    // minutal sólo el status del minuto.
+    const statusField = `${tableKey}_status`;
+    const kCountField = `${tableKey}_k_status`;
+    known.add(statusField);
+    known.add(kCountField);
 
-    if (!seen.has(statusField)) {
-      orderedFields.push(statusField);
-      seen.add(statusField);
+    if (variant !== "validados") {
+      push(statusField);
+      if (inferIntegration === "hour") {
+        push(kCountField);
+      }
     }
   });
 
   // Agregar cualquier campo adicional que no esté en TABLE_CONFIG
   allFields.forEach((field) => {
-    if (!seen.has(field)) {
-      orderedFields.push(field);
-      seen.add(field);
+    if (seen.has(field) || known.has(field)) return;
+    if (
+      variant === "validados" &&
+      (field.endsWith("_status") || field.endsWith("_raw"))
+    ) {
+      return;
     }
+    push(field);
   });
 
   return orderedFields;
@@ -264,24 +328,54 @@ export function downloadAsCSV(
   URL.revokeObjectURL(url);
 }
 
+/** Nombre base de una columna: las series _raw heredan el de su métrica. */
+function baseColumnName(col: string): string {
+  return col.endsWith("_raw") ? col.slice(0, -"_raw".length) : col;
+}
+
+/**
+ * Indica si el promedio validado de esa celda se construyó con menos de
+ * 45 minutos con status k (75% de la hora).
+ */
+function hasLowKCoverage(row: DataRow, column: string): boolean {
+  const tableKey = METRIC_TO_TABLE.get(column);
+  if (!tableKey) return false;
+  const kCount = row[`${tableKey}_k_status`];
+  return (
+    typeof kCount === "number" &&
+    kCount < MIN_K_MINUTES_PER_HOUR &&
+    typeof row[column] === "number"
+  );
+}
+
+interface WorksheetOptions {
+  /** Muestra las columnas _raw con el nombre base de su métrica (hoja crudos). */
+  stripRawSuffix?: boolean;
+  /** Resalta la celda cuando el predicado da true (hoja validados). */
+  highlightCell?: (row: DataRow, column: string) => boolean;
+}
+
 /**
  * Helper interno para volcar datos y aplicar estilos básicos a una hoja de ExcelJS.
  *
  * @param worksheet Instancia de la hoja de Excel.
  * @param data Datos a insertar.
  * @param columns Lista de columnas a incluir en esta hoja.
+ * @param options Ajustes de encabezados y resaltado propios de cada hoja.
  */
 function addDataToWorksheet(
   worksheet: ExcelJS.Worksheet,
   data: DataRow[],
   columns: string[],
+  options: WorksheetOptions = {},
 ) {
   // Agregar encabezados
   const headers = [
     "Fecha y Hora",
     ...columns.map((col) => {
-      if (col === "catalinas") return "La Boca";
-      return col.charAt(0).toUpperCase() + col.slice(1);
+      const name = options.stripRawSuffix ? baseColumnName(col) : col;
+      if (name === "catalinas") return "La Boca";
+      return name.charAt(0).toUpperCase() + name.slice(1);
     }),
   ];
   worksheet.addRow(headers);
@@ -295,7 +389,7 @@ function addDataToWorksheet(
   };
 
   // Agregar filas de datos
-  data.forEach((row, _rowIndex) => {
+  data.forEach((row) => {
     const values: (string | number)[] = [
       formatDate(row.time),
       ...columns.map((col) => {
@@ -308,12 +402,13 @@ function addDataToWorksheet(
         }
         if (typeof value === "number") {
           // Determinar decimales según la columna
+          const baseCol = baseColumnName(col);
           let decimals = 1;
-          if (THREE_DECIMAL_COLUMNS.has(col)) {
+          if (THREE_DECIMAL_COLUMNS.has(baseCol)) {
             decimals = 3;
-          } else if (TWO_DECIMAL_COLUMNS.has(col)) {
+          } else if (TWO_DECIMAL_COLUMNS.has(baseCol)) {
             decimals = 2;
-          } else if (ONE_DECIMAL_COLUMNS.has(col)) {
+          } else if (ONE_DECIMAL_COLUMNS.has(baseCol)) {
             decimals = 1;
           }
           return Number(value.toFixed(decimals));
@@ -321,7 +416,15 @@ function addDataToWorksheet(
         return String(value);
       }),
     ];
-    worksheet.addRow(values);
+    const excelRow = worksheet.addRow(values);
+
+    if (options.highlightCell) {
+      columns.forEach((col, index) => {
+        if (options.highlightCell?.(row, col)) {
+          excelRow.getCell(index + 2).fill = LOW_COVERAGE_FILL;
+        }
+      });
+    }
   });
 
   // Ajustar ancho de columnas
@@ -333,7 +436,9 @@ function addDataToWorksheet(
 
 /**
  * Orquestador para descargar los datos en formato Excel (.xlsx).
- * Crea dos hojas: "crudos" (con estados) y "validados" (sin estados).
+ * Crea dos hojas: "crudos" (promedio de todos los minutos más los status
+ * observados) y "validados" (promedio sólo de minutos con status k; en la
+ * integración horaria se resaltan las horas con menos de 45 minutos válidos).
  *
  * @param data Array de objetos con las filas de datos.
  * @param filename Nombre que tendrá el archivo descargado.
@@ -348,20 +453,30 @@ export async function downloadAsExcel(
     throw new Error("No hay datos para descargar");
   }
 
-  // Obtener todas las columnas ordenadas según TABLE_CONFIG
-  const allColumns = getOrderedColumns(data, integration);
+  const resolvedIntegration = resolveIntegration(data, integration);
 
   // Crear workbook
   const workbook = new ExcelJS.Workbook();
 
-  // Primera worksheet: "crudos" con todas las columnas (incluyendo time y _k_status)
+  // Primera worksheet: "crudos". En la integración horaria lleva las series
+  // _raw (mostradas con su nombre base) junto a los status observados y el
+  // conteo de minutos válidos de cada hora.
+  const crudosColumns = getOrderedColumns(data, resolvedIntegration, "crudos");
   const crudosWorksheet = workbook.addWorksheet("crudos");
-  addDataToWorksheet(crudosWorksheet, data, allColumns);
+  addDataToWorksheet(crudosWorksheet, data, crudosColumns, {
+    stripRawSuffix: true,
+  });
 
-  // Segunda worksheet: "validados" sin columnas que terminen en "_status" (incluye "_k_status") y sin "time"
-  const validadosColumns = allColumns.filter((col) => !col.endsWith("_status"));
+  // Segunda worksheet: "validados", sin columnas de estado ni series _raw.
+  const validadosColumns = getOrderedColumns(
+    data,
+    resolvedIntegration,
+    "validados",
+  );
   const validadosWorksheet = workbook.addWorksheet("validados");
-  addDataToWorksheet(validadosWorksheet, data, validadosColumns);
+  addDataToWorksheet(validadosWorksheet, data, validadosColumns, {
+    highlightCell: resolvedIntegration === "hour" ? hasLowKCoverage : undefined,
+  });
 
   // Generar buffer y descargar
   const buffer = await workbook.xlsx.writeBuffer();

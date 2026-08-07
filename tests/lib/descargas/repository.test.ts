@@ -77,20 +77,44 @@ describe("fetchDatosPorEstacion", () => {
       );
     });
 
-    // El promedio horario sólo debe construirse con minutos validados. Sin este
-    // filtro, un minuto marcado como inválido contamina toda la hora.
-    it("promedia únicamente los minutos con status k", async () => {
+    // La hoja de crudos necesita el promedio de todos los minutos: el filtro
+    // por status vive en un CASE del agregado validado, no en el WHERE.
+    it("promedia todos los minutos en la serie cruda sin filtrar por status", async () => {
       await fetchDatosPorEstacion(PARAMS_BASE);
 
-      expect(queryDe("co_minutales")).toContain("status = 'k'");
+      const co = queryDe("co_minutales");
+      expect(co).toContain("AVG(co_mean) AS co_raw");
+      expect(co).not.toContain("AND status = 'k'");
+    });
+
+    // El promedio validado sólo debe construirse con minutos con status k. Sin
+    // esto, un minuto marcado como inválido contamina toda la hora.
+    it("promedia únicamente los minutos con status k en la serie validada", async () => {
+      await fetchDatosPorEstacion(PARAMS_BASE);
+
+      expect(queryDe("co_minutales")).toContain(
+        "AVG(CASE WHEN status = 'k' THEN co_mean END) AS co",
+      );
     });
 
     it("expone cuántos minutos válidos respaldan cada hora", async () => {
       await fetchDatosPorEstacion(PARAMS_BASE);
 
-      // El conteo es lo que permite al usuario descartar horas armadas con
-      // pocos minutos; si desapareciera, el dato se vuelve inauditable.
-      expect(queryDe("co_minutales")).toContain("COUNT(*) AS co_k_status");
+      // El conteo es lo que permite descartar (y resaltar en el Excel) las
+      // horas armadas con menos del 75% de los minutos.
+      expect(queryDe("co_minutales")).toContain(
+        "COUNT(CASE WHEN status = 'k' THEN 1 END) AS co_k_status",
+      );
+    });
+
+    // La hoja de crudos muestra qué status hubo en cada hora: es lo que
+    // explica por qué el promedio validado difiere del crudo.
+    it("lista los status observados en cada hora", async () => {
+      await fetchDatosPorEstacion(PARAMS_BASE);
+
+      expect(queryDe("co_minutales")).toContain(
+        "array_to_string(array_agg(DISTINCT status), ',') AS co_status",
+      );
     });
 
     // La lluvia es acumulada: promediarla da un número sin sentido físico.
@@ -98,8 +122,11 @@ describe("fetchDatosPorEstacion", () => {
       await fetchDatosPorEstacion(PARAMS_BASE);
 
       const meteo = queryDe("meteo_minutales");
-      expect(meteo).toContain("MAX(lluvia_mean) AS lluvia");
-      expect(meteo).toContain("AVG(temp_mean) AS temp");
+      expect(meteo).toContain("MAX(lluvia_mean) AS lluvia_raw");
+      expect(meteo).toContain(
+        "MAX(CASE WHEN status = 'k' THEN lluvia_mean END) AS lluvia",
+      );
+      expect(meteo).toContain("AVG(temp_mean) AS temp_raw");
       expect(meteo).not.toContain("AVG(lluvia_mean)");
     });
   });

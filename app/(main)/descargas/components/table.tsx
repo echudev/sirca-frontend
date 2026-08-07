@@ -24,18 +24,24 @@ export default function Table({ data }: TableProps) {
         orderedFields.push(fieldName);
       }
     });
-    // Agregar campo de status de cada tabla
-    const statusField = `${tableKey}_k_status`;
+    // Agregar campos de status de cada tabla: el status del minuto (minutal) o
+    // los status observados en la hora, más el conteo de minutos k (horaria)
+    const statusField = `${tableKey}_status`;
     if (data.some((row) => statusField in row)) {
       orderedFields.push(statusField);
     }
+    const kStatusField = `${tableKey}_k_status`;
+    if (data.some((row) => kStatusField in row)) {
+      orderedFields.push(kStatusField);
+    }
   });
 
-  // Agregar cualquier campo adicional que no esté en TABLE_CONFIG
+  // Agregar cualquier campo adicional que no esté en TABLE_CONFIG. Las series
+  // _raw quedan fuera de la vista previa: se muestran en el Excel descargado.
   const allFields = new Set<string>();
   data.forEach((row) => {
     Object.keys(row).forEach((key) => {
-      if (key !== "time") {
+      if (key !== "time" && !key.endsWith("_raw")) {
         allFields.add(key);
       }
     });

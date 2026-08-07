@@ -75,6 +75,25 @@ function encabezadosDe(hoja: ExcelJS.Worksheet): string[] {
   return (hoja.getRow(1).values as string[]).filter(Boolean);
 }
 
+/** Celda de la primera fila de datos bajo el encabezado dado. */
+function celdaDe(hoja: ExcelJS.Worksheet, encabezado: string): ExcelJS.Cell {
+  const indice = (hoja.getRow(1).values as string[]).findIndex(
+    (h) => h?.toLowerCase() === encabezado.toLowerCase(),
+  );
+  if (indice === -1) {
+    throw new Error(`La hoja no tiene la columna "${encabezado}"`);
+  }
+  return hoja.getRow(2).getCell(indice);
+}
+
+/** Color de fondo de una celda, si tiene un relleno sólido. */
+function colorDeFondo(celda: ExcelJS.Cell): string | undefined {
+  const fill = celda.fill;
+  return fill && fill.type === "pattern" && fill.pattern === "solid"
+    ? fill.fgColor?.argb
+    : undefined;
+}
+
 /** Workbook releído desde el archivo entregado. */
 async function excelDescargado(): Promise<ExcelJS.Workbook> {
   if (!blobDescargado) throw new Error("No se generó ninguna descarga");
@@ -252,6 +271,17 @@ describe("downloadAsCSV", () => {
       expect((await filasCSV())[0]).toContain("Co_k_status");
     });
 
+    // El CSV es una sola tabla, así que lleva las dos series lado a lado: la
+    // validada con el nombre base y la cruda con el sufijo _raw, junto con los
+    // status observados en cada hora.
+    it("incluye la serie cruda y los status observados en la integración horaria", async () => {
+      downloadAsCSV([FILA], "x.csv", "hour");
+
+      const [encabezado] = await filasCSV();
+      expect(encabezado).toContain("Co_raw");
+      expect(encabezado).toContain("Co_status");
+    });
+
     it("usa _status en la integración minutal", async () => {
       // Sin co_k_status en los datos: getOrderedColumns arrastra al final
       // cualquier campo presente que no esté en TABLE_CONFIG, y ese arrastre
@@ -316,7 +346,9 @@ describe("downloadAsExcel", () => {
 
   // A diferencia del CSV —que usa tres decimales para todo—, el Excel respeta
   // la precisión de cada instrumento: el CO se informa con tres decimales y la
-  // temperatura con uno, porque el sensor no mide más que eso.
+  // temperatura con uno, porque el sensor no mide más que eso. En la hoja de
+  // crudos la columna se llama como la métrica pero el dato sale de la serie
+  // _raw, así que la precisión tiene que heredarse del nombre base.
   it.each([
     ["co", 1.23456, 1.235],
     ["no2", 9.87654, 9.88],
@@ -325,19 +357,68 @@ describe("downloadAsExcel", () => {
     "escribe %s con la precisión de su instrumento",
     async (columna, crudo, esperado) => {
       await downloadAsExcel(
-        [{ time: FILA.time, [columna]: crudo }],
+        [{ time: FILA.time, [`${columna}_raw`]: crudo }],
         "x.xlsx",
         "hour",
       );
 
       const hoja = hojaDe(await excelDescargado(), "crudos");
-      const indice = (hoja.getRow(1).values as string[]).findIndex(
-        (h) => h?.toLowerCase() === columna.toLowerCase(),
-      );
-
-      expect(hoja.getRow(2).getCell(indice).value).toBe(esperado);
+      expect(celdaDe(hoja, columna).value).toBe(esperado);
     },
   );
+
+  // El motivo del arreglo del promedio horario: la hoja crudos lleva el
+  // promedio de todos los minutos (serie _raw, mostrada con el nombre base) y
+  // validados el promedio construido sólo con los minutos de status k.
+  it("separa el promedio crudo del validado en su hoja correspondiente", async () => {
+    await downloadAsExcel(
+      [{ time: FILA.time, co: 1.111, co_raw: 2.222, co_k_status: 58 }],
+      "x.xlsx",
+      "hour",
+    );
+
+    const workbook = await excelDescargado();
+    expect(celdaDe(hojaDe(workbook, "crudos"), "co").value).toBe(2.222);
+    expect(celdaDe(hojaDe(workbook, "validados"), "co").value).toBe(1.111);
+  });
+
+  describe("marca de respaldo insuficiente en validados", () => {
+    // 45 minutos k = 75% de la hora: por debajo, el promedio validado se
+    // entrega igual pero resaltado, para que quien analiza sepa que la hora
+    // está armada con pocos minutos.
+    it("resalta el promedio de una hora con menos de 45 minutos válidos", async () => {
+      await downloadAsExcel(
+        [{ time: FILA.time, co: 1.5, co_k_status: 44 }],
+        "x.xlsx",
+        "hour",
+      );
+
+      const hoja = hojaDe(await excelDescargado(), "validados");
+      expect(colorDeFondo(celdaDe(hoja, "co"))).toBe("FFFFEB9C");
+    });
+
+    it("no resalta una hora con respaldo suficiente", async () => {
+      await downloadAsExcel(
+        [{ time: FILA.time, co: 1.5, co_k_status: 45 }],
+        "x.xlsx",
+        "hour",
+      );
+
+      const hoja = hojaDe(await excelDescargado(), "validados");
+      expect(colorDeFondo(celdaDe(hoja, "co"))).toBeUndefined();
+    });
+
+    it("no resalta la hoja crudos aunque falten minutos válidos", async () => {
+      await downloadAsExcel(
+        [{ time: FILA.time, co: 1.5, co_raw: 2, co_k_status: 10 }],
+        "x.xlsx",
+        "hour",
+      );
+
+      const hoja = hojaDe(await excelDescargado(), "crudos");
+      expect(colorDeFondo(celdaDe(hoja, "co"))).toBeUndefined();
+    });
+  });
 
   it("nombra a catalinas como La Boca en el encabezado", async () => {
     await downloadAsExcel(
