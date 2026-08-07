@@ -206,6 +206,108 @@ describe("fetchDatosPorEstacion", () => {
     });
   });
 
+  describe("lluvia horaria derivada del acumulador", () => {
+    // El pluviómetro no mide lluvia por minuto: informa un acumulador que
+    // resetea a las 00:00 hora argentina (03:00 UTC). La lluvia de la hora es
+    // la diferencia contra la hora anterior, no el valor del acumulador.
+    it("convierte el acumulador en lluvia caída por hora", async () => {
+      state.responder = (sql) =>
+        sql.includes("meteo_minutales")
+          ? [
+              { time: "2026-01-01T10:00:00Z", lluvia: 2, lluvia_raw: 2.5 },
+              { time: "2026-01-01T11:00:00Z", lluvia: 5, lluvia_raw: 6.5 },
+            ]
+          : [];
+
+      const { data } = await fetchDatosPorEstacion(PARAMS_BASE);
+
+      expect(data[1].lluvia).toBe(3);
+      expect(data[1].lluvia_raw).toBe(4);
+    });
+
+    it("usa el acumulador directo en la primera hora del día local", async () => {
+      // A las 03:00 UTC (00:00 argentina) el acumulador arrancó de cero: su
+      // valor ya es la lluvia de esa hora, aunque la hora anterior traiga el
+      // total acumulado de ayer.
+      state.responder = (sql) =>
+        sql.includes("meteo_minutales")
+          ? [
+              { time: "2026-01-01T02:00:00Z", lluvia: 10 },
+              { time: "2026-01-01T03:00:00Z", lluvia: 1.2 },
+            ]
+          : [];
+
+      const { data } = await fetchDatosPorEstacion(PARAMS_BASE);
+
+      expect(data[1].lluvia).toBe(1.2);
+    });
+
+    it("interpreta un descenso del acumulador como reset", async () => {
+      state.responder = (sql) =>
+        sql.includes("meteo_minutales")
+          ? [
+              { time: "2026-01-01T10:00:00Z", lluvia: 8 },
+              { time: "2026-01-01T11:00:00Z", lluvia: 0.5 },
+            ]
+          : [];
+
+      const { data } = await fetchDatosPorEstacion(PARAMS_BASE);
+
+      expect(data[1].lluvia).toBe(0.5);
+    });
+
+    // Tras un hueco, la diferencia acumula varias horas de lluvia: atribuirla
+    // a una sola hora inventaría un pico que no existió.
+    it("deja sin dato la hora que no tiene hora anterior contigua", async () => {
+      state.responder = (sql) =>
+        sql.includes("meteo_minutales")
+          ? [
+              { time: "2026-01-01T10:00:00Z", lluvia: 2 },
+              { time: "2026-01-01T13:00:00Z", lluvia: 6 },
+            ]
+          : [];
+
+      const { data } = await fetchDatosPorEstacion(PARAMS_BASE);
+
+      expect(data[0].lluvia).toBeNull();
+      expect(data[1].lluvia).toBeNull();
+    });
+
+    it("deriva la serie cruda y la validada de forma independiente", async () => {
+      // Una hora sin minutos válidos corta la serie validada pero no la cruda.
+      state.responder = (sql) =>
+        sql.includes("meteo_minutales")
+          ? [
+              {
+                time: "2026-01-01T10:00:00Z",
+                lluvia: null as never,
+                lluvia_raw: 2,
+              },
+              { time: "2026-01-01T11:00:00Z", lluvia: 5, lluvia_raw: 6 },
+            ]
+          : [];
+
+      const { data } = await fetchDatosPorEstacion(PARAMS_BASE);
+
+      expect(data[1].lluvia).toBeNull();
+      expect(data[1].lluvia_raw).toBe(4);
+    });
+
+    it("no toca la lluvia minutal, que es el acumulador crudo del equipo", async () => {
+      state.responder = (sql) =>
+        sql.includes("meteo_minutales")
+          ? [{ time: "2026-01-01T10:00:00Z", lluvia: 4 }]
+          : [];
+
+      const { data } = await fetchDatosPorEstacion({
+        ...PARAMS_BASE,
+        integration: "minute",
+      });
+
+      expect(data[0].lluvia).toBe(4);
+    });
+  });
+
   describe("unificación de tablas", () => {
     it("junta en una sola fila las métricas del mismo instante", async () => {
       state.responder = (sql) => {

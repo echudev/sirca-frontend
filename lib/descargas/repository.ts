@@ -3,7 +3,7 @@
  * @description Maneja las consultas dinámicas a InfluxDB3 para diferentes contaminantes y meteorología,
  * realizando la unificación de datos basada en el tiempo y ajustes específicos de sensores.
  * @author Ezequiel Maranda
- * @version 1.2.0
+ * @version 1.3.0
  * @since 2026-03-11
  */
 
@@ -24,6 +24,65 @@ async function collectRows<T>(iterable: AsyncIterable<T>): Promise<Array<T>> {
   return rows;
 }
 
+const HOUR_MS = 60 * 60 * 1000;
+
+// Argentina no tiene horario de verano: el offset UTC-3 es fijo todo el año.
+const ARGENTINA_UTC_OFFSET_HOURS = -3;
+
+/** Hora local argentina (0-23) de un timestamp en milisegundos. */
+function argentinaHour(timeMs: number): number {
+  return (
+    (new Date(timeMs).getUTCHours() + 24 + ARGENTINA_UTC_OFFSET_HOURS) % 24
+  );
+}
+
+/**
+ * Deriva la lluvia caída en cada hora a partir del acumulador del pluviómetro.
+ *
+ * El equipo no informa lluvia por minuto sino un acumulador que resetea a las
+ * 00:00 hora argentina, así que el MAX horario que trae la query es "lo
+ * acumulado del día al cierre de la hora". La lluvia de la hora es la
+ * diferencia contra la hora anterior contigua, con dos excepciones: en la
+ * primera hora del día local el acumulador arrancó de cero y el valor se usa
+ * directo, y un descenso a mitad del día sólo puede ser un reset, así que
+ * también se usa directo. Sin hora anterior contigua la diferencia acumula
+ * varias horas y no es atribuible a una sola, por lo que queda sin dato.
+ *
+ * @param rows Filas horarias ya unificadas y ordenadas cronológicamente.
+ */
+function deriveHourlyRain(rows: Array<Record<string, string | number | null>>) {
+  const series = ["lluvia", "lluvia_raw"] as const;
+  const previous: Record<
+    (typeof series)[number],
+    { timeMs: number; acum: number } | undefined
+  > = {
+    lluvia: undefined,
+    lluvia_raw: undefined,
+  };
+
+  for (const row of rows) {
+    const timeMs = new Date(String(row.time)).getTime();
+    for (const field of series) {
+      const acum = row[field];
+      if (typeof acum !== "number") {
+        continue;
+      }
+      const prev = previous[field];
+      previous[field] = { timeMs, acum };
+
+      if (argentinaHour(timeMs) === 0) {
+        // Primera hora del día local: el acumulador arrancó de cero a las 00:00
+        row[field] = acum;
+      } else if (prev && timeMs - prev.timeMs === HOUR_MS) {
+        const delta = acum - prev.acum;
+        row[field] = delta >= 0 ? delta : acum;
+      } else {
+        row[field] = null;
+      }
+    }
+  }
+}
+
 /**
  * Consulta y unifica datos de múltiples tablas de InfluxDB para una estación específica.
  *
@@ -37,7 +96,8 @@ async function collectRows<T>(iterable: AsyncIterable<T>): Promise<Array<T>> {
  * (`{metrica}_raw`, promedio de todos los minutos sin importar el status, con
  * los status observados en `{tabla}_status`) y la validada (`{metrica}`,
  * promedio sólo de los minutos con status 'k', con el conteo de minutos
- * válidos en `{tabla}_k_status`).
+ * válidos en `{tabla}_k_status`). La lluvia horaria no es un promedio: se
+ * deriva del acumulador diario del pluviómetro (ver deriveHourlyRain).
  *
  * @returns Objeto con los datos unificados y ordenados cronológicamente.
  */
@@ -57,7 +117,9 @@ export async function fetchDatosPorEstacion(params: {
     let query: string;
     if (integration === "hour") {
       // Serie cruda: promedio horario de todos los minutos, sin importar el status.
-      // La lluvia es acumulada, así que se toma el MAX en lugar del promedio.
+      // La lluvia no se promedia: el pluviómetro informa un acumulador diario,
+      // así que el MAX es "lo acumulado al cierre de la hora" y después
+      // deriveHourlyRain lo convierte en lluvia caída por hora.
       const rawSelect = metrics
         .map((metric) => {
           const name = metric.replace("_mean", "");
@@ -207,6 +269,12 @@ export async function fetchDatosPorEstacion(params: {
       const timeB = new Date(String(b.time)).getTime();
       return timeA - timeB;
     });
+
+    // La lluvia horaria se deriva recién acá porque necesita la serie completa
+    // ordenada: el cálculo compara cada hora con la anterior contigua.
+    if (integration === "hour") {
+      deriveHourlyRain(sortedRows);
+    }
 
     return {
       data: sortedRows,
