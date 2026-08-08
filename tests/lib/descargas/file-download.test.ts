@@ -404,7 +404,7 @@ describe("downloadAsExcel", () => {
     expect(celdaDe(hojaDe(workbook, "validados"), "co").value).toBe(1.111);
   });
 
-  describe("marca de respaldo insuficiente en validados", () => {
+  describe("marca de respaldo insuficiente", () => {
     // 45 minutos k = 75% de la hora: por debajo, el promedio validado se
     // entrega igual pero resaltado, para que quien analiza sepa que la hora
     // está armada con pocos minutos.
@@ -430,7 +430,9 @@ describe("downloadAsExcel", () => {
       expect(colorDeFondo(celdaDe(hoja, "co"))).toBeUndefined();
     });
 
-    it("no resalta la hoja crudos aunque falten minutos válidos", async () => {
+    // En crudos el promedio es el de todos los minutos: no depende del respaldo
+    // k, así que resaltarlo sería engañoso. La marca va sobre el conteo.
+    it("no resalta el promedio crudo aunque falten minutos válidos", async () => {
       await downloadAsExcel(
         [{ time: FILA.time, co: 1.5, co_raw: 2, co_k_status: 10 }],
         "x.xlsx",
@@ -439,6 +441,30 @@ describe("downloadAsExcel", () => {
 
       const hoja = hojaDe(await excelDescargado(), "crudos");
       expect(colorDeFondo(celdaDe(hoja, "co"))).toBeUndefined();
+    });
+
+    // El conteo es lo que se mira en crudos para saber si la hora se sostiene:
+    // marcarlo evita tener que comparar 60 columnas contra el umbral a ojo.
+    it("resalta en crudos el conteo de minutos k por debajo de 45", async () => {
+      await downloadAsExcel(
+        [{ time: FILA.time, co_raw: 2, co_k_status: 44 }],
+        "x.xlsx",
+        "hour",
+      );
+
+      const hoja = hojaDe(await excelDescargado(), "crudos");
+      expect(colorDeFondo(celdaDe(hoja, "co_k_status"))).toBe("FFFFEB9C");
+    });
+
+    it("no resalta el conteo cuando la hora tiene respaldo suficiente", async () => {
+      await downloadAsExcel(
+        [{ time: FILA.time, co_raw: 2, co_k_status: 45 }],
+        "x.xlsx",
+        "hour",
+      );
+
+      const hoja = hojaDe(await excelDescargado(), "crudos");
+      expect(colorDeFondo(celdaDe(hoja, "co_k_status"))).toBeUndefined();
     });
   });
 
@@ -486,6 +512,14 @@ describe("downloadAsExcel", () => {
       }
       expect(filaNota).toBeGreaterThan(0);
       expect(colorDeFondo(hoja.getRow(filaNota).getCell(1))).toBe("FFFFEB9C");
+    });
+
+    it("explica en crudos qué significa el resaltado del conteo", async () => {
+      await downloadAsExcel([FILA], "x.xlsx", "hour");
+
+      const notas = notasDe(hojaDe(await excelDescargado(), "crudos"));
+      expect(notas).toContain("amarillo");
+      expect(notas).toContain("45 minutos en status K");
     });
 
     it("aclara qué serie contiene cada hoja", async () => {
@@ -543,6 +577,35 @@ describe("downloadAsExcel", () => {
       );
       expect(hoja.getRow(fila + 2).getCell(1).border?.top?.style).toBe(
         "medium",
+      );
+    });
+
+    // Columnas angostas con números de distinto largo: alineados a la izquierda
+    // (el default de Excel para el texto) la grilla se lee en zigzag.
+    it.each(["crudos", "validados"])(
+      "centra encabezados y datos en la hoja %s",
+      async (nombre) => {
+        await downloadAsExcel([FILA], "x.xlsx", "hour");
+
+        const hoja = hojaDe(await excelDescargado(), nombre);
+        const encabezado = hoja.getRow(filaEncabezados(hoja)).getCell(1);
+        const dato = celdaDe(hoja, "co");
+
+        for (const celda of [encabezado, dato]) {
+          expect(celda.alignment?.horizontal).toBe("center");
+          expect(celda.alignment?.vertical).toBe("middle");
+        }
+      },
+    );
+
+    // Las notas son texto corrido fusionado a lo ancho: centrarlas las dejaría
+    // flotando lejos del borde y sin punto de arranque para la lectura.
+    it("deja las notas alineadas a la izquierda", async () => {
+      await downloadAsExcel([FILA], "x.xlsx", "hour");
+
+      const hoja = hojaDe(await excelDescargado(), "crudos");
+      expect(hoja.getRow(1).getCell(1).alignment?.horizontal).not.toBe(
+        "center",
       );
     });
 
