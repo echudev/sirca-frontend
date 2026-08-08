@@ -81,6 +81,13 @@ const HEADER_FILL: ExcelJS.Fill = {
   fgColor: { argb: "FFE0E0E0" },
 };
 
+// Alineación de la grilla: encabezados y datos centrados en ambos ejes. Las
+// notas de arriba quedan afuera: son texto corrido y se leen desde la izquierda.
+const GRID_ALIGNMENT: Partial<ExcelJS.Alignment> = {
+  horizontal: "center",
+  vertical: "middle",
+};
+
 const LEGEND_FONT: Partial<ExcelJS.Font> = {
   italic: true,
   size: 10,
@@ -429,6 +436,17 @@ function hasLowKCoverage(row: DataRow, column: string): boolean {
   );
 }
 
+/**
+ * Indica si esa celda es un conteo de minutos k por debajo de 45 (75% de la
+ * hora). Se evalúa sobre la propia columna *_k_status de la hoja crudos, que es
+ * donde se lee el respaldo de la hora antes de mirar el promedio validado.
+ */
+function hasLowKCount(row: DataRow, column: string): boolean {
+  if (!column.endsWith("_k_status")) return false;
+  const kCount = row[column];
+  return typeof kCount === "number" && kCount < MIN_K_MINUTES_PER_HOUR;
+}
+
 /** Grupo visual al que pertenece una columna: su tabla de origen en InfluxDB. */
 function groupKeyOf(col: string): string {
   const base = baseColumnName(col);
@@ -462,7 +480,7 @@ interface WorksheetOptions {
   hourRangeLabels?: boolean;
   /** Muestra las columnas _raw con el nombre base de su métrica (hoja crudos). */
   stripRawSuffix?: boolean;
-  /** Resalta la celda cuando el predicado da true (hoja validados). */
+  /** Resalta la celda cuando el predicado da true (respaldo insuficiente). */
   highlightCell?: (row: DataRow, column: string) => boolean;
 }
 
@@ -530,6 +548,7 @@ function addDataToWorksheet(
   for (let cellIndex = 1; cellIndex <= totalColumns; cellIndex++) {
     const cell = headerRow.getCell(cellIndex);
     cell.fill = HEADER_FILL;
+    cell.alignment = GRID_ALIGNMENT;
     // Borde inferior medio: separa el encabezado del primer día de datos
     cell.border = { ...borderFor(cellIndex, THIN_BORDER), bottom: DAY_BORDER };
   }
@@ -579,6 +598,7 @@ function addDataToWorksheet(
     for (let cellIndex = 1; cellIndex <= totalColumns; cellIndex++) {
       const cell = excelRow.getCell(cellIndex);
       cell.border = borderFor(cellIndex, isNewDay ? DAY_BORDER : THIN_BORDER);
+      cell.alignment = GRID_ALIGNMENT;
       if (dayParity === 1) {
         cell.fill = DAY_BAND_FILL;
       }
@@ -613,8 +633,9 @@ function addDataToWorksheet(
 /**
  * Orquestador para descargar los datos en formato Excel (.xlsx).
  * Crea dos hojas: "crudos" (promedio de todos los minutos más los status
- * observados) y "validados" (promedio sólo de minutos con status k; en la
- * integración horaria se resaltan las horas con menos de 45 minutos válidos).
+ * observados) y "validados" (promedio sólo de minutos con status k). En la
+ * integración horaria se resaltan las horas con menos de 45 minutos válidos:
+ * en crudos sobre el conteo *_k_status y en validados sobre el promedio.
  * Cada hoja abre con notas: crudos explica qué contiene y el significado de
  * cada status; validados, qué contiene y qué indica el resaltado amarillo.
  *
@@ -645,6 +666,11 @@ export async function downloadAsExcel(
       ? [
           {
             text: "Las columnas *_status listan los status observados en cada hora; las *_k_status cuentan los minutos en status K (sobre 60).",
+          },
+          {
+            text: `Conteo resaltado en amarillo: la hora tuvo menos de ${MIN_K_MINUTES_PER_HOUR} minutos en status K (75% de la hora), por lo que su promedio validado es menos representativo.`,
+            fill: LOW_COVERAGE_FILL,
+            font: LOW_COVERAGE_LEGEND_FONT,
           },
         ]
       : []),
@@ -680,6 +706,7 @@ export async function downloadAsExcel(
     legend: crudosLegend,
     hourRangeLabels: isHour,
     stripRawSuffix: true,
+    highlightCell: isHour ? hasLowKCount : undefined,
   });
 
   // Segunda worksheet: "validados", sin columnas de estado ni series _raw.
